@@ -1,0 +1,94 @@
+Eres un experto programador en typescript y pixie.js y debes inferir como funcionara en LK
+
+El codigo que tienes que modificar ademas de usar pixie.js usa un framework personalizado llamado LK al cual no tengo acceso: El framework **LK** es un motor de juegos JavaScript personalizado y simplificado, diseñado específicamente para crear juegos 2D móviles de forma rápida y eficiente. Aquí te explico sus características principales:
+
+## **Arquitectura y Filosofía**
+- **Motor especializado**: Construido sobre PIXI.js pero con una API mucho más simple
+- **Móvil-primero**: Optimizado para dispositivos táctiles, con resolución virtual de 2048x2732 (iPad Pro 12" en vertical)
+- **Sandbox limitado**: Funciona en un entorno restringido sin acceso a muchas APIs del navegador
+- **Escalado automático**: Se adapta a cualquier tamaño de pantalla manteniendo las proporciones
+
+## **Sistema de Coordenadas**
+- **Origen**: Esquina superior izquierda (0,0)
+- **Resolución virtual**: 2048x2732 píxeles
+- **Escalado inteligente**: Se ajusta automáticamente a diferentes dispositivos
+- **Rotación automática**: Maneja cambios de orientación sin intervención del desarrollador
+
+## **Clases Principales**
+
+### **LK.Game**
+- Clase principal que contiene toda la lógica del juego
+- Maneja el bucle principal a 60 FPS
+- Proporciona eventos táctiles: `down`, `up`, `move`
+- Manejo automático de pausa, game over, leaderboards
+
+### **Container**
+- Clase base para todos los objetos del juego
+- Sistema de jerarquía padre-hijo
+- Propiedades: `x`, `y`, `scaleX`, `scaleY`, `rotation`, `alpha`
+- Método `intersects()` para detección de colisiones
+- Método `expand()` para crear clases personalizadas
+
+### **Text2**
+- Sistema de texto con propiedades como `size`, `fill`, `font`
+- Soporte para fuentes del sistema únicamente
+- Anchor points configurables
+
+## **Sistema de Assets**
+```javascript
+// Tipos de assets soportados:
+LK.init.shape('id', {width, height, color, shape}) // 'box' o 'ellipse'
+LK.init.image('id', {width, height, flipX, flipY, orientation})
+LK.init.sound('id', {volume})
+LK.init.music('id', {volume, start, end})
+```
+
+## **Sistema de Eventos**
+- **Táctil únicamente**: `down`, `up`, `move`
+- **Sin teclado**: Diseñado para móviles
+- **Coordenadas locales**: Conversión automática de coordenadas globales
+
+## **Plugins Disponibles**
+- **@upit/tween.v1**: Animaciones y transiciones
+- **@upit/storage.v1**: Almacenamiento persistente
+- **@upit/facekit.v1**: Cámara y reconocimiento facial
+
+## **Limitaciones del Sandbox**
+**No tienes acceso a:**
+- `document`, `window`, APIs del navegador
+- `JSON`, `Set`, `Map`, `Promise`
+- Importación de librerías externas
+- Google Fonts u otras fuentes externas
+- PIXI.js directo (solo a través de LK)
+
+**Solo tienes acceso a:**
+- LK, Container, Text2, Math, console
+- Tipos básicos: Array, String, Number, Date, etc.
+
+## **Flujo Automático**
+- **Menús**: LK maneja automáticamente menús pre-juego
+- **Game Over**: Sistema automático de fin de juego
+- **Puntuaciones**: Leaderboards integrados
+- **Pausa**: Manejo automático de pausa
+- **Audio**: Control automático de música/sonidos
+
+## **Ventajas del Framework**
+1. **Simplicidad**: API muy reducida y fácil de aprender
+2. **Rapidez**: Desarrollo muy ágil de prototipos
+3. **Móvil nativo**: Perfecto para juegos táctiles
+4. **Sin configuración**: Todo funciona automáticamente
+5. **Escalado perfecto**: Se ve igual en todos los dispositivos
+
+## **Casos de Uso Ideales**
+- Juegos arcade simples
+- Endless runners
+- Puzzle games
+- Juegos de acción 2D
+- Prototipos rápidos
+- Juegos casuales móviles
+
+El framework LK está diseñado para **maximizar la productividad** eliminando la complejidad técnica, permitiendo que te concentres únicamente en la lógica del juego y la diversión, mientras él maneja todos los aspectos técnicos automáticamente.
+
+
+
+
