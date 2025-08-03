@@ -3,6 +3,8 @@
 ****/
 LK.init.shape('cat-hit', {width:180, height:180, color:0xfee87c, shape:'box'})
 LK.init.shape('dangerousObject', {width:100, height:100, color:0xed5c7c, shape:'box'})
+LK.init.shape('gatoBaila', {width:180, height:180, color:0x7f134c, shape:'box'})
+LK.init.shape('laserDot', {width:15, height:15, color:0xff0000, shape:'ellipse'})
 LK.init.image('Cat-step', {width:180, height:180, id:'688174e58a10be04e179465c'})
 LK.init.image('Dog-close', {width:300, height:286, id:'687fee3dc018371eaf0b9e15'})
 LK.init.image('Gato-enjabonado', {width:160, height:160, id:'6881ff55957ff79db8c80f6b'})
@@ -14,6 +16,7 @@ LK.init.image('catElectrocuted', {width:240, height:180, id:'68811ad20167e711346
 LK.init.image('dog', {width:300, height:286, id:'687eb15dfa2cf73da94880ff'})
 LK.init.image('gato-kiss', {width:160, height:160, id:'68873789d79209b11a68b06c'})
 LK.init.image('lamp', {width:40, height:60, id:'68810476b1b31e1884ae3a82'})
+LK.init.image('laserPointer', {width:50, height:26, id:'687ea9f2fa2cf73da94880b6'})
 LK.init.image('lightbulb', {width:40, height:60, id:'6881037db1b31e1884ae3a58'})
 LK.init.image('mouse', {width:160, height:139.2, id:'687eaf3bfa2cf73da94880f7'})
 LK.init.image('object1', {width:50, height:74.5, id:'6881fd221ec60ae272fb859a'})
@@ -23,15 +26,19 @@ LK.init.image('separator', {width:40, height:61.69, id:'687ecad3fa2cf73da94881ba
 LK.init.image('shelf', {width:400, height:75, id:'687ead55fa2cf73da94880db'})
 LK.init.image('soap', {width:100, height:100, id:'687fe32388fabecfe2dd5671'})
 LK.init.image('zarpazo', {width:160, height:160, id:'687fed0dc018371eaf0b9de3'})
+LK.init.sound('bubble', {volume:1, start:0.154, end:1, id:'688ccdc1434e4b0fac5f4cff'})
 LK.init.sound('catFall', {volume:1, start:0, end:1, id:'68812ab3f94a38cca99dd05c'})
-LK.init.sound('dangerousFall')
-LK.init.sound('dogBark')
+LK.init.sound('dangerousFall', {volume:1, start:0, end:1, id:'688ca7e47b8a9a7b8375216d'})
+LK.init.sound('dogBark', {volume:1, start:0.171, end:0.821, id:'688f3d2ee0d9f2c7c65f34c5'})
 LK.init.sound('electricShock', {volume:1, start:0, end:1, id:'688ca80a7b8a9a7b83752171'})
-LK.init.sound('gato-kiss')
+LK.init.sound('gato-kiss', {volume:1, start:0, end:1, id:'688a348deb579d504a1b1cb8'})
+LK.init.sound('laserPickup')
 LK.init.music('mainTheme', {volume:1, start:0, end:1, id:'6882273af94a38cca99dd0d9'})
 LK.init.sound('mouseSqueak')
 LK.init.sound('objectHit', {volume:1, start:0, end:1, id:'68812accf94a38cca99dd05e'})
 LK.init.sound('soapSlip')
+LK.init.sound('successSong')
+LK.init.sound('zarpazo', {volume:1, start:0.185, end:0.295, id:'688f3f12e0d9f2c7c65f34c7'})
 
 /**** 
 * Plugins
@@ -84,7 +91,10 @@ var Cat = Container.expand(function () {
 	self.direction = 1; // 1 for right, -1 for left
 	self.targetShelfLevel = 2; // Start on middle shelf (0-4)
 	self.currentShelfLevel = 2;
+	self.isLaserMode = false;
+	self.laserModeTimer = 0;
 	self.normalSpeed = 8;
+	self.laserSpeed = 15;
 	self.isChasing = false;
 	self.chaseTarget = null;
 	self.isHiding = false;
@@ -123,7 +133,16 @@ var Cat = Container.expand(function () {
 	self.blockTimer = 0;
 	self.isFloating = false;
 	self.floatingTimer = 0;
+	self.gatoBailaGraphics = self.attachAsset('gatoBaila', {
+		anchorX: 0.5,
+		anchorY: 0.5,
+		scaleX: 2,
+		scaleY: 2
+	});
+	self.gatoBailaGraphics.visible = false;
+	self.isDancing = false;
 	self.activateZarpazo = function () {
+		LK.getSound('zarpazo').play();
 		if (self.isZarpazoMode || self.isKissMode) {
 			return;
 		} // Already in zarpazo or kiss mode
@@ -151,6 +170,7 @@ var Cat = Container.expand(function () {
 		self.zarpazoGraphics.visible = true;
 		self.zarpazoGraphics.scaleX = 2 * self.direction;
 		self.zarpazoGraphics.scaleY = 2;
+		LK.getSound('zarpazo').play();
 		// Return to normal after zarpazo
 		tween.stop(self, {
 			isZarpazoMode: true
@@ -290,7 +310,14 @@ var Cat = Container.expand(function () {
 			self.currentShelfLevel = self.targetShelfLevel;
 			self.isJumping = false;
 		}
-
+		// Handle laser mode
+		if (self.isLaserMode) {
+			self.laserModeTimer--;
+			if (self.laserModeTimer <= 0) {
+				self.isLaserMode = false;
+				self.speed = self.normalSpeed;
+			}
+		}
 		// Handle walking animation - alternate between cat and cat-step every 15 frames (0.25 seconds)
 		self.walkAnimTimer++;
 		if (self.walkAnimTimer >= 15) {
@@ -403,7 +430,29 @@ var Cat = Container.expand(function () {
 				}
 				self.gatoKissGraphics.visible = false;
 				self.catHitGraphics.visible = false;
+				self.gatoBailaGraphics.visible = false;
 				self.catBlockGraphics.visible = true;
+			}
+			// When dancing, hide all other animations and show dance
+			if (self.isDancing) {
+				catGraphics.visible = false;
+				catStepGraphics.visible = false;
+				self.catJumpGraphics.visible = false;
+				if (self.catElectrocutedGraphics) {
+					self.catElectrocutedGraphics.visible = false;
+				}
+				self.gatoEnjabonado.visible = false;
+				if (self.zarpazoGraphics) {
+					self.zarpazoGraphics.visible = false;
+				}
+				self.gatoKissGraphics.visible = false;
+				self.catHitGraphics.visible = false;
+				self.catBlockGraphics.visible = false;
+				self.gatoBailaGraphics.visible = true;
+				// Dancing animation with bounce effect
+				var danceScale = 2 + Math.sin(LK.ticks * 0.3) * 0.3;
+				self.gatoBailaGraphics.scaleX = danceScale * self.direction;
+				self.gatoBailaGraphics.scaleY = danceScale;
 			}
 		}
 		// Update graphics direction based on movement direction
@@ -431,6 +480,9 @@ var Cat = Container.expand(function () {
 			if (self.catBlockGraphics) {
 				self.catBlockGraphics.scaleX = 2;
 			}
+			if (self.gatoBailaGraphics) {
+				self.gatoBailaGraphics.scaleX = 2;
+			}
 		} else {
 			catGraphics.scaleX = -2;
 			catStepGraphics.scaleX = -2;
@@ -454,6 +506,9 @@ var Cat = Container.expand(function () {
 			}
 			if (self.catBlockGraphics) {
 				self.catBlockGraphics.scaleX = -2;
+			}
+			if (self.gatoBailaGraphics) {
+				self.gatoBailaGraphics.scaleX = -2;
 			}
 		}
 		// Handle floating timer countdown
@@ -482,7 +537,7 @@ var Cat = Container.expand(function () {
 				self.catHitGraphics.visible = false;
 				catGraphics.visible = true;
 				// Restore movement speed
-				self.speed =  self.normalSpeed;
+				self.speed = self.isLaserMode ? self.laserSpeed : self.normalSpeed;
 			}
 		}
 		// Handle block timer countdown
@@ -494,7 +549,7 @@ var Cat = Container.expand(function () {
 				self.catBlockGraphics.visible = false;
 				catGraphics.visible = true;
 				// Restore movement speed
-				self.speed =  self.normalSpeed;
+				self.speed = self.isLaserMode ? self.laserSpeed : self.normalSpeed;
 			}
 		}
 		// Handle horizontal movement when not electrocuted, slipping, floating, in zarpazo, kiss, hit, or block mode
@@ -550,27 +605,56 @@ var Cat = Container.expand(function () {
 				self.catBlockGraphics.scaleX = 2 * self.direction;
 				self.catBlockGraphics.scaleY = 2;
 			} else if (!wouldBeBlocked) {
-				// Constrain cat movement within expanded world boundaries (32 sections * 400px = 12800px)
+				// Constrain cat movement within reduced world boundaries (24 sections * 400px = 9600px)
 				// Allow some buffer on both sides for smooth movement
-				self.x = Math.max(-50, Math.min(newX, 12850)); // Keep cat within expanded world bounds
+				self.x = Math.max(-50, Math.min(newX, 9650)); // Keep cat within reduced world bounds
 			}
 		}
 		for (var i = shelfObjects.length - 1; i >= 0; i--) {
 			var obj = shelfObjects[i];
 			if (self.intersects(obj) && !obj.isFalling) {
 				obj.startFalling();
-				LK.setScore(LK.getScore() + 10);
-				scoreTxt.setText(LK.getScore());
-				// Update objects knocked down counter based on actual remaining objects
-				var actualObjectsRemaining = shelfObjects.length;
+				// Update objects knocked down counter based on objects that are NOT falling
+				var actualObjectsRemaining = 0;
+				for (var j = 0; j < shelfObjects.length; j++) {
+					if (!shelfObjects[j].isFalling) {
+						actualObjectsRemaining++;
+					}
+				}
 				objectsKnockedDown = totalObjectsToKnock - actualObjectsRemaining;
 				storage.objectsKnockedDown = objectsKnockedDown;
 				// Check if all objects have been knocked down
 				if (actualObjectsRemaining <= 0) {
-					// Player wins when all objects are knocked down - reset storage for new game
-					storage.totalObjectsToKnock = 0;
-					storage.objectsKnockedDown = 0;
-					LK.showYouWin();
+					// Calculate final score based on remaining time and penalties
+					var remainingSeconds = Math.max(0, Math.ceil((TIME_LIMIT - gameTimer) / 60));
+					finalScore = remainingSeconds * 10 - obstaclePenalties; // 10 points per remaining second minus penalties
+					finalScore = Math.max(finalScore, 0); // Ensure score doesn't go negative
+					// Set the calculated score
+					LK.setScore(finalScore);
+					// Stop the game timer to prevent time-based game over
+					gameTimer = TIME_LIMIT;
+					// Activate dancing mode for cat
+					self.isDancing = true;
+					// Stop cat movement during victory dance
+					self.speed = 0;
+					// Stop all cat behaviors
+					self.isElectrocuted = false;
+					self.isSlipping = false;
+					self.isFloating = false;
+					self.isZarpazoMode = false;
+					self.isKissMode = false;
+					self.isHitMode = false;
+					self.isBlockMode = false;
+					// Play success song
+					LK.getSound('successSong').play();
+					// Wait a moment then show victory
+					LK.setTimeout(function () {
+						// Player wins when all objects are knocked down - reset storage for new game
+						storage.totalObjectsToKnock = 0;
+						storage.objectsKnockedDown = 0;
+						// Show level complete message
+						LK.showYouWin();
+					}, 2000); // Wait 2 seconds to show the dance
 					return;
 				}
 				// Play random knock sound
@@ -595,6 +679,7 @@ var Cat = Container.expand(function () {
 			if (self.intersects(dangerousObj) && dangerousObj.isDangerous && !dangerousObj.isFalling && objShelfLevel === self.currentShelfLevel && !self.isHitMode) {
 				// Cat gets hit and stops for a few seconds
 				dangerousObj.startFalling();
+				obstaclePenalties += 10; // Add penalty for hitting dangerous object
 				LK.getSound('catFall').play();
 				LK.effects.flashScreen(0xff0000, 500);
 				// Enter hit mode
@@ -615,31 +700,53 @@ var Cat = Container.expand(function () {
 				self.catHitGraphics.visible = true;
 				self.catHitGraphics.scaleX = 2 * self.direction;
 				self.catHitGraphics.scaleY = 2;
-				LK.setScore(Math.max(0, LK.getScore() - 50));
-				scoreTxt.setText(LK.getScore());
 			}
 		}
-		// Check for collisions with dogs - cat can kill dog by falling on it
+		// Check for collisions with dogs
 		for (var i = dogs.length - 1; i >= 0; i--) {
 			var dog = dogs[i];
-			if (self.intersects(dog) && self.isJumping && self.y < dog.y - 20) {
-				// Cat falls on dog and kills it
-				LK.getSound('dogBark').play();
-				LK.effects.flashObject(self, 0x00ff00, 500);
-				LK.setScore(LK.getScore() + 200);
-				scoreTxt.setText(LK.getScore());
-				// Remove dog from game
-				dog.destroy();
-				dogs.splice(i, 1);
-				// Stop hiding behavior if this was the hide target
-				if (dog === self.hideTarget) {
-					self.isHiding = false;
-					self.hideTarget = null;
+			if (self.intersects(dog)) {
+				if (self.isJumping && self.y < dog.y - 20) {
+					// Cat falls on dog and kills it
+					LK.getSound('dogBark').play();
+					LK.effects.flashObject(self, 0x00ff00, 500);
+					// Remove dog from game
+					dog.destroy();
+					dogs.splice(i, 1);
+					// Stop hiding behavior if this was the hide target
+					if (dog === self.hideTarget) {
+						self.isHiding = false;
+						self.hideTarget = null;
+					}
+				} else if (!self.isHitMode && !self.isInvulnerable) {
+					// Dog knocks down the cat
+					LK.getSound('dogBark').play();
+					LK.getSound('catFall').play();
+					LK.effects.flashScreen(0xff0000, 500);
+					obstaclePenalties += 15; // Add penalty for being knocked down by dog
+					// Enter hit mode
+					self.isHitMode = true;
+					self.hitTimer = 180; // 3 seconds at 60fps
+					// Stop movement during hit
+					self.speed = 0;
+					// Show only cat-hit graphics
+					catGraphics.visible = false;
+					catStepGraphics.visible = false;
+					self.catJumpGraphics.visible = false;
+					self.catElectrocutedGraphics.visible = false;
+					self.gatoEnjabonado.visible = false;
+					self.gatoKissGraphics.visible = false;
+					if (self.zarpazoGraphics) {
+						self.zarpazoGraphics.visible = false;
+					}
+					self.catHitGraphics.visible = true;
+					self.catHitGraphics.scaleX = 2 * self.direction;
+					self.catHitGraphics.scaleY = 2;
 				}
 			}
 		}
 		// Check if cat reaches right world boundary and trigger block mode
-		if (self.x >= 12700 && !self.isBlockMode) {
+		if (self.x >= 9500 && !self.isBlockMode) {
 			// Enter block mode when reaching right boundary barriers
 			self.isBlockMode = true;
 			self.blockTimer = 180; // 3 seconds at 60fps
@@ -666,6 +773,7 @@ var Cat = Container.expand(function () {
 			self.lives--;
 			self.isInvulnerable = true;
 			self.invulnerabilityTimer = 120; // 2 seconds of invulnerability
+			obstaclePenalties += 25; // Add penalty for losing a life
 			LK.getSound('catFall').play();
 			LK.effects.flashScreen(0xff0000, 1000);
 			// Dramatic fall animation
@@ -688,8 +796,6 @@ var Cat = Container.expand(function () {
 			if (self.lives <= 0) {
 				LK.showGameOver();
 			}
-			LK.setScore(Math.max(0, LK.getScore() - 100));
-			scoreTxt.setText(LK.getScore());
 		}
 		// Check for collisions with separators - only on same shelf level
 		for (var i = separators.length - 1; i >= 0; i--) {
@@ -747,7 +853,7 @@ var Cat = Container.expand(function () {
 			self.catElectrocutedGraphics.scaleY = 2;
 			if (self.electrocutionTimer <= 0) {
 				self.isElectrocuted = false;
-				self.speed = self.normalSpeed;
+				self.speed = self.isLaserMode ? self.laserSpeed : self.normalSpeed;
 				// Switch back to normal cat
 				catGraphics.visible = true;
 				catStepGraphics.visible = false;
@@ -910,7 +1016,7 @@ var Cat = Container.expand(function () {
 				// Electrocute cat for 2 seconds
 				self.isElectrocuted = true;
 				self.electrocutionTimer = 120; // 2 seconds at 60fps
-
+				obstaclePenalties += 15; // Add penalty for lamp electrocution
 				// Play electric shock sound
 				LK.getSound('electricShock').play();
 				// Flash screen blue/white for electric effect
@@ -920,7 +1026,7 @@ var Cat = Container.expand(function () {
 				var pushDistance = 250;
 				var targetX = self.x + pushDistance * pushDirection;
 				// Ensure target position is within game bounds
-				targetX = Math.max(200, Math.min(targetX, 12600));
+				targetX = Math.max(200, Math.min(targetX, 9600));
 				// Stop any existing movement tweens on cat
 				tween.stop(self, {
 					x: true
@@ -934,7 +1040,7 @@ var Cat = Container.expand(function () {
 					onFinish: function onFinish() {
 						// Additional push to ensure separation
 						var secondPushX = targetX + pushDirection * 100;
-						secondPushX = Math.max(200, Math.min(secondPushX, 12600));
+						secondPushX = Math.max(200, Math.min(secondPushX, 9600));
 						tween(self, {
 							x: secondPushX
 						}, {
@@ -943,9 +1049,6 @@ var Cat = Container.expand(function () {
 						});
 					}
 				});
-				// Reduce score for getting electrocuted
-				LK.setScore(Math.max(0, LK.getScore() - 25));
-				scoreTxt.setText(LK.getScore());
 			}
 		}
 		// Check for soap collision - only on same shelf level and causes floating upward
@@ -1025,6 +1128,68 @@ var Cat = Container.expand(function () {
 			level;
 		for (var i = soaps.length - 1; i >= 0; i--) {
 			if (_loop()) {
+				break;
+			}
+		}
+		// Check for collisions with mice - cat can eat mouse
+		for (var i = mice.length - 1; i >= 0; i--) {
+			var mouse = mice[i];
+			// Calculate which shelf level the mouse is on
+			var mouseShelfLevel = -1;
+			for (var level = 0; level < 5; level++) {
+				if (Math.abs(mouse.y - (shelfLevels[level] - 75)) < 50) {
+					mouseShelfLevel = level;
+					break;
+				}
+			}
+			// Only collide if on same shelf level
+			if (self.intersects(mouse) && mouseShelfLevel === self.currentShelfLevel) {
+				// Cat eats mouse
+				LK.getSound('mouseSqueak').play();
+				LK.effects.flashObject(self, 0x00ff00, 500);
+				// Activate zarpazo mode when eating mouse
+				self.activateZarpazo();
+				// Remove mouse from game
+				mouse.destroy();
+				mice.splice(i, 1);
+				// Stop chasing behavior if this was the chase target
+				if (mouse === self.chaseTarget) {
+					self.isChasing = false;
+					self.chaseTarget = null;
+				}
+			}
+		}
+		// Check for laser pointer pickup - only on same shelf level
+		for (var i = laserPointers.length - 1; i >= 0; i--) {
+			var pointer = laserPointers[i];
+			// Calculate which shelf level the laser pointer is on
+			var pointerShelfLevel = -1;
+			for (var level = 0; level < 5; level++) {
+				if (Math.abs(pointer.y - (shelfLevels[level] - 75)) < 50) {
+					pointerShelfLevel = level;
+					break;
+				}
+			}
+			// Only collide if on same shelf level
+			if (self.intersects(pointer) && pointerShelfLevel === self.currentShelfLevel) {
+				self.isLaserMode = true;
+				self.laserModeTimer = 300; // 5 seconds at 60fps
+				self.speed = self.laserSpeed;
+				LK.getSound('laserPickup').play();
+				pointer.destroy();
+				laserPointers.splice(i, 1);
+				// Create laser dot
+				if (!laserDot) {
+					laserDot = game.addChild(LK.getAsset('laserDot', {
+						anchorX: 0.5,
+						anchorY: 0.5
+					}));
+				}
+				laserDot.x = self.x + 100;
+				laserDot.y = self.y;
+				laserDot.visible = false; // Hide the laser dot
+				// Activate zarpazo mode when picking up laser pointer
+				self.activateZarpazo();
 				break;
 			}
 		}
@@ -1184,7 +1349,7 @@ var Dog = Container.expand(function () {
 				tween(self.dogCloseGraphics, {
 					alpha: 1
 				}, {
-					duration: 100,
+					duration: 10,
 					easing: tween.easeOut,
 					onFinish: function onFinish() {
 						dogGraphics.visible = false;
@@ -1326,7 +1491,7 @@ var Lamp = Container.expand(function () {
 				self.hasElectrocuted = true;
 				// Electrocute cat for 2 seconds (reduced from 3)
 				cat.isElectrocuted = true;
-                LK.getSound('electricShock').play();
+				LK.getSound('electricShock').play();
 				cat.electrocutionTimer = 120; // 2 seconds at 60fps
 				// Play electric shock sound
 				LK.getSound('electricShock').play();
@@ -1373,6 +1538,49 @@ var Lamp = Container.expand(function () {
 				}
 			}
 		}
+	};
+	return self;
+});
+var LaserPointer = Container.expand(function () {
+	var self = Container.call(this);
+	var pointerGraphics = self.attachAsset('laserPointer', {
+		anchorX: 0.5,
+		anchorY: 0.5,
+		scaleX: 4,
+		scaleY: 4
+	});
+	self.pulseTimer = 0;
+	self.update = function () {
+		self.pulseTimer++;
+		// Hide laser pointer
+		pointerGraphics.visible = false;
+		// Dynamic pulsing with tween animation
+		if (self.pulseTimer % 120 === 0) {
+			// Every 2 seconds
+			tween(pointerGraphics, {
+				scaleX: 6,
+				scaleY: 6
+			}, {
+				duration: 600,
+				easing: tween.elasticOut,
+				onFinish: function onFinish() {
+					tween(pointerGraphics, {
+						scaleX: 4,
+						scaleY: 4
+					}, {
+						duration: 400,
+						easing: tween.bounceOut
+					});
+				}
+			});
+		}
+		// Add rotation animation for more visual appeal
+		tween(pointerGraphics, {
+			rotation: pointerGraphics.rotation + Math.PI * 2
+		}, {
+			duration: 3000,
+			easing: tween.linear
+		});
 	};
 	return self;
 });
@@ -1484,8 +1692,6 @@ var ShelfObject = Container.expand(function (objectType) {
 					// Object hits dog - dog runs away scared
 					LK.getSound('dogBark').play();
 					LK.effects.flashObject(dog, 0xFFFF00, 300);
-					LK.setScore(LK.getScore() + 50);
-					scoreTxt.setText(LK.getScore());
 					// Make dog run away fast
 					dog.speed = 25; // Much faster running speed
 					dog.direction = dog.x > cat.x ? 1 : -1; // Run away from cat
@@ -1566,6 +1772,8 @@ var game = new LK.Game({
 var cat;
 var shelfObjects = [];
 var dangerousObjects = [];
+var laserPointers = [];
+var laserDot = null;
 var mice = [];
 var dogs = [];
 var separators = [];
@@ -1580,19 +1788,16 @@ var shelfLevels = [500, 1000, 1500, 2000, 2500]; // Y positions for 5 shelf leve
 var shelves = [];
 var nextObjectSpawn = 0;
 var nextDangerousSpawn = 0;
+var nextLaserSpawn = 0;
 var cameraX = 0;
 var gameTimer = 0;
-var TIME_LIMIT = 3600; // 60 seconds at 60fps (3600 ticks)
-var totalObjectsToKnock = storage.totalObjectsToKnock || 0;
-var objectsKnockedDown = storage.objectsKnockedDown || 0;
-// Create score display
-var scoreTxt = new Text2('0', {
-	size: 80,
-	fill: 0xFFFFFF
-});
-scoreTxt.anchor.set(0.5, 0);
-LK.gui.top.addChild(scoreTxt);
-scoreTxt.y = 50;
+var TIME_LIMIT = 9600; // 160 seconds at 60fps (9600 ticks)
+// Always start fresh - ignore storage values to ensure correct initialization
+var totalObjectsToKnock = 15;
+var objectsKnockedDown = 0;
+var obstaclePenalties = 0; // Track penalties from hitting obstacles
+var finalScore = 0;
+// Score display removed - game now uses timer-based gameplay
 // Create lives display
 var livesText = new Text2('Lives: 3', {
 	size: 60,
@@ -1611,18 +1816,26 @@ timerText.anchor.set(1, 0);
 LK.gui.topRight.addChild(timerText);
 timerText.x = -20;
 timerText.y = 50;
-// Create progress display
-var progressText = new Text2('Objects: ' + objectsKnockedDown + '/' + totalObjectsToKnock, {
+// Create progress display with initial values
+var progressText = new Text2('Objects: 0/15', {
 	size: 60,
 	fill: 0x00FF00
 });
 progressText.anchor.set(0.5, 0);
 LK.gui.top.addChild(progressText);
 progressText.y = 120;
+// Create score display
+var scoreText = new Text2('Score: 0', {
+	size: 50,
+	fill: 0xFFFFFF
+});
+scoreText.anchor.set(0.5, 0);
+LK.gui.top.addChild(scoreText);
+scoreText.y = 180;
 // Claw button removed - zarpazo is now automatic when picking up objects
-// Create shelves first - expanded to 128 shelves wide (32 sections per level)
+// Create shelves first - reduced to 96 shelves wide (24 sections per level)
 for (var level = 0; level < 5; level++) {
-	for (var section = 0; section < 32; section++) {
+	for (var section = 0; section < 24; section++) {
 		var shelf = game.addChild(LK.getAsset('shelf', {
 			anchorX: 0,
 			anchorY: 1
@@ -1633,117 +1846,113 @@ for (var level = 0; level < 5; level++) {
 	}
 }
 // Initialize objects at the beginning of the game with persistence
-if (totalObjectsToKnock === 0) {
-	// First time playing - set fixed limit and distribute objects
-	totalObjectsToKnock = 15; // Fixed limit of objects to knock down
-	objectsKnockedDown = 0;
-	storage.totalObjectsToKnock = totalObjectsToKnock;
-	storage.objectsKnockedDown = objectsKnockedDown;
-}
-// Always distribute objects at game start (they persist until all are knocked down)
-if (objectsKnockedDown < totalObjectsToKnock) {
-	// Pre-define object positions for consistent gameplay
-	var objectPositions = [{
-		x: 800,
-		level: 0,
-		type: 1
-	},
-	// Object 1
-	{
-		x: 1600,
-		level: 1,
-		type: 2
-	},
-	// Object 2
-	{
-		x: 2400,
-		level: 2,
-		type: 3
-	},
-	// Object 3
-	{
-		x: 3200,
-		level: 3,
-		type: 1
-	},
-	// Object 4
-	{
-		x: 4000,
-		level: 4,
-		type: 2
-	},
-	// Object 5
-	{
-		x: 4800,
-		level: 0,
-		type: 3
-	},
-	// Object 6
-	{
-		x: 5600,
-		level: 1,
-		type: 1
-	},
-	// Object 7
-	{
-		x: 6400,
-		level: 2,
-		type: 2
-	},
-	// Object 8
-	{
-		x: 7200,
-		level: 3,
-		type: 3
-	},
-	// Object 9
-	{
-		x: 8000,
-		level: 4,
-		type: 1
-	},
-	// Object 10
-	{
-		x: 8800,
-		level: 0,
-		type: 2
-	},
-	// Object 11
-	{
-		x: 9600,
-		level: 1,
-		type: 3
-	},
-	// Object 12
-	{
-		x: 10400,
-		level: 2,
-		type: 1
-	},
-	// Object 13
-	{
-		x: 11200,
-		level: 3,
-		type: 2
-	},
-	// Object 14
-	{
-		x: 12000,
-		level: 4,
-		type: 3
-	} // Object 15
-	];
-	// Distribute remaining objects using predefined positions
-	var objectsToPlace = totalObjectsToKnock - objectsKnockedDown;
-	for (var i = 0; i < objectsToPlace && i < objectPositions.length; i++) {
-		var pos = objectPositions[i];
-		var obj = new ShelfObject(pos.type);
-		obj.x = pos.x;
-		obj.y = shelfLevels[pos.level] - 75; // Position on top of shelf
-		obj.objectNumber = i + 1; // Add numbering for identification
-		game.addChild(obj);
-		shelfObjects.push(obj);
-	}
+// Reset counters at game start to ensure proper initialization
+totalObjectsToKnock = 15; // Always start with 15 objects
+objectsKnockedDown = 0; // Always start with 0 knocked down
+storage.totalObjectsToKnock = totalObjectsToKnock;
+storage.objectsKnockedDown = objectsKnockedDown;
+// Clear any existing objects from previous games
+shelfObjects = [];
+// Pre-define object positions ensuring proper spacing (minimum 500px apart) within shelf boundaries (400-9200px)
+var objectPositions = [{
+	x: 600,
+	level: 0,
+	type: 1
+},
+// Object 1
+{
+	x: 1200,
+	level: 1,
+	type: 2
+},
+// Object 2  
+{
+	x: 1800,
+	level: 2,
+	type: 3
+},
+// Object 3
+{
+	x: 2400,
+	level: 3,
+	type: 1
+},
+// Object 4
+{
+	x: 3000,
+	level: 4,
+	type: 2
+},
+// Object 5
+{
+	x: 3600,
+	level: 0,
+	type: 3
+},
+// Object 6
+{
+	x: 4200,
+	level: 1,
+	type: 1
+},
+// Object 7
+{
+	x: 4800,
+	level: 2,
+	type: 2
+},
+// Object 8
+{
+	x: 5400,
+	level: 3,
+	type: 3
+},
+// Object 9
+{
+	x: 6000,
+	level: 4,
+	type: 1
+},
+// Object 10
+{
+	x: 6600,
+	level: 0,
+	type: 2
+},
+// Object 11
+{
+	x: 7200,
+	level: 1,
+	type: 3
+},
+// Object 12
+{
+	x: 7800,
+	level: 2,
+	type: 1
+},
+// Object 13
+{
+	x: 8400,
+	level: 3,
+	type: 2
+},
+// Object 14
+{
+	x: 9000,
+	level: 4,
+	type: 3
+} // Object 15
+];
+// Create all 15 objects at game start with proper spacing
+for (var i = 0; i < totalObjectsToKnock; i++) {
+	var pos = objectPositions[i];
+	var obj = new ShelfObject(pos.type);
+	obj.x = pos.x;
+	obj.y = shelfLevels[pos.level] - 75; // Position on top of shelf
+	obj.objectNumber = i + 1; // Add numbering for identification
+	game.addChild(obj);
+	shelfObjects.push(obj);
 }
 // Create barrier columns at start and end of game world
 var leftBarriers = [];
@@ -1756,13 +1965,49 @@ for (var level = 0; level < 5; level++) {
 	leftBarrier.isBlocking = true;
 	leftBarriers.push(leftBarrier);
 }
-// Create right barrier column (at the end) - positioned for 128 shelves wide
+// Create right barrier column (at the end) - positioned for 96 shelves wide
 for (var level = 0; level < 5; level++) {
 	var rightBarrier = game.addChild(new Separator());
-	rightBarrier.x = 12800; // Position at end of 32 sections (32 * 400 = 12800)
+	rightBarrier.x = 9600; // Position at end of 24 sections (24 * 400 = 9600)
 	rightBarrier.y = shelfLevels[level] - 150; // Position on each shelf level
 	rightBarrier.isBlocking = true;
 	rightBarriers.push(rightBarrier);
+}
+// Pre-define separator positions ensuring proper spacing (minimum 500px apart) within shelf boundaries
+var separatorPositions = [{
+	x: 1500,
+	level: 0
+}, {
+	x: 2500,
+	level: 2
+}, {
+	x: 3500,
+	level: 1
+}, {
+	x: 4500,
+	level: 4
+}, {
+	x: 5500,
+	level: 3
+}, {
+	x: 6500,
+	level: 0
+}, {
+	x: 7500,
+	level: 2
+}, {
+	x: 8500,
+	level: 1
+}];
+// Create all separators at game start with proper spacing
+for (var i = 0; i < separatorPositions.length; i++) {
+	var sepPos = separatorPositions[i];
+	var separator = new Separator();
+	separator.x = sepPos.x;
+	separator.y = shelfLevels[sepPos.level] - 150; // Position higher above shelf
+	separator.isBlocking = true;
+	game.addChild(separator);
+	separators.push(separator);
 }
 // Create cat after shelves so it appears in front
 cat = game.addChild(new Cat());
@@ -1779,9 +2024,21 @@ game.down = function (x, y, obj) {
 	swipeStartX = x;
 	swipeStartY = y;
 	isDragging = true;
-
+	// If in laser mode, move laser dot
+	if (cat.isLaserMode && laserDot) {
+		laserDot.x = x;
+		laserDot.y = y;
+		laserDot.visible = false; // Keep laser dot hidden
+	}
 };
-
+game.move = function (x, y, obj) {
+	// If in laser mode, move laser dot
+	if (cat.isLaserMode && laserDot) {
+		laserDot.x = x;
+		laserDot.y = y;
+		laserDot.visible = false; // Keep laser dot hidden
+	}
+};
 game.up = function (x, y, obj) {
 	if (!isDragging) {
 		return;
@@ -1804,15 +2061,18 @@ game.up = function (x, y, obj) {
 		} else if (deltaY > 0 && cat.targetShelfLevel < 4) {
 			cat.targetShelfLevel++; // Swipe down
 		}
-
+	} else {
+		// Horizontal swipe - change direction
+		if (!cat.isLaserMode) {
 			if (deltaX > 0) {
 				cat.direction = 1; // Right
 			} else {
 				cat.direction = -1; // Left
 			}
 		}
+	}
 };
-// Spawn objects
+// Spawn objects and laser pointers
 function spawnObject() {
 	// Objects are distributed at the beginning and remain persistent
 	// No automatic spawning during gameplay
@@ -1822,23 +2082,76 @@ function spawnDangerousObject() {
 	if (LK.ticks < nextDangerousSpawn) {
 		return;
 	}
-	var dangerousObj = new DangerousObject();
-	var level = Math.floor(Math.random() * 5);
-	var xPos = 200 + Math.random() * 12400; // Spawn within shelf boundaries (200-12600)
-	dangerousObj.x = xPos;
-	dangerousObj.y = shelfLevels[level] - 75; // Position on top of shelf
-	game.addChild(dangerousObj);
-	dangerousObjects.push(dangerousObj);
+	// Find a valid position with proper spacing (minimum 300px from other objects)
+	var attempts = 0;
+	var validPosition = false;
+	var xPos, level;
+	while (!validPosition && attempts < 20) {
+		level = Math.floor(Math.random() * 5);
+		xPos = 200 + Math.random() * 9400; // Spawn within shelf boundaries (200-9600)
+		validPosition = true;
+		// Check distance from existing objects on same shelf level
+		for (var i = 0; i < shelfObjects.length; i++) {
+			var obj = shelfObjects[i];
+			var objLevel = -1;
+			for (var l = 0; l < 5; l++) {
+				if (Math.abs(obj.y - (shelfLevels[l] - 75)) < 50) {
+					objLevel = l;
+					break;
+				}
+			}
+			if (objLevel === level && Math.abs(obj.x - xPos) < 300) {
+				validPosition = false;
+				break;
+			}
+		}
+		// Check distance from other dangerous objects on same level
+		for (var i = 0; i < dangerousObjects.length; i++) {
+			var dObj = dangerousObjects[i];
+			var dObjLevel = -1;
+			for (var l = 0; l < 5; l++) {
+				if (Math.abs(dObj.y - (shelfLevels[l] - 75)) < 50) {
+					dObjLevel = l;
+					break;
+				}
+			}
+			if (dObjLevel === level && Math.abs(dObj.x - xPos) < 300) {
+				validPosition = false;
+				break;
+			}
+		}
+		attempts++;
+	}
+	// Only spawn if valid position found
+	if (validPosition) {
+		var dangerousObj = new DangerousObject();
+		dangerousObj.x = xPos;
+		dangerousObj.y = shelfLevels[level] - 75; // Position on top of shelf
+		game.addChild(dangerousObj);
+		dangerousObjects.push(dangerousObj);
+	}
 	nextDangerousSpawn = LK.ticks + 300 + Math.random() * 450; // 10% spawn rate - 5-12.5 seconds
 }
-
+function spawnLaserPointer() {
+	if (LK.ticks < nextLaserSpawn) {
+		return;
+	}
+	var pointer = new LaserPointer();
+	var level = Math.floor(Math.random() * 5);
+	var xPos = 200 + Math.random() * 9400; // Spawn within shelf boundaries (200-9600)
+	pointer.x = xPos;
+	pointer.y = shelfLevels[level] - 75; // Position on top of shelf
+	game.addChild(pointer);
+	laserPointers.push(pointer);
+	nextLaserSpawn = LK.ticks + 600 + Math.random() * 600; // 10-20 seconds
+}
 function spawnMouse() {
 	if (LK.ticks < nextMouseSpawn) {
 		return;
 	}
 	var mouse = new Mouse();
 	var level = Math.floor(Math.random() * 5);
-	var xPos = 200 + Math.random() * 12400; // Spawn within shelf boundaries (200-12600)
+	var xPos = 200 + Math.random() * 9400; // Spawn within shelf boundaries (200-9600)
 	mouse.x = xPos;
 	mouse.y = shelfLevels[level] - 75; // Position on top of shelf
 	game.addChild(mouse);
@@ -1851,7 +2164,7 @@ function spawnDog() {
 	}
 	var dog = new Dog();
 	var level = Math.floor(Math.random() * 5);
-	var xPos = 200 + Math.random() * 12400; // Spawn within shelf boundaries (200-12600)
+	var xPos = 200 + Math.random() * 9400; // Spawn within shelf boundaries (200-9600)
 	dog.x = xPos;
 	dog.y = shelfLevels[level] - 75; // Position on top of shelf
 	game.addChild(dog);
@@ -1859,29 +2172,61 @@ function spawnDog() {
 	nextDogSpawn = LK.ticks + 12000 + Math.random() * 9000; // 10% spawn rate - 200-350 seconds
 }
 function spawnSeparator() {
-	if (LK.ticks < nextSeparatorSpawn) {
-		return;
-	}
-	var separator = new Separator();
-	var level = Math.floor(Math.random() * 5);
-	var xPos = 200 + Math.random() * 12400; // Spawn within shelf boundaries (200-12600)
-	separator.x = xPos;
-	separator.y = shelfLevels[level] - 150; // Position higher above shelf
-	game.addChild(separator);
-	separators.push(separator);
-	nextSeparatorSpawn = LK.ticks + 600 + Math.random() * 900; // 10% spawn rate - 10-25 seconds
+	// Separators are now pre-defined at game start - no dynamic spawning
+	return;
 }
 function spawnLamp() {
 	if (LK.ticks < nextLampSpawn) {
 		return;
 	}
-	var lamp = new Lamp();
-	var level = Math.floor(Math.random() * 5);
-	var xPos = 200 + Math.random() * 12400; // Spawn within shelf boundaries (200-12600)
-	lamp.x = xPos;
-	lamp.y = shelfLevels[level]; // Position on shelf
-	game.addChild(lamp);
-	lamps.push(lamp);
+	// Find a valid position with proper spacing (minimum 350px from other objects)
+	var attempts = 0;
+	var validPosition = false;
+	var xPos, level;
+	while (!validPosition && attempts < 20) {
+		level = Math.floor(Math.random() * 5);
+		xPos = 200 + Math.random() * 9400; // Spawn within shelf boundaries (200-9600)
+		validPosition = true;
+		// Check distance from existing objects on same shelf level
+		for (var i = 0; i < shelfObjects.length; i++) {
+			var obj = shelfObjects[i];
+			var objLevel = -1;
+			for (var l = 0; l < 5; l++) {
+				if (Math.abs(obj.y - (shelfLevels[l] - 75)) < 50) {
+					objLevel = l;
+					break;
+				}
+			}
+			if (objLevel === level && Math.abs(obj.x - xPos) < 350) {
+				validPosition = false;
+				break;
+			}
+		}
+		// Check distance from other lamps on same level
+		for (var i = 0; i < lamps.length; i++) {
+			var otherLamp = lamps[i];
+			var lampLevel = -1;
+			for (var l = 0; l < 5; l++) {
+				if (Math.abs(otherLamp.y - shelfLevels[l]) < 50) {
+					lampLevel = l;
+					break;
+				}
+			}
+			if (lampLevel === level && Math.abs(otherLamp.x - xPos) < 350) {
+				validPosition = false;
+				break;
+			}
+		}
+		attempts++;
+	}
+	// Only spawn if valid position found
+	if (validPosition) {
+		var lamp = new Lamp();
+		lamp.x = xPos;
+		lamp.y = shelfLevels[level]; // Position on shelf
+		game.addChild(lamp);
+		lamps.push(lamp);
+	}
 	nextLampSpawn = LK.ticks + 900 + Math.random() * 1200; // 15-35 seconds
 }
 function spawnSoap() {
@@ -1890,7 +2235,7 @@ function spawnSoap() {
 	}
 	var soap = new Soap();
 	var level = Math.floor(Math.random() * 5);
-	var xPos = 200 + Math.random() * 12400; // Spawn within shelf boundaries (200-12600)
+	var xPos = 200 + Math.random() * 9400; // Spawn within shelf boundaries (200-9600)
 	soap.x = xPos;
 	soap.y = shelfLevels[level] - 40; // Position on shelf
 	game.addChild(soap);
@@ -1918,11 +2263,11 @@ function updateCamera() {
 		cameraX = targetCameraX;
 		game.x = -cameraX;
 	}
-	// Keep world size limited to 128 shelves - no dynamic expansion
+	// Keep world size limited to 96 shelves - no dynamic expansion
 	var rightmostShelf = Math.max.apply(Math, shelves.map(function (s) {
 		return s.x;
 	}));
-	// No shelf expansion - world stays at fixed 128 shelves wide (12800px)
+	// No shelf expansion - world stays at fixed 96 shelves wide (9600px)
 }
 // Play main theme music
 LK.playMusic('mainTheme');
@@ -1930,29 +2275,30 @@ game.update = function () {
 	gameTimer++;
 	var remainingTime = Math.max(0, Math.ceil((TIME_LIMIT - gameTimer) / 60));
 	timerText.setText('Time: ' + remainingTime);
-	// Update progress display based on actual objects in game
-	var actualObjectsRemaining = shelfObjects.length;
+	// Update progress display based on objects that are NOT falling
+	var actualObjectsRemaining = 0;
+	for (var j = 0; j < shelfObjects.length; j++) {
+		if (!shelfObjects[j].isFalling) {
+			actualObjectsRemaining++;
+		}
+	}
 	var actualObjectsKnockedDown = totalObjectsToKnock - actualObjectsRemaining;
 	progressText.setText('Objects: ' + actualObjectsKnockedDown + '/' + totalObjectsToKnock);
-	// Check if time limit reached
-	if (gameTimer >= TIME_LIMIT) {
-		// Check if all objects have been knocked down
-		var actualObjectsRemaining = shelfObjects.length;
-		if (actualObjectsRemaining > 0) {
-			// Time's up and objects remain - cat loses
-			LK.showGameOver();
-			return;
-		} else {
-			// Time's up but all objects knocked down - cat wins
-			LK.showYouWin();
-			return;
-		}
+	// Update score display with current calculated score
+	var currentRemainingSeconds = Math.max(0, Math.ceil((TIME_LIMIT - gameTimer) / 60));
+	var currentScore = Math.max(0, currentRemainingSeconds * 10 - obstaclePenalties);
+	scoreText.setText('Score: ' + currentScore);
+	// Check if time limit reached (only if cat is not dancing - i.e., game hasn't been won)
+	if (gameTimer >= TIME_LIMIT && !cat.isDancing) {
+		// Time's up - player loses regardless of objects remaining
+		LK.showGameOver();
+		return;
 	}
 	spawnObject();
 	spawnDangerousObject();
+	spawnLaserPointer();
 	spawnMouse();
 	spawnDog();
-	spawnSeparator();
 	spawnLamp();
 	spawnSoap();
 	updateCamera();
@@ -1966,14 +2312,14 @@ game.update = function () {
 			dangerousObjects.splice(i, 1);
 		}
 	}
-	// Clean up separators
-	for (var i = separators.length - 1; i >= 0; i--) {
-		var separator = separators[i];
-		if (separator.x < cameraX - 500) {
-			separator.destroy();
-			separators.splice(i, 1);
+	for (var i = laserPointers.length - 1; i >= 0; i--) {
+		var pointer = laserPointers[i];
+		if (pointer.x < cameraX - 500) {
+			pointer.destroy();
+			laserPointers.splice(i, 1);
 		}
 	}
+	// Separators are now persistent and don't need cleanup
 	// Clean up lamps only if they have fallen off screen, not just off camera
 	for (var i = lamps.length - 1; i >= 0; i--) {
 		var lamp = lamps[i];
@@ -2012,5 +2358,10 @@ game.update = function () {
 			dog.destroy();
 			dogs.splice(i, 1);
 		}
+	}
+	// Remove laser dot when laser mode ends
+	if (!cat.isLaserMode && laserDot) {
+		laserDot.destroy();
+		laserDot = null;
 	}
 };
