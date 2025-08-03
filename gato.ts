@@ -1861,7 +1861,7 @@ var objectPositions = [{
 },
 // Object 1
 {
-	x: 1200,
+	x: 1600,
 	level: 1,
 	type: 2
 },
@@ -1915,13 +1915,13 @@ var objectPositions = [{
 },
 // Object 10
 {
-	x: 6600,
+	x: 6800,
 	level: 0,
 	type: 2
 },
 // Object 11
 {
-	x: 7200,
+	x: 7300,
 	level: 1,
 	type: 3
 },
@@ -1933,13 +1933,13 @@ var objectPositions = [{
 },
 // Object 13
 {
-	x: 8400,
+	x: 8500,
 	level: 3,
 	type: 2
 },
 // Object 14
 {
-	x: 9000,
+	x: 9100,
 	level: 4,
 	type: 3
 } // Object 15
@@ -1949,7 +1949,7 @@ for (var i = 0; i < totalObjectsToKnock; i++) {
 	var pos = objectPositions[i];
 	var obj = new ShelfObject(pos.type);
 	obj.x = pos.x;
-	obj.y = shelfLevels[pos.level] - 75; // Position on top of shelf
+	obj.y = shelfLevels[pos.level] - 155; // Position much higher on top of shelf (60px higher)
 	obj.objectNumber = i + 1; // Add numbering for identification
 	game.addChild(obj);
 	shelfObjects.push(obj);
@@ -1973,30 +1973,30 @@ for (var level = 0; level < 5; level++) {
 	rightBarrier.isBlocking = true;
 	rightBarriers.push(rightBarrier);
 }
-// Pre-define separator positions ensuring proper spacing (minimum 500px apart) within shelf boundaries
+// Pre-define separator positions ensuring proper spacing (minimum 60px from other elements)
 var separatorPositions = [{
-	x: 1500,
+	x: 1900,
 	level: 0
 }, {
-	x: 2500,
+	x: 2600,
 	level: 2
 }, {
-	x: 3500,
+	x: 3600,
 	level: 1
 }, {
-	x: 4500,
+	x: 4600,
 	level: 4
 }, {
-	x: 5500,
+	x: 5600,
 	level: 3
 }, {
-	x: 6500,
+	x: 6700,
 	level: 0
 }, {
-	x: 7500,
+	x: 7600,
 	level: 2
 }, {
-	x: 8500,
+	x: 8600,
 	level: 1
 }];
 // Create all separators at game start with proper spacing
@@ -2009,6 +2009,151 @@ for (var i = 0; i < separatorPositions.length; i++) {
 	game.addChild(separator);
 	separators.push(separator);
 }
+
+// Pre-define dangerous object positions ensuring proper spacing from other elements (minimum 60px spacing)
+var dangerousObjectPositions = [{
+	x: 2000,
+	level: 1
+}, {
+	x: 2300,
+	level: 0
+}, {
+	x: 3900,
+	level: 3
+}, {
+	x: 5300,
+	level: 2
+}, {
+	x: 6900,
+	level: 4
+}, {
+	x: 8300,
+	level: 1
+}];
+
+// Create all dangerous objects at game start
+for (var i = 0; i < dangerousObjectPositions.length; i++) {
+	var dangerPos = dangerousObjectPositions[i];
+	var dangerousObj = new DangerousObject();
+	dangerousObj.x = dangerPos.x;
+	dangerousObj.y = shelfLevels[dangerPos.level] - 75; // Position on top of shelf
+	game.addChild(dangerousObj);
+	dangerousObjects.push(dangerousObj);
+}
+
+// Pre-define dog positions ensuring proper spacing (minimum 60px from other elements)
+var dogPositions = [{
+	x: 2700,
+	level: 4
+}, {
+	x: 4100,
+	level: 0
+}, {
+	x: 7100,
+	level: 3
+}];
+
+// Create all dogs at game start
+for (var i = 0; i < dogPositions.length; i++) {
+	var dogPos = dogPositions[i];
+	var dog = new Dog();
+	dog.x = dogPos.x;
+	dog.y = shelfLevels[dogPos.level] - 75; // Position on top of shelf
+	game.addChild(dog);
+	dogs.push(dog);
+}
+
+// Pre-define mouse positions ensuring proper spacing (far from cat start position)
+var mousePositions = [{
+	x: 3300,
+	level: 4
+}, {
+	x: 3400,
+	level: 1
+}, {
+	x: 5900,
+	level: 0
+}, {
+	x: 8700,
+	level: 2
+}];
+
+// Create all mice at game start
+for (var i = 0; i < mousePositions.length; i++) {
+	var mousePos = mousePositions[i];
+	var mouse = new Mouse();
+	mouse.x = mousePos.x;
+	mouse.y = shelfLevels[mousePos.level] - 75; // Position on top of shelf
+	game.addChild(mouse);
+	mice.push(mouse);
+}
+
+// Pre-define lamp positions ensuring proper spacing (minimum 60px from other elements)
+var lampPositions = [{
+	x: 1750,
+	level: 1
+}, {
+	x: 4700,
+	level: 3
+}, {
+	x: 6300,
+	level: 0
+}, {
+	x: 8900,
+	level: 4
+}];
+
+// Create all lamps at game start
+for (var i = 0; i < lampPositions.length; i++) {
+	var lampPos = lampPositions[i];
+	var lamp = new Lamp();
+	lamp.x = lampPos.x;
+	lamp.y = shelfLevels[lampPos.level]; // Position on shelf
+	game.addChild(lamp);
+	lamps.push(lamp);
+}
+
+// Pre-define soap positions ensuring proper spacing (minimum 60px from other elements)
+var soapPositions = [{
+	x: 2100,
+	level: 4
+}, {
+	x: 4500,
+	level: 1
+}, {
+	x: 6500,
+	level: 2
+}];
+
+// Create all soaps at game start
+for (var i = 0; i < soapPositions.length; i++) {
+	var soapPos = soapPositions[i];
+	var soap = new Soap();
+	soap.x = soapPos.x;
+	soap.y = shelfLevels[soapPos.level] - 40; // Position on shelf
+	game.addChild(soap);
+	soaps.push(soap);
+}
+
+// Pre-define laser pointer positions ensuring proper spacing (minimum 60px from other elements)
+var laserPointerPositions = [{
+	x: 2900,
+	level: 0
+}, {
+	x: 5700,
+	level: 4
+}];
+
+// Create all laser pointers at game start
+for (var i = 0; i < laserPointerPositions.length; i++) {
+	var laserPos = laserPointerPositions[i];
+	var pointer = new LaserPointer();
+	pointer.x = laserPos.x;
+	pointer.y = shelfLevels[laserPos.level] - 75; // Position on top of shelf
+	game.addChild(pointer);
+	laserPointers.push(pointer);
+}
+
 // Create cat after shelves so it appears in front
 cat = game.addChild(new Cat());
 // Position cat at horizontal center of screen
@@ -2079,168 +2224,32 @@ function spawnObject() {
 	return;
 }
 function spawnDangerousObject() {
-	if (LK.ticks < nextDangerousSpawn) {
-		return;
-	}
-	// Find a valid position with proper spacing (minimum 300px from other objects)
-	var attempts = 0;
-	var validPosition = false;
-	var xPos, level;
-	while (!validPosition && attempts < 20) {
-		level = Math.floor(Math.random() * 5);
-		xPos = 200 + Math.random() * 9400; // Spawn within shelf boundaries (200-9600)
-		validPosition = true;
-		// Check distance from existing objects on same shelf level
-		for (var i = 0; i < shelfObjects.length; i++) {
-			var obj = shelfObjects[i];
-			var objLevel = -1;
-			for (var l = 0; l < 5; l++) {
-				if (Math.abs(obj.y - (shelfLevels[l] - 75)) < 50) {
-					objLevel = l;
-					break;
-				}
-			}
-			if (objLevel === level && Math.abs(obj.x - xPos) < 300) {
-				validPosition = false;
-				break;
-			}
-		}
-		// Check distance from other dangerous objects on same level
-		for (var i = 0; i < dangerousObjects.length; i++) {
-			var dObj = dangerousObjects[i];
-			var dObjLevel = -1;
-			for (var l = 0; l < 5; l++) {
-				if (Math.abs(dObj.y - (shelfLevels[l] - 75)) < 50) {
-					dObjLevel = l;
-					break;
-				}
-			}
-			if (dObjLevel === level && Math.abs(dObj.x - xPos) < 300) {
-				validPosition = false;
-				break;
-			}
-		}
-		attempts++;
-	}
-	// Only spawn if valid position found
-	if (validPosition) {
-		var dangerousObj = new DangerousObject();
-		dangerousObj.x = xPos;
-		dangerousObj.y = shelfLevels[level] - 75; // Position on top of shelf
-		game.addChild(dangerousObj);
-		dangerousObjects.push(dangerousObj);
-	}
-	nextDangerousSpawn = LK.ticks + 300 + Math.random() * 450; // 10% spawn rate - 5-12.5 seconds
+	// Dangerous objects are now pre-defined at game start - no dynamic spawning
+	return;
 }
 function spawnLaserPointer() {
-	if (LK.ticks < nextLaserSpawn) {
-		return;
-	}
-	var pointer = new LaserPointer();
-	var level = Math.floor(Math.random() * 5);
-	var xPos = 200 + Math.random() * 9400; // Spawn within shelf boundaries (200-9600)
-	pointer.x = xPos;
-	pointer.y = shelfLevels[level] - 75; // Position on top of shelf
-	game.addChild(pointer);
-	laserPointers.push(pointer);
-	nextLaserSpawn = LK.ticks + 600 + Math.random() * 600; // 10-20 seconds
+	// Laser pointers are now pre-defined at game start - no dynamic spawning
+	return;
 }
 function spawnMouse() {
-	if (LK.ticks < nextMouseSpawn) {
-		return;
-	}
-	var mouse = new Mouse();
-	var level = Math.floor(Math.random() * 5);
-	var xPos = 200 + Math.random() * 9400; // Spawn within shelf boundaries (200-9600)
-	mouse.x = xPos;
-	mouse.y = shelfLevels[level] - 75; // Position on top of shelf
-	game.addChild(mouse);
-	mice.push(mouse);
-	nextMouseSpawn = LK.ticks + 4500 + Math.random() * 3000; // 10% spawn rate - 75-125 seconds
+	// Mice are now pre-defined at game start - no dynamic spawning
+	return;
 }
 function spawnDog() {
-	if (LK.ticks < nextDogSpawn) {
-		return;
-	}
-	var dog = new Dog();
-	var level = Math.floor(Math.random() * 5);
-	var xPos = 200 + Math.random() * 9400; // Spawn within shelf boundaries (200-9600)
-	dog.x = xPos;
-	dog.y = shelfLevels[level] - 75; // Position on top of shelf
-	game.addChild(dog);
-	dogs.push(dog);
-	nextDogSpawn = LK.ticks + 12000 + Math.random() * 9000; // 10% spawn rate - 200-350 seconds
+	// Dogs are now pre-defined at game start - no dynamic spawning
+	return;
 }
 function spawnSeparator() {
 	// Separators are now pre-defined at game start - no dynamic spawning
 	return;
 }
 function spawnLamp() {
-	if (LK.ticks < nextLampSpawn) {
-		return;
-	}
-	// Find a valid position with proper spacing (minimum 350px from other objects)
-	var attempts = 0;
-	var validPosition = false;
-	var xPos, level;
-	while (!validPosition && attempts < 20) {
-		level = Math.floor(Math.random() * 5);
-		xPos = 200 + Math.random() * 9400; // Spawn within shelf boundaries (200-9600)
-		validPosition = true;
-		// Check distance from existing objects on same shelf level
-		for (var i = 0; i < shelfObjects.length; i++) {
-			var obj = shelfObjects[i];
-			var objLevel = -1;
-			for (var l = 0; l < 5; l++) {
-				if (Math.abs(obj.y - (shelfLevels[l] - 75)) < 50) {
-					objLevel = l;
-					break;
-				}
-			}
-			if (objLevel === level && Math.abs(obj.x - xPos) < 350) {
-				validPosition = false;
-				break;
-			}
-		}
-		// Check distance from other lamps on same level
-		for (var i = 0; i < lamps.length; i++) {
-			var otherLamp = lamps[i];
-			var lampLevel = -1;
-			for (var l = 0; l < 5; l++) {
-				if (Math.abs(otherLamp.y - shelfLevels[l]) < 50) {
-					lampLevel = l;
-					break;
-				}
-			}
-			if (lampLevel === level && Math.abs(otherLamp.x - xPos) < 350) {
-				validPosition = false;
-				break;
-			}
-		}
-		attempts++;
-	}
-	// Only spawn if valid position found
-	if (validPosition) {
-		var lamp = new Lamp();
-		lamp.x = xPos;
-		lamp.y = shelfLevels[level]; // Position on shelf
-		game.addChild(lamp);
-		lamps.push(lamp);
-	}
-	nextLampSpawn = LK.ticks + 900 + Math.random() * 1200; // 15-35 seconds
+	// Lamps are now pre-defined at game start - no dynamic spawning
+	return;
 }
 function spawnSoap() {
-	if (LK.ticks < nextSoapSpawn) {
-		return;
-	}
-	var soap = new Soap();
-	var level = Math.floor(Math.random() * 5);
-	var xPos = 200 + Math.random() * 9400; // Spawn within shelf boundaries (200-9600)
-	soap.x = xPos;
-	soap.y = shelfLevels[level] - 40; // Position on shelf
-	game.addChild(soap);
-	soaps.push(soap);
-	nextSoapSpawn = LK.ticks + 1200 + Math.random() * 1800; // 20-50 seconds
+	// Soaps are now pre-defined at game start - no dynamic spawning
+	return;
 }
 // Camera follow with smooth tweening
 function updateCamera() {
