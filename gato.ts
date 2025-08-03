@@ -3,7 +3,6 @@
 ****/
 LK.init.shape('cat-hit', {width:180, height:180, color:0xfee87c, shape:'box'})
 LK.init.shape('dangerousObject', {width:100, height:100, color:0xed5c7c, shape:'box'})
-LK.init.shape('gatoBaila', {width:180, height:180, color:0x7f134c, shape:'box'})
 LK.init.shape('laserDot', {width:15, height:15, color:0xff0000, shape:'ellipse'})
 LK.init.image('Cat-step', {width:180, height:180, id:'688174e58a10be04e179465c'})
 LK.init.image('Dog-close', {width:300, height:286, id:'687fee3dc018371eaf0b9e15'})
@@ -15,6 +14,7 @@ LK.init.image('cat-jump', {width:180, height:180, id:'688252893cf08f876d9dace8'}
 LK.init.image('catElectrocuted', {width:240, height:180, id:'68811ad20167e711346df4db'})
 LK.init.image('dog', {width:300, height:286, id:'687eb15dfa2cf73da94880ff'})
 LK.init.image('gato-kiss', {width:160, height:160, id:'68873789d79209b11a68b06c'})
+LK.init.image('gatoBaila', {width:180, height:180, id:'6888e337fda9581915120bf4'})
 LK.init.image('lamp', {width:40, height:60, id:'68810476b1b31e1884ae3a82'})
 LK.init.image('laserPointer', {width:50, height:26, id:'687ea9f2fa2cf73da94880b6'})
 LK.init.image('lightbulb', {width:40, height:60, id:'6881037db1b31e1884ae3a58'})
@@ -37,7 +37,7 @@ LK.init.music('mainTheme', {volume:1, start:0, end:1, id:'6882273af94a38cca99dd0
 LK.init.sound('mouseSqueak')
 LK.init.sound('objectHit', {volume:1, start:0, end:1, id:'68812accf94a38cca99dd05e'})
 LK.init.sound('soapSlip')
-LK.init.sound('successSong')
+LK.init.sound('successSong', {volume:1, start:0, end:1, id:'688f791ea12bfcc888f900c5'})
 LK.init.sound('zarpazo', {volume:1, start:0.185, end:0.295, id:'688f3f12e0d9f2c7c65f34c7'})
 
 /**** 
@@ -135,12 +135,16 @@ var Cat = Container.expand(function () {
 	self.floatingTimer = 0;
 	self.gatoBailaGraphics = self.attachAsset('gatoBaila', {
 		anchorX: 0.5,
-		anchorY: 0.5,
+		anchorY: 1.0,
+		// Anchor at bottom for proper center of gravity
 		scaleX: 2,
 		scaleY: 2
 	});
 	self.gatoBailaGraphics.visible = false;
 	self.isDancing = false;
+	// Dance flip variables
+	self.danceFlipTimer = 0;
+	self.danceFlipDirection = 1;
 	self.activateZarpazo = function () {
 		LK.getSound('zarpazo').play();
 		if (self.isZarpazoMode || self.isKissMode) {
@@ -194,8 +198,8 @@ var Cat = Container.expand(function () {
 				catGraphics.visible = true;
 				// Restore movement speed
 				self.speed = originalSpeed;
-			}, 500); // Kiss lasts 0.5 seconds
-		}, 1000); // 1 second for zarpazo duration
+			}, 330); // Kiss lasts 0.33 seconds (33% less than original)
+		}, 500); // 0.5 seconds for zarpazo duration (half the original time)
 	};
 	self.activateBubble = function (duration) {
 		if (self.isInBubble) {
@@ -209,6 +213,27 @@ var Cat = Container.expand(function () {
 			y: true
 		});
 		self.isJumping = false;
+		// Immediately hide all other cat assets and show only gatoEnjabonado
+		catGraphics.visible = false;
+		catStepGraphics.visible = false;
+		self.catJumpGraphics.visible = false;
+		if (self.catElectrocutedGraphics) {
+			self.catElectrocutedGraphics.visible = false;
+		}
+		if (self.zarpazoGraphics) {
+			self.zarpazoGraphics.visible = false;
+		}
+		self.gatoKissGraphics.visible = false;
+		if (self.catHitGraphics) {
+			self.catHitGraphics.visible = false;
+		}
+		if (self.catBlockGraphics) {
+			self.catBlockGraphics.visible = false;
+		}
+		if (self.gatoBailaGraphics) {
+			self.gatoBailaGraphics.visible = false;
+		}
+		self.gatoEnjabonado.visible = true;
 		// Visual effect when bubble starts
 		LK.effects.flashObject(self, 0x87CEEB, 300);
 	};
@@ -344,14 +369,28 @@ var Cat = Container.expand(function () {
 				catStepGraphics.visible = false;
 				// cat-jump visibility is handled in the jumping animation logic above
 			}
-			// When in bubble, hide walking animation
+			// When in bubble, hide ALL other animations - only show gatoEnjabonado
 			if (self.isInBubble) {
 				catGraphics.visible = false;
 				catStepGraphics.visible = false;
 				self.catJumpGraphics.visible = false;
+				if (self.catElectrocutedGraphics) {
+					self.catElectrocutedGraphics.visible = false;
+				}
 				if (self.zarpazoGraphics) {
 					self.zarpazoGraphics.visible = false;
 				}
+				self.gatoKissGraphics.visible = false;
+				if (self.catHitGraphics) {
+					self.catHitGraphics.visible = false;
+				}
+				if (self.catBlockGraphics) {
+					self.catBlockGraphics.visible = false;
+				}
+				if (self.gatoBailaGraphics) {
+					self.gatoBailaGraphics.visible = false;
+				}
+				// Only show the soapy/bubble cat
 				self.gatoEnjabonado.visible = true;
 			}
 			// When floating with soap, hide all other animations
@@ -449,10 +488,51 @@ var Cat = Container.expand(function () {
 				self.catHitGraphics.visible = false;
 				self.catBlockGraphics.visible = false;
 				self.gatoBailaGraphics.visible = true;
-				// Dancing animation with bounce effect
-				var danceScale = 2 + Math.sin(LK.ticks * 0.3) * 0.3;
-				self.gatoBailaGraphics.scaleX = danceScale * self.direction;
-				self.gatoBailaGraphics.scaleY = danceScale;
+				// Advanced dancing animation with multiple dance moves
+				var beatTime = LK.ticks * 0.15; // Main beat
+				var fastBeat = LK.ticks * 0.4; // Fast beat for quick movements
+				var slowBeat = LK.ticks * 0.08; // Slow beat for direction changes
+				// Multi-layered scale animation for dancing effect
+				var baseScale = 2;
+				var bounceScale = Math.sin(beatTime) * 0.4; // Main bounce
+				var quickPulse = Math.sin(fastBeat) * 0.15; // Quick pulse
+				var breathe = Math.sin(slowBeat) * 0.1; // Breathing effect
+				// X and Y scale with different patterns for asymmetric dance
+				var scaleX = baseScale + bounceScale + quickPulse;
+				var scaleY = baseScale + bounceScale * 0.7 + breathe; // Different Y movement
+				// Dance flip animation - similar to running animation
+				self.danceFlipTimer++;
+				if (self.danceFlipTimer >= 45) { // Flip every 45 ticks (0.75 seconds)
+					self.danceFlipDirection = -self.danceFlipDirection;
+					self.danceFlipTimer = 0;
+				}
+				// Add some random flips for more dynamic dancing
+				if (LK.ticks % 120 === 0 && Math.random() < 0.3) {
+					// 30% chance every 2 seconds to do extra flip
+					self.danceFlipDirection = -self.danceFlipDirection;
+				}
+				// Apply scale with flip direction
+				self.gatoBailaGraphics.scaleX = scaleX * self.danceFlipDirection;
+				self.gatoBailaGraphics.scaleY = scaleY;
+				// No rotation - keep cat upright, only horizontal flips for dancing
+				self.gatoBailaGraphics.rotation = 0;
+				// Add slight vertical bobbing for dance effect
+				var danceBob = Math.sin(beatTime * 1.8) * 8;
+				self.gatoBailaGraphics.y = danceBob;
+				// Occasional dramatic scale changes for dance highlights
+				if (LK.ticks % 240 === 0) {
+					// Every 4 seconds
+					tween(self.gatoBailaGraphics, {
+						scaleX: scaleX * self.danceFlipDirection * 1.5,
+						scaleY: scaleY * 1.3
+					}, {
+						duration: 200,
+						easing: tween.elasticOut,
+						onFinish: function onFinish() {
+							// Return to normal dance animation
+						}
+					});
+				}
 			}
 		}
 		// Update graphics direction based on movement direction
@@ -511,9 +591,57 @@ var Cat = Container.expand(function () {
 				self.gatoBailaGraphics.scaleX = -2;
 			}
 		}
-		// Handle floating timer countdown
+		// Handle floating timer countdown with wavy random movement
 		if (self.isFloating) {
 			self.floatingTimer--;
+			// Initialize wave variables if not set
+			if (self.soapWaveTime === undefined) {
+				self.soapWaveTime = 0;
+				self.soapBaseX = self.x;
+				self.soapWaveSpeedX = 0.05 + Math.random() * 0.03;
+				self.soapWaveSpeedY = 0.04 + Math.random() * 0.02;
+				self.soapAmplitudeX = 20 + Math.random() * 15;
+				self.soapAmplitudeY = 10 + Math.random() * 8;
+			}
+			// Increment wave time for smooth animation
+			self.soapWaveTime += 1;
+			// Complex wavy movement with multiple wave components
+			var primaryWaveX = Math.sin(self.soapWaveTime * self.soapWaveSpeedX) * self.soapAmplitudeX;
+			var secondaryWaveX = Math.cos(self.soapWaveTime * self.soapWaveSpeedX * 1.7) * (self.soapAmplitudeX * 0.4);
+			var primaryWaveY = Math.sin(self.soapWaveTime * self.soapWaveSpeedY) * self.soapAmplitudeY;
+			// Add some randomness for more organic movement
+			var randomDriftX = (Math.random() - 0.5) * 4;
+			var randomDriftY = (Math.random() - 0.5) * 2;
+			var verticalDrift = -2.5 - Math.random() * 1.5; // Upward drift
+			// Apply the wavy movement with more pronounced vertical oscillation
+			var targetX = self.soapBaseX + primaryWaveX + secondaryWaveX;
+			self.x += (targetX - self.x) * 0.02 + randomDriftX * 0.3;
+			// Increased vertical wave amplitude to about 20px up and down
+			var verticalWave = Math.sin(self.soapWaveTime * self.soapWaveSpeedY * 0.8) * 20;
+			self.y += verticalDrift + verticalWave * 0.15 + primaryWaveY * 0.05 + randomDriftY;
+			// Add rotation for more dramatic soap floating effect
+			self.gatoEnjabonado.rotation = Math.sin(LK.ticks * 0.05) * 0.3 + Math.cos(LK.ticks * 0.03) * 0.2;
+			// Scaling animation for floating effect
+			if (LK.ticks % 45 === 0) {
+				// Every 0.75 seconds
+				var scaleVariation = 0.9 + Math.random() * 0.2; // Random scale between 0.9-1.1
+				tween(self.gatoEnjabonado, {
+					scaleX: Math.abs(self.gatoEnjabonado.scaleX) * scaleVariation,
+					scaleY: self.gatoEnjabonado.scaleY * (1.1 + Math.random() * 0.1)
+				}, {
+					duration: 400 + Math.random() * 200,
+					easing: tween.easeInOut,
+					onFinish: function onFinish() {
+						tween(self.gatoEnjabonado, {
+							scaleX: self.direction > 0 ? 2 : -2,
+							scaleY: 2
+						}, {
+							duration: 300 + Math.random() * 200,
+							easing: tween.easeInOut
+						});
+					}
+				});
+			}
 			if (self.floatingTimer <= 0) {
 				// Stop floating after timer expires
 				self.isFloating = false;
@@ -522,8 +650,24 @@ var Cat = Container.expand(function () {
 				tween.stop(self, {
 					y: true
 				});
+				tween.stop(self.gatoEnjabonado, {
+					scaleX: true,
+					scaleY: true,
+					rotation: true
+				});
+				// Reset rotation and scale
+				self.gatoEnjabonado.rotation = 0;
+				self.gatoEnjabonado.scaleX = self.direction > 0 ? 2 : -2;
+				self.gatoEnjabonado.scaleY = 2;
 				self.gatoEnjabonado.visible = false;
 				catGraphics.visible = true;
+				// Reset wave variables for next soap interaction
+				self.soapWaveTime = undefined;
+				self.soapBaseX = undefined;
+				self.soapWaveSpeedX = undefined;
+				self.soapWaveSpeedY = undefined;
+				self.soapAmplitudeX = undefined;
+				self.soapAmplitudeY = undefined;
 				// Return to current shelf level
 				self.y = shelfLevels[self.currentShelfLevel] - 208;
 			}
@@ -612,7 +756,7 @@ var Cat = Container.expand(function () {
 		}
 		for (var i = shelfObjects.length - 1; i >= 0; i--) {
 			var obj = shelfObjects[i];
-			if (self.intersects(obj) && !obj.isFalling) {
+			if (self.intersects(obj) && !obj.isFalling && !self.isJumping) {
 				obj.startFalling();
 				// Update objects knocked down counter based on objects that are NOT falling
 				var actualObjectsRemaining = 0;
@@ -635,6 +779,19 @@ var Cat = Container.expand(function () {
 					gameTimer = TIME_LIMIT;
 					// Activate dancing mode for cat
 					self.isDancing = true;
+					// Reset dance flip variables for consistent start
+					self.danceFlipTimer = 0;
+					self.danceFlipDirection = 1;
+					// Stop main theme music when dancing starts
+					try {
+						if (LK.stopMusic) {
+							LK.stopMusic('mainTheme');
+						} else if (LK.pauseMusic) {
+							LK.pauseMusic('mainTheme');
+						}
+					} catch (e) {
+						console.log('Music stop/pause not available');
+					}
 					// Stop cat movement during victory dance
 					self.speed = 0;
 					// Stop all cat behaviors
@@ -654,7 +811,7 @@ var Cat = Container.expand(function () {
 						storage.objectsKnockedDown = 0;
 						// Show level complete message
 						LK.showYouWin();
-					}, 2000); // Wait 2 seconds to show the dance
+					}, 4000); // Wait 4 seconds to let cat dance longer before victory
 					return;
 				}
 				// Play random knock sound
@@ -676,7 +833,7 @@ var Cat = Container.expand(function () {
 				}
 			}
 			// Only collide if on same shelf level
-			if (self.intersects(dangerousObj) && dangerousObj.isDangerous && !dangerousObj.isFalling && objShelfLevel === self.currentShelfLevel && !self.isHitMode) {
+			if (self.intersects(dangerousObj) && dangerousObj.isDangerous && !dangerousObj.isFalling && objShelfLevel === self.currentShelfLevel && !self.isHitMode && !self.isJumping) {
 				// Cat gets hit and stops for a few seconds
 				dangerousObj.startFalling();
 				obstaclePenalties += 10; // Add penalty for hitting dangerous object
@@ -702,12 +859,21 @@ var Cat = Container.expand(function () {
 				self.catHitGraphics.scaleY = 2;
 			}
 		}
-		// Check for collisions with dogs
+		// Check for collisions with dogs - only on same shelf level
 		for (var i = dogs.length - 1; i >= 0; i--) {
 			var dog = dogs[i];
+			// Calculate which shelf level the dog is on
+			var dogShelfLevel = -1;
+			for (var level = 0; level < 5; level++) {
+				if (Math.abs(dog.y - (shelfLevels[level] - 75)) < 50) {
+					dogShelfLevel = level;
+					break;
+				}
+			}
+			// Only collide if on same shelf level or jumping attack from above
 			if (self.intersects(dog)) {
 				if (self.isJumping && self.y < dog.y - 20) {
-					// Cat falls on dog and kills it
+					// Cat falls on dog and kills it (can happen from any level when jumping)
 					LK.getSound('dogBark').play();
 					LK.effects.flashObject(self, 0x00ff00, 500);
 					// Remove dog from game
@@ -718,8 +884,8 @@ var Cat = Container.expand(function () {
 						self.isHiding = false;
 						self.hideTarget = null;
 					}
-				} else if (!self.isHitMode && !self.isInvulnerable) {
-					// Dog knocks down the cat
+				} else if (!self.isHitMode && !self.isInvulnerable && !self.isJumping && dogShelfLevel === self.currentShelfLevel) {
+					// Dog knocks down the cat (only on same shelf level and not jumping)
 					LK.getSound('dogBark').play();
 					LK.getSound('catFall').play();
 					LK.effects.flashScreen(0xff0000, 500);
@@ -809,7 +975,7 @@ var Cat = Container.expand(function () {
 				}
 			}
 			// Only collide if on same shelf level
-			if (self.intersects(separator) && separator.isBlocking && sepShelfLevel === self.currentShelfLevel && !self.isBlockMode) {
+			if (self.intersects(separator) && separator.isBlocking && sepShelfLevel === self.currentShelfLevel && !self.isBlockMode && !self.isJumping) {
 				// Enter block mode when hitting separator
 				self.isBlockMode = true;
 				self.blockTimer = 180; // 3 seconds at 60fps
@@ -927,19 +1093,19 @@ var Cat = Container.expand(function () {
 					break;
 				}
 			}
-			// Gentle floating animation with tween - more bubble-like
+			// Gentle floating animation with tween - more bubble-like, applied to the correct asset
 			if (LK.ticks % 90 === 0) {
 				// Every 1.5 seconds - slower, more gentle
-				tween(catGraphics, {
-					scaleX: Math.abs(catGraphics.scaleX) * 1.05,
-					scaleY: catGraphics.scaleY * 1.15
+				tween(self.gatoEnjabonado, {
+					scaleX: Math.abs(self.gatoEnjabonado.scaleX) * 1.05,
+					scaleY: self.gatoEnjabonado.scaleY * 1.15
 				}, {
 					duration: 750,
 					easing: tween.easeInOut,
 					onFinish: function onFinish() {
-						tween(catGraphics, {
-							scaleX: Math.abs(catGraphics.scaleX) / 1.05,
-							scaleY: catGraphics.scaleY / 1.15
+						tween(self.gatoEnjabonado, {
+							scaleX: Math.abs(self.gatoEnjabonado.scaleX) / 1.05,
+							scaleY: self.gatoEnjabonado.scaleY / 1.15
 						}, {
 							duration: 750,
 							easing: tween.easeInOut
@@ -971,7 +1137,12 @@ var Cat = Container.expand(function () {
 					duration: 800,
 					easing: tween.bounceOut,
 					onFinish: function onFinish() {
-						// Reset cat graphics to normal
+						// Reset bubble asset visibility and scale
+						self.gatoEnjabonado.visible = false;
+						self.gatoEnjabonado.scaleX = self.direction > 0 ? 2 : -2;
+						self.gatoEnjabonado.scaleY = 2;
+						// Show normal cat
+						catGraphics.visible = true;
 						catGraphics.scaleY = Math.abs(catGraphics.scaleY);
 						catGraphics.scaleX = self.direction > 0 ? 2 : -2;
 						// Flash effect when landing
@@ -1012,7 +1183,7 @@ var Cat = Container.expand(function () {
 				}
 			}
 			// Only collide if on same shelf level and cat is not immune to lamp electrocution
-			if (self.intersects(lamp) && lampShelfLevel === self.currentShelfLevel && !self.isElectrocuted) {
+			if (self.intersects(lamp) && lampShelfLevel === self.currentShelfLevel && !self.isElectrocuted && !self.isJumping) {
 				// Electrocute cat for 2 seconds
 				self.isElectrocuted = true;
 				self.electrocutionTimer = 120; // 2 seconds at 60fps
@@ -1062,7 +1233,7 @@ var Cat = Container.expand(function () {
 					}
 				}
 				// Only collide if on same shelf level
-				if (self.intersects(soap) && !soap.hasBeenUsed && !self.isSlipping && soapShelfLevel === self.currentShelfLevel) {
+				if (self.intersects(soap) && !soap.hasBeenUsed && !self.isSlipping && soapShelfLevel === self.currentShelfLevel && !self.isJumping) {
 					soap.hasBeenUsed = true;
 					// Set floating state
 					self.isFloating = true;
@@ -1080,28 +1251,22 @@ var Cat = Container.expand(function () {
 					self.isJumping = false;
 					self.isElectrocuted = false;
 					self.isZarpazoMode = false;
-					// Play slip sound
+					// Play slip sound and bubble sound for soapy floating effect
 					LK.getSound('soapSlip').play();
+					LK.getSound('bubble').play();
 					// Stop any existing tweens on cat position
 					tween.stop(self, {
-						y: true
+						y: true,
+						x: true
 					});
-					// Float upward continuously for 5 seconds
-					tween(self, {
-						y: -200
-					}, {
-						duration: 5000,
-						easing: tween.easeOut,
-						onFinish: function onFinish() {
-							// Reset cat state after floating off screen
-							self.isFloating = false;
-							self.floatingTimer = 0;
-							self.gatoEnjabonado.visible = false;
-							catGraphics.visible = true;
-							// Return to current shelf level
-							self.y = shelfLevels[self.currentShelfLevel] - 208;
-						}
-					});
+					// Initialize soap floating variables for wavy movement
+					self.soapWaveTime = 0;
+					self.soapBaseX = self.x;
+					self.soapWaveSpeedX = 0.05 + Math.random() * 0.03;
+					self.soapWaveSpeedY = 0.04 + Math.random() * 0.02;
+					self.soapAmplitudeX = 20 + Math.random() * 15;
+					self.soapAmplitudeY = 10 + Math.random() * 8;
+					// Note: The actual wavy movement is now handled in the floating timer section above
 					// Visual effect - soap disappears with tween
 					tween(soap, {
 						alpha: 0,
@@ -1143,7 +1308,7 @@ var Cat = Container.expand(function () {
 				}
 			}
 			// Only collide if on same shelf level
-			if (self.intersects(mouse) && mouseShelfLevel === self.currentShelfLevel) {
+			if (self.intersects(mouse) && mouseShelfLevel === self.currentShelfLevel && !self.isJumping) {
 				// Cat eats mouse
 				LK.getSound('mouseSqueak').play();
 				LK.effects.flashObject(self, 0x00ff00, 500);
@@ -1171,7 +1336,7 @@ var Cat = Container.expand(function () {
 				}
 			}
 			// Only collide if on same shelf level
-			if (self.intersects(pointer) && pointerShelfLevel === self.currentShelfLevel) {
+			if (self.intersects(pointer) && pointerShelfLevel === self.currentShelfLevel && !self.isJumping) {
 				self.isLaserMode = true;
 				self.laserModeTimer = 300; // 5 seconds at 60fps
 				self.speed = self.laserSpeed;
@@ -1744,8 +1909,8 @@ var Soap = Container.expand(function () {
 	var soapGraphics = self.attachAsset('soap', {
 		anchorX: 0.5,
 		anchorY: 0.5,
-		scaleX: 3,
-		scaleY: 3
+		scaleX: 1.8,
+		scaleY: 1.8
 	});
 	self.pulseTimer = 0;
 	self.hasBeenUsed = false;
@@ -2009,7 +2174,6 @@ for (var i = 0; i < separatorPositions.length; i++) {
 	game.addChild(separator);
 	separators.push(separator);
 }
-
 // Pre-define dangerous object positions ensuring proper spacing from other elements (minimum 60px spacing)
 var dangerousObjectPositions = [{
 	x: 2000,
@@ -2030,7 +2194,6 @@ var dangerousObjectPositions = [{
 	x: 8300,
 	level: 1
 }];
-
 // Create all dangerous objects at game start
 for (var i = 0; i < dangerousObjectPositions.length; i++) {
 	var dangerPos = dangerousObjectPositions[i];
@@ -2040,7 +2203,6 @@ for (var i = 0; i < dangerousObjectPositions.length; i++) {
 	game.addChild(dangerousObj);
 	dangerousObjects.push(dangerousObj);
 }
-
 // Pre-define dog positions ensuring proper spacing (minimum 60px from other elements)
 var dogPositions = [{
 	x: 2700,
@@ -2052,7 +2214,6 @@ var dogPositions = [{
 	x: 7100,
 	level: 3
 }];
-
 // Create all dogs at game start
 for (var i = 0; i < dogPositions.length; i++) {
 	var dogPos = dogPositions[i];
@@ -2062,7 +2223,6 @@ for (var i = 0; i < dogPositions.length; i++) {
 	game.addChild(dog);
 	dogs.push(dog);
 }
-
 // Pre-define mouse positions ensuring proper spacing (far from cat start position)
 var mousePositions = [{
 	x: 3300,
@@ -2077,7 +2237,6 @@ var mousePositions = [{
 	x: 8700,
 	level: 2
 }];
-
 // Create all mice at game start
 for (var i = 0; i < mousePositions.length; i++) {
 	var mousePos = mousePositions[i];
@@ -2087,7 +2246,6 @@ for (var i = 0; i < mousePositions.length; i++) {
 	game.addChild(mouse);
 	mice.push(mouse);
 }
-
 // Pre-define lamp positions ensuring proper spacing (minimum 60px from other elements)
 var lampPositions = [{
 	x: 1750,
@@ -2102,7 +2260,6 @@ var lampPositions = [{
 	x: 8900,
 	level: 4
 }];
-
 // Create all lamps at game start
 for (var i = 0; i < lampPositions.length; i++) {
 	var lampPos = lampPositions[i];
@@ -2112,7 +2269,6 @@ for (var i = 0; i < lampPositions.length; i++) {
 	game.addChild(lamp);
 	lamps.push(lamp);
 }
-
 // Pre-define soap positions ensuring proper spacing (minimum 60px from other elements)
 var soapPositions = [{
 	x: 2100,
@@ -2124,7 +2280,6 @@ var soapPositions = [{
 	x: 6500,
 	level: 2
 }];
-
 // Create all soaps at game start
 for (var i = 0; i < soapPositions.length; i++) {
 	var soapPos = soapPositions[i];
@@ -2134,7 +2289,6 @@ for (var i = 0; i < soapPositions.length; i++) {
 	game.addChild(soap);
 	soaps.push(soap);
 }
-
 // Pre-define laser pointer positions ensuring proper spacing (minimum 60px from other elements)
 var laserPointerPositions = [{
 	x: 2900,
@@ -2143,7 +2297,6 @@ var laserPointerPositions = [{
 	x: 5700,
 	level: 4
 }];
-
 // Create all laser pointers at game start
 for (var i = 0; i < laserPointerPositions.length; i++) {
 	var laserPos = laserPointerPositions[i];
@@ -2153,7 +2306,6 @@ for (var i = 0; i < laserPointerPositions.length; i++) {
 	game.addChild(pointer);
 	laserPointers.push(pointer);
 }
-
 // Create cat after shelves so it appears in front
 cat = game.addChild(new Cat());
 // Position cat at horizontal center of screen
