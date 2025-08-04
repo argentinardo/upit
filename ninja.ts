@@ -60,11 +60,12 @@ LK.init.sound('Arcer-apears', {volume:1, start:0, end:1, id:'687e2a4c5089f8124e1
 LK.init.sound('Avion', {volume:1, start:0, end:1, id:'687d99e6bdf42f92241c54b4'})
 LK.init.sound('Congelado', {volume:1, start:0, end:1, id:'687fdb2488fabecfe2dd55df'})
 LK.init.sound('Enemy3', {volume:1, start:0.292, end:0.874, id:'687d9ca7bdf42f92241c54c4'})
-LK.init.sound('Hit2', {volume:1, start:0, end:1, id:'687d9676bdf42f92241c5482'})
+LK.init.sound('Hit2', {volume:1, start:0.15, end:1, id:'687d9676bdf42f92241c5482'})
 LK.init.sound('Ninjaarrowgrito', {volume:1, start:0, end:1, id:'687ce7c702066f9f2984dd9d'})
 LK.init.sound('aeroplane-fall', {volume:1, start:0.411, end:0.431, id:'6886e3ee828e2fa043a9e80e'})
 LK.init.sound('alert-sound')
 LK.init.sound('archer-shoot', {volume:1, start:0, end:1, id:'687e298f5089f8124e100a87'})
+LK.init.sound('breakIce')
 LK.init.sound('electric-cloud-hit')
 LK.init.sound('fallBox')
 LK.init.sound('hit', {volume:1, start:0, end:1, id:'687ce7e702066f9f2984dda1'})
@@ -78,12 +79,12 @@ LK.init.sound('meteoro-golpe', {volume:1, start:0, end:1, id:'687d52a7c4a1a36a58
 LK.init.sound('meteoro-grito', {volume:1, start:0, end:1, id:'687d42a0eec7e75544ba1ac5'})
 LK.init.sound('meterito-voltea')
 LK.init.sound('mushroom-hit')
-LK.init.sound('ninja-ouch', {volume:1, start:0, end:1, id:'687d60a5546d3d568db4ef95'})
+LK.init.sound('ninja-ouch', {volume:1, start:0, end:0.783, id:'687d60a5546d3d568db4ef95'})
 LK.init.sound('ninjaJump', {volume:1, start:0, end:1, id:'687cf1f902066f9f2984de22'})
 LK.init.sound('pipipipipi', {volume:1, start:0, end:0.714, id:'687e658de214dcb39e5b1d0d'})
 LK.init.sound('planefall', {volume:1, start:0, end:1, id:'687e25fe97be051837220948'})
 LK.init.sound('sol-grito', {volume:1, start:0, end:1, id:'687d17df4caaf4399f3ee290'})
-LK.init.sound('sol-risa', {volume:1, start:0, end:1, id:'687d50c6c4a1a36a58c65538'})
+LK.init.sound('sol-risa', {volume:1, start:0.103, end:0.953, id:'687d50c6c4a1a36a58c65538'})
 LK.init.sound('throw', {volume:1, start:0, end:1, id:'687ce54002066f9f2984dd53'})
 
 /**** 
@@ -134,6 +135,10 @@ var Airplane = Container.expand(function () {
 		}
 		// Remove if off screen
 		if (self.x < -200 || self.x > 2248 || self.y > 3332) {
+			// Play break ice sound if airplane was frozen when leaving screen
+			if (self.frozen) {
+				LK.getSound('breakIce').play();
+			}
 			self.active = false;
 		}
 	};
@@ -475,6 +480,10 @@ var Enemy = Container.expand(function () {
 		}
 		// Remove if off screen or fallen enemies that have fallen off screen bottom
 		if (self.x < -200 || self.x > 2248 || self.falling && self.y > 2800 || !self.falling && self.y > 3300) {
+			// Play break ice sound if enemy was frozen when leaving screen
+			if (self.frozen) {
+				LK.getSound('breakIce').play();
+			}
 			self.active = false;
 		}
 	};
@@ -539,6 +548,10 @@ var Enemy2 = Container.expand(function () {
 		}
 		// Remove if off screen or fallen enemies that have fallen off screen bottom
 		if (self.x < -200 || self.x > 2248 || self.falling && self.y > 2800 || !self.falling && self.y > 3300) {
+			// Play break ice sound if enemy was frozen when leaving screen
+			if (self.frozen) {
+				LK.getSound('breakIce').play();
+			}
 			self.active = false;
 		}
 	};
@@ -603,6 +616,10 @@ var Enemy3 = Container.expand(function () {
 		}
 		// Remove if off screen or fallen enemies that have fallen off screen bottom
 		if (self.x < -200 || self.x > 2248 || self.falling && self.y > 2800 || !self.falling && self.y > 3300) {
+			// Play break ice sound if enemy was frozen when leaving screen
+			if (self.frozen) {
+				LK.getSound('breakIce').play();
+			}
 			self.active = false;
 		}
 	};
@@ -819,31 +836,36 @@ var Lightning = Container.expand(function () {
 			self.active = false;
 		}
 	};
-	// Estira el rayo desde el centro de la nube al centro del ninja
+	// Simple: top center del rayo en bottom center de nube, bottom center del rayo en top center de ninja
 	self.stretchTo = function () {
-		if (!ninja) {
+		if (!ninja || !self.sourceCloud) {
 			return;
 		}
-		var cloud = self.parent;
-		// Centro de la nube (asumiendo anchorX=0.5, anchorY=0.5)
-		var cloudCenterX = cloud ? cloud.x : self.x;
-		var cloudCenterY = cloud ? cloud.y : self.y;
-		// Centro del ninja (asumiendo anchorX=0.5, anchorY=0.5 para asset electrocutado)
-		var ninjaCenterX = ninja.x;
-		var ninjaCenterY = ninja.y;
-		// Calcula la diferencia entre centros
-		var dx = ninjaCenterX - cloudCenterX;
-		var dy = ninjaCenterY - cloudCenterY;
+		
+		var cloud = self.sourceCloud;
+		
+		// Bottom center de cloudType2 (height=197.66, anchored at center)
+		var cloudBottomX = cloud.x;
+		var cloudBottomY = cloud.y + 98.83; // 197.66/2
+		
+		// Top center del ninja (height=538.95, anchored at bottom)
+		var ninjaTopX = ninja.x;
+		var ninjaTopY = ninja.y - 538.95;
+		
+		// Distancia y ángulo
+		var dx = ninjaTopX - cloudBottomX;
+		var dy = ninjaTopY - cloudBottomY;
 		var distance = Math.sqrt(dx * dx + dy * dy);
-		// Ángulo para apuntar del centro de la nube al centro del ninja
-		var angle = Math.atan2(dy, dx) - Math.PI / 2; // El asset apunta hacia arriba
-		// Escala y rota el rayo para conectar los centros
+		var angle = Math.atan2(dy, dx) - Math.PI / 2;
+		
+		// Posicionar container en bottom center de nube
+		self.x = cloudBottomX;
+		self.y = cloudBottomY;
+		
+		// Lightning asset (height=50, anchorY=0 significa top del asset está en el container)
 		lightningGraphics.scaleY = distance / 50;
-		lightningGraphics.scaleX = 2;
 		lightningGraphics.rotation = angle;
-		// Posiciona el rayo en el centro de la nube
-		lightningGraphics.x = 0; // El rayo está centrado en X respecto al contenedor
-		lightningGraphics.y = 0; // Centro de la nube
+		lightningGraphics.scaleX = 2;
 	};
 	return self;
 });
@@ -2794,9 +2816,16 @@ function throwNinjaStar(targetX, targetY) {
 			var spreadAngle = (starIndex - 1) * (Math.PI / 12); // 15 degrees in radians
 			var baseAngle = Math.atan2(limitedDy, dx);
 			var finalAngle = baseAngle + spreadAngle;
-			// Set velocity with spread
-			woodenStar.velocityX = Math.cos(finalAngle) * woodenStar.speed;
-			woodenStar.velocityY = Math.sin(finalAngle) * woodenStar.speed;
+			// Set velocity with spread - but limit Y velocity to not go above horizon
+			var velocityX = Math.cos(finalAngle) * woodenStar.speed;
+			var velocityY = Math.sin(finalAngle) * woodenStar.speed;
+			// If velocity would make star go above horizon, limit it to horizontal only
+			if (velocityY < 0 && woodenStar.y + velocityY * 50 < horizonY) {
+				// 50 frames lookahead
+				velocityY = Math.max(velocityY, 0); // Don't allow upward movement that would cross horizon
+			}
+			woodenStar.velocityX = velocityX;
+			woodenStar.velocityY = velocityY;
 			woodenStars.push(woodenStar);
 			// Add wooden star after ninja in display list so it appears in front
 			var ninjaIndex = game.children.indexOf(ninja);
@@ -3655,6 +3684,8 @@ game.update = function () {
 						};
 						// Spawn lightning that stretches from cloud center to ninja center
 						lightning = new Lightning();
+						// Store reference to the cloud that fired this lightning
+						lightning.sourceCloud = cloud;
 						lightning.x = cloud.x;
 						lightning.y = cloud.y; // Position at cloud center
 						// Stretch lightning from cloud center to ninja center
