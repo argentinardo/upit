@@ -19,9 +19,10 @@ LK.init.image('casaNinja', {width:600, height:600, id:'6893ba9c6c5d0982f48f476e'
 LK.init.image('casaNinjaCerrada', {width:600, height:600, id:'6893e82b5896eda87911e33f'})
 LK.init.image('center-ui-bg', {width:200, height:74.22, id:'6886b03e0363b585632d55ae'})
 LK.init.image('cloud', {width:150, height:80, id:'687c37cce5cbe2bee2b1bfd1'})
+LK.init.image('cloudInactive', {width:100, height:100, id:'6893ff94eba6f1f305376726'})
 LK.init.image('cloudType2', {width:200, height:197.66, id:'687d876bbdf42f92241c53ec'})
 LK.init.image('cloudType3', {width:100, height:60, id:'687c37cce5cbe2bee2b1bfce'})
-LK.init.image('electrocutado', {width:180, height:180, id:'687d5d90546d3d568db4ef77'})
+LK.init.image('electrocutado', {width:180, height:180, id:'68940cf06c5d0982f48f4818'})
 LK.init.image('enemy', {width:300, height:307, id:'687c381ae5cbe2bee2b1bfdb', flipX:1})
 LK.init.image('freeze-archer-ninja', {width:100, height:100, id:'687fda0388fabecfe2dd55cc'})
 LK.init.image('freeze-enemy', {width:100, height:100, id:'687f88b35ad081944b422bcd'})
@@ -63,33 +64,34 @@ LK.init.sound('Congelado', {volume:1, start:0, end:1, id:'687fdb2488fabecfe2dd55
 LK.init.sound('Enemy3', {volume:1, start:0.292, end:0.874, id:'687d9ca7bdf42f92241c54c4'})
 LK.init.sound('Hit2', {volume:1, start:0.15, end:1, id:'687d9676bdf42f92241c5482'})
 LK.init.sound('Ninjaarrowgrito', {volume:1, start:0.361, end:1, id:'687ce7c702066f9f2984dd9d'})
-LK.init.sound('aeroplane-fall', {volume:1, start:0.411, end:0.431, id:'6886e3ee828e2fa043a9e80e'})
+LK.init.sound('aeroplane-fall', {volume:1, start:0, end:1, id:'6886e3ee828e2fa043a9e80e'})
 LK.init.sound('alert-sound', {volume:1, start:0.141, end:0.417, id:'689115a8eba6f1f305376639'})
 LK.init.sound('alivio', {volume:1, start:0.492, end:0.672, id:'6893d7de5896eda87911e334'})
 LK.init.sound('archer-shoot', {volume:1.5, start:0, end:1, id:'687e298f5089f8124e100a87'})
-LK.init.sound('bloop', {volume:1, start:0.309, end:0.471, id:'6893e87ceba6f1f30537671f'})
+LK.init.sound('bloop', {volume:2, start:0.309, end:0.471, id:'6893e87ceba6f1f30537671f'})
 LK.init.sound('bodyFall', {volume:1.85, start:0, end:0.512, id:'6891f718eba6f1f30537666b'})
 LK.init.sound('brbrbrbrbr', {volume:1, start:0.385, end:0.763, id:'689134375896eda87911e261'})
 LK.init.sound('breakIce', {volume:0.5, start:0.453, end:0.669, id:'688f817ce0d9f2c7c65f34cd'})
-LK.init.sound('electric-cloud-hit')
+LK.init.sound('electric-cloud-hit', {volume:1, start:0.375, end:1, id:'68940308eba6f1f305376728'})
 LK.init.sound('fallBox', {volume:1, start:0.223, end:0.63, id:'689134375896eda87911e267'})
 LK.init.sound('hit', {volume:1, start:0, end:1, id:'687ce7e702066f9f2984dda1'})
 LK.init.sound('ice-throw')
 LK.init.sound('icesun', {volume:1, start:0, end:1, id:'687e621463d16be0c7d93bbd'})
 LK.init.sound('jump', {volume:1, start:0, end:1, id:'687ce4f802066f9f2984dd49'})
 LK.init.sound('lightning', {volume:0.8, start:0, end:1, id:'687d04424caaf4399f3ee1ec'})
-LK.init.music('main-theme', {volume:1, start:0, end:1, id:'687ce4796abc931f9db9a9e1'})
+LK.init.music('main-theme', {volume:0.5, start:0, end:1, id:'687ce4796abc931f9db9a9e1'})
 LK.init.music('mainTheme')
-LK.init.sound('meo', {volume:1, start:0.686, end:0.941, id:'6893d7df5896eda87911e337'})
+LK.init.sound('meo', {volume:1.5, start:0.686, end:0.941, id:'6893d7df5896eda87911e337'})
 LK.init.sound('meteoro-golpe', {volume:2, start:0.495, end:0.692, id:'689134375896eda87911e264'})
 LK.init.sound('meteoro-grito', {volume:1, start:0.51, end:0.68, id:'689134375896eda87911e263'})
 LK.init.sound('meterito-voltea')
 LK.init.sound('mushroom-hit', {volume:1, start:0.281, end:0.779, id:'689133d65896eda87911e25e'})
 LK.init.sound('ninja-ouch', {volume:1, start:0, end:0.783, id:'687d60a5546d3d568db4ef95'})
 LK.init.sound('ninjaJump', {volume:1, start:0, end:1, id:'687cf1f902066f9f2984de22'})
-LK.init.sound('pedoLargo', {volume:1, start:0.295, end:0.612, id:'6893e87ceba6f1f30537671e'})
-LK.init.sound('pedos', {volume:1, start:0.565, end:0.668, id:'6893e87ceba6f1f30537671c'})
+LK.init.sound('pedoLargo', {volume:1.5, start:0.295, end:0.612, id:'6893e87ceba6f1f30537671e'})
+LK.init.sound('pedos', {volume:2, start:0.565, end:0.668, id:'6893e87ceba6f1f30537671c'})
 LK.init.sound('pipipipipi', {volume:1, start:0, end:0.714, id:'687e658de214dcb39e5b1d0d'})
+LK.init.sound('planeHit', {volume:1, start:0.291, end:0.453, id:'68940f58eba6f1f30537672d'})
 LK.init.sound('planefall', {volume:0.5, start:0, end:1, id:'687e25fe97be051837220948'})
 LK.init.sound('portazo', {volume:1, start:0.421, end:0.582, id:'6893d7de5896eda87911e333'})
 LK.init.sound('powerUp', {volume:1, start:0.501, end:0.77, id:'689133d6eba6f1f305376642'})
@@ -97,7 +99,7 @@ LK.init.sound('puerta-abre', {volume:1, start:0.433, end:0.724, id:'6893d7de5896
 LK.init.sound('sol-grito', {volume:1, start:0, end:1, id:'687d17df4caaf4399f3ee290'})
 LK.init.sound('sol-risa', {volume:1, start:0.103, end:0.953, id:'687d50c6c4a1a36a58c65538'})
 LK.init.sound('throw', {volume:1, start:0, end:1, id:'687ce54002066f9f2984dd53'})
-LK.init.sound('wc', {volume:1, start:0.127, end:0.736, id:'6893d7df5896eda87911e336'})
+LK.init.sound('wc', {volume:1.5, start:0.127, end:0.736, id:'6893d7df5896eda87911e336'})
 
 /**** 
 * Plugins
@@ -1157,7 +1159,7 @@ var NinjaStar = Container.expand(function () {
 			var distance = Math.sqrt(dx * dx + dy * dy);
 			// Scale from 1.0 to 0.1 based on distance (farther = smaller)
 			var maxDistance = 1500; // Maximum expected distance before removal
-			var minScale = 0.3;
+			var minScale = 0.2;
 			var maxScale = 1.5;
 			var normalizedDistance = Math.min(distance / maxDistance, 1);
 			var scale = maxScale - normalizedDistance * (maxScale - minScale);
@@ -1165,7 +1167,7 @@ var NinjaStar = Container.expand(function () {
 			self.scaleY = scale;
 		}
 		// Rotate ninja star - one full rotation per second (60 FPS = 60 ticks per second)
-		starGraphics.rotation += Math.PI * 2 / 60; // 2π radians per 60 ticks = 1 rotation per second
+		starGraphics.rotation += Math.PI * 2 / 45; // 2π radians per 60 ticks = 1 rotation per second
 		// Remove if off screen
 		if (self.x < -100 || self.x > 2148 || self.y < -100 || self.y > 3332) {
 			self.active = false;
@@ -1650,7 +1652,15 @@ var electroCloud = Container.expand(function () {
 		anchorX: 0.5,
 		anchorY: 0.5,
 		scaleX: 0.75,
-		scaleY: 0.75
+		scaleY: 0.75,
+		alpha: 0 // Start invisible
+	});
+	var inactiveCloudGraphics = self.attachAsset('cloudInactive', {
+		anchorX: 0.5,
+		anchorY: 0.5,
+		scaleX: 1,
+		scaleY: 1,
+		alpha: 1 // Start invisible
 	});
 	self.speed = Math.random() * 1.5 + 0.5; // Different speed range
 	self.active = true;
@@ -1660,7 +1670,8 @@ var electroCloud = Container.expand(function () {
 	// Start with much smaller scale and transparency
 	self.scaleX = 0.05;
 	self.scaleY = 0.05;
-	cloudGraphics.alpha = 0.1; // Start very transparent
+	cloudGraphics.alpha = 0; // Start very transparent with active cloud
+	inactiveCloudGraphics.alpha = 0.1; // Start with inactive cloud hidden
 	tween(self, {
 		scaleX: 0.3,
 		scaleY: 0.3
@@ -1684,10 +1695,17 @@ var electroCloud = Container.expand(function () {
 			// Start charging when entering interaction range
 			self.isCharged = true;
 			self.chargeTimer = 0;
+			// Switch to inactive cloud graphics (cloudInactive when not charged)
+			cloudGraphics.alpha = 0;
+			inactiveCloudGraphics.alpha = 1;
+			// Play lightning sound when cloud becomes active
 		} else if (!isInInteractionRange && self.isCharged) {
 			// Stop charging when leaving interaction range
 			self.isCharged = false;
 			cloudGraphics.tint = 0xFFFFFF; // Reset to normal color
+			// Switch to active cloud graphics (cloudType2 when charged)
+			cloudGraphics.alpha = 0;
+			inactiveCloudGraphics.alpha = 1;
 		}
 		// Update charge timer and visual effects
 		if (self.isCharged) {
@@ -1711,20 +1729,21 @@ var electroCloud = Container.expand(function () {
 					}
 				});
 			}
+			// Play lightning sound periodically while charged (every 60 frames = 1 second)
 		} else {
 			// Subtle flickering when not in interaction range (distant or too close)
 			self.flickerTimer = self.flickerTimer || 0;
 			self.flickerTimer++;
 			if (self.flickerTimer % 45 === 0) {
-				// Slower, more subtle flicker
+				// Slower, more subtle flicker for inactive cloud
 				var distantTint = 0xCCCCCC; // Gray tint for distant clouds
-				tween(cloudGraphics, {
+				tween(inactiveCloudGraphics, {
 					tint: distantTint
 				}, {
 					duration: 200,
 					easing: tween.easeInOut,
 					onFinish: function onFinish() {
-						tween(cloudGraphics, {
+						tween(inactiveCloudGraphics, {
 							tint: 0xFFFFFF
 						}, {
 							duration: 200,
@@ -1737,7 +1756,14 @@ var electroCloud = Container.expand(function () {
 		// Transparency: faint at distance, solid when close, but dimmed when not in interaction range
 		var baseAlpha = Math.min(1.0, 0.3 + distanceProgress * 0.7);
 		var finalAlpha = self.isCharged ? baseAlpha : baseAlpha * 0.6; // Dimmed when not charged
-		cloudGraphics.alpha = finalAlpha;
+		if (self.isCharged) {
+			cloudGraphics.alpha = finalAlpha;
+			inactiveCloudGraphics.alpha = 0;
+			LK.getSound('electric-cloud-hit').play();
+		} else {
+			cloudGraphics.alpha = 0;
+			inactiveCloudGraphics.alpha = finalAlpha;
+		}
 		// Y movement: start near horizon, escape dramatically upward when close
 		self.baseY = self.baseY || self.y;
 		var horizonCloudY = self.baseY; // Original Y position (near horizon)
@@ -1954,8 +1980,8 @@ function showCurrentPhase() {
 		window.phaseDisplay = new Text2();
 		window.phaseDisplay.x = 1024; // Center of screen
 		window.phaseDisplay.y = 160; // 160px from top
-		window.phaseDisplay.size = 50;
-		window.phaseDisplay.fill = '#FFFFFF';
+		window.phaseDisplay.size = 60;
+		window.phaseDisplay.fill = '#FFD700'; // Golden yellow for better visibility
 		window.phaseDisplay.anchorX = 0.5;
 		window.phaseDisplay.anchorY = 0.5;
 		game.addChild(window.phaseDisplay);
@@ -1988,14 +2014,13 @@ function showPhaseInfo() {
 	phaseInfo.setText(message);
 	phaseInfo.x = casaNinja.x;
 	phaseInfo.y = casaNinja.y - 200;
-	phaseInfo.size = 40;
-	phaseInfo.fill = '#FFFFFF';
+	phaseInfo.size = 50;
+	phaseInfo.fill = '#FFD700'; // Golden yellow for better visibility
 	// Initialize style object if it doesn't exist
 	if (!phaseInfo.style) {
 		phaseInfo.style = {};
 	}
-	phaseInfo.style.stroke = '#000000';
-	phaseInfo.style.strokeThickness = 3;
+	// Remove stroke for LK compatibility
 	phaseInfo.anchorX = 0.5;
 	phaseInfo.anchorY = 0.5;
 	game.addChild(phaseInfo);
@@ -2449,9 +2474,7 @@ scoreTxt.style.dropShadow = true;
 scoreTxt.style.dropShadowColor = "#000000";
 scoreTxt.style.dropShadowDistance = 4;
 scoreTxt.style.dropShadowAngle = Math.PI / 4;
-// Add bold stroke effect
-scoreTxt.style.stroke = "#ffffff";
-scoreTxt.style.strokeThickness = 3;
+// Add bold stroke effect - removed for LK compatibility
 game.addChild(scoreTxt);
 // Create enemies text on the right side of center UI background
 var enemiesTxt = new Text2('00000', {
@@ -2471,9 +2494,7 @@ enemiesTxt.style.dropShadow = true;
 enemiesTxt.style.dropShadowColor = "#000000";
 enemiesTxt.style.dropShadowDistance = 4;
 enemiesTxt.style.dropShadowAngle = Math.PI / 4;
-// Add bold stroke effect
-enemiesTxt.style.stroke = "#000000";
-enemiesTxt.style.strokeThickness = 3;
+// Add bold stroke effect - removed for LK compatibility
 game.addChild(enemiesTxt);
 // Track enemies killed and time survived
 var enemiesKilled = 0;
@@ -3652,8 +3673,8 @@ game.update = function () {
 					break;
 				}
 			}
-			// Check collision with sun to freeze it
-			if (iceStar.intersects(sun)) {
+			// Check collision with sun to freeze it - only if sun is visible
+			if (sun.alpha > 0 && iceStar.intersects(sun)) {
 				// Add strong initial trembling effect
 				var createStrongTrembling = function createStrongTrembling() {
 					var trembleIntensity = 20; // Strong initial shake
@@ -3928,8 +3949,8 @@ game.update = function () {
 			ninjaStars.splice(i, 1);
 			continue;
 		}
-		// Check collision with sun
-		if (star.intersects(sun)) {
+		// Check collision with sun - only if sun is visible
+		if (sun.alpha > 0 && star.intersects(sun)) {
 			// Hit sun - change sun image for 2 seconds
 			if (!sunIsHit) {
 				LK.getSound('sol-grito').play();
@@ -4112,7 +4133,7 @@ game.update = function () {
 				// Hit airplane - drop power-up
 				dropPowerUp(airplane);
 				// Play special airplane hit sound
-				LK.getSound('hit').play();
+				LK.getSound('planeHit').play();
 				// Remove star
 				star.active = false;
 				star.destroy();
@@ -4259,8 +4280,8 @@ game.update = function () {
 			enemies.splice(i, 1);
 			continue;
 		}
-		// Check collision with ninja (only in lower part of game when enemy is close, not frozen, and not falling)
-		if (enemy.y > 2200 && !enemy.frozen && !enemy.falling && ninja.intersects(enemy)) {
+		// Check collision with ninja (only in lower part of game when enemy is close, not frozen, not falling, and casa ninja is not active)
+		if (enemy.y > 2200 && !enemy.frozen && !enemy.falling && !(casaNinja && casaNinja.active) && ninja.intersects(enemy)) {
 			LK.getSound('ninja-ouch').play();
 			// Turn screen red and stop ninja walking
 			tween(game, {
@@ -4295,8 +4316,8 @@ game.update = function () {
 			enemies2.splice(i, 1);
 			continue;
 		}
-		// Check collision with ninja (only in lower part of game when enemy is close, not frozen, and not falling)
-		if (enemy2.y > 2200 && !enemy2.frozen && !enemy2.falling && ninja.intersects(enemy2)) {
+		// Check collision with ninja (only in lower part of game when enemy is close, not frozen, not falling, and casa ninja is not active)
+		if (enemy2.y > 2200 && !enemy2.frozen && !enemy2.falling && !(casaNinja && casaNinja.active) && ninja.intersects(enemy2)) {
 			LK.getSound('ninja-ouch').play();
 			// Turn screen red and stop ninja walking
 			tween(game, {
@@ -4331,8 +4352,8 @@ game.update = function () {
 			enemies3.splice(i, 1);
 			continue;
 		}
-		// Check collision with ninja (only in lower part of game when enemy is close, not frozen, and not falling)
-		if (enemy3.y > 2200 && !enemy3.frozen && !enemy3.falling && ninja.intersects(enemy3)) {
+		// Check collision with ninja (only in lower part of game when enemy is close, not frozen, not falling, and casa ninja is not active)
+		if (enemy3.y > 2200 && !enemy3.frozen && !enemy3.falling && !(casaNinja && casaNinja.active) && ninja.intersects(enemy3)) {
 			LK.getSound('ninja-ouch').play();
 			// Turn screen red and stop ninja walking
 			tween(game, {
@@ -4481,7 +4502,7 @@ game.update = function () {
 			}
 		}
 		// Check collision with ninja (only if not jumping and when obstacle reaches ninja's feet at ground level)
-		if (!ninja.isJumping && obstacle.y > 2600 && ninja.intersects(obstacle)) {
+		if (!ninja.isJumping && obstacle.y > 2600 && !(casaNinja && casaNinja.active) && ninja.intersects(obstacle)) {
 			// Ninja collides with obstacle - play mushroom hit sound
 			LK.getSound('mushroom-hit').play();
 			LK.getSound('pipipipipi').play();
@@ -4521,7 +4542,7 @@ game.update = function () {
 				continue;
 			}
 			// Check if ninja is jumping and near the tori
-			if (ninja.isJumping && tori.y > 2200 && ninja.intersects(tori)) {
+			if (ninja.isJumping && tori.y > 2200 && !(casaNinja && casaNinja.active) && ninja.intersects(tori)) {
 				LK.getSound('ninja-ouch').play();
 				// Turn screen red and stop ninja walking
 				tween(game, {
@@ -4549,8 +4570,8 @@ game.update = function () {
 			}
 		}
 	}
-	// Spawn enemies - only after main screen is dismissed and not in casa ninja
-	if (!mainScreenActive && !isInCasaNinja && isFeatureUnlocked('enemies')) {
+	// Spawn enemies - only after main screen is dismissed and not in casa ninja or when casa ninja is active
+	if (!mainScreenActive && !isInCasaNinja && !(casaNinja && casaNinja.active) && isFeatureUnlocked('enemies')) {
 		enemySpawnTimer++;
 		if (enemySpawnTimer > 600) {
 			spawnEnemy();
@@ -4570,14 +4591,14 @@ game.update = function () {
 			spawnEnemy3();
 			enemy3SpawnTimer = 0;
 		}
-		// Spawn enemy archers on trees - only in phase 4+
-		if (LK.ticks % 900 === 0 && isFeatureUnlocked('archers')) {
+		// Spawn enemy archers on trees - only in phase 4+ and not when casa ninja is active
+		if (LK.ticks % 900 === 0 && isFeatureUnlocked('archers') && !(casaNinja && casaNinja.active)) {
 			// Every 15 seconds, only in phase 4+
 			spawnEnemyArcher();
 		}
 	}
-	// Spawn obstacles - much less frequently and with conflict detection, but not in casa ninja
-	if (!isInCasaNinja && isFeatureUnlocked('obstacles')) {
+	// Spawn obstacles - much less frequently and with conflict detection, but not in casa ninja or when casa ninja is active
+	if (!isInCasaNinja && !(casaNinja && casaNinja.active) && isFeatureUnlocked('obstacles')) {
 		obstacleSpawnTimer++;
 		if (obstacleSpawnTimer > 1200) {
 			// Doubled from 600 to 1200 for fewer obstacles
@@ -4592,8 +4613,8 @@ game.update = function () {
 			}
 		}
 	}
-	// Spawn toris - but not when in casa ninja
-	if (!isInCasaNinja && isFeatureUnlocked('toris')) {
+	// Spawn toris - but not when in casa ninja or when casa ninja is active
+	if (!isInCasaNinja && !(casaNinja && casaNinja.active) && isFeatureUnlocked('toris')) {
 		toriSpawnTimer++;
 		if (toriSpawnTimer > 480) {
 			// Spawn every 8 seconds
@@ -4681,15 +4702,15 @@ game.update = function () {
 	// Spawn clouds
 	cloudSpawnTimer++;
 	if (cloudSpawnTimer > 120) {
-		// Spawn clouds less frequently for easier gameplay - but not when in casa ninja
-		if (!isInCasaNinja) {
+		// Spawn clouds less frequently for easier gameplay - but not when in casa ninja or when casa ninja is active
+		if (!isInCasaNinja && !(casaNinja && casaNinja.active)) {
 			spawnCloud();
 			cloudSpawnTimer = 0;
 		}
 	}
 	// Fog spawning removed - no fog elements needed
-	// Spawn trees on both sides - but not when in casa ninja
-	if (!isInCasaNinja) {
+	// Spawn trees on both sides - but not when in casa ninja or when casa ninja is active
+	if (!isInCasaNinja && !(casaNinja && casaNinja.active)) {
 		treeSpawnTimer++;
 		if (treeSpawnTimer > 90) {
 			// Spawn trees much more frequently - 1.5 seconds interval for many more trees
@@ -4697,13 +4718,13 @@ game.update = function () {
 			treeSpawnTimer = 0;
 		}
 	}
-	// Spawn wooden planks with more spacing for walkway effect - but not when in casa ninja
-	if (!isInCasaNinja && LK.ticks % 25 === 0) {
+	// Spawn wooden planks with more spacing for walkway effect - but not when in casa ninja or when casa ninja is active
+	if (!isInCasaNinja && !(casaNinja && casaNinja.active) && LK.ticks % 25 === 0) {
 		// Spawn wooden planks every 25 frames (0.42 seconds) for spaced walkway effect
 		spawnWoodenPlanks();
 	}
-	// Spawn airplanes periodically - only if unlocked and not in casa ninja
-	if (!isInCasaNinja) {
+	// Spawn airplanes periodically - only if unlocked and not in casa ninja or when casa ninja is active
+	if (!isInCasaNinja && !(casaNinja && casaNinja.active)) {
 		airplaneSpawnTimer++;
 		if (airplaneSpawnTimer > 600 && isFeatureUnlocked('airplanes')) {
 			// Every 10 seconds
