@@ -2,8 +2,6 @@
 * Assets
 ****/
 LK.init.shape('grassMask', {width:3000, height:3000, color:0x228b22, shape:'box'})
-LK.init.shape('roadMask', {width:2048, height:800, color:0x000000, shape:'ellipse'})
-LK.init.shape('skyBackground', {width:2048, height:1366, color:0x87ceeb, shape:'box'})
 LK.init.image('Archer-ninja', {width:100, height:100, id:'687e2b5a5089f8124e100aa0'})
 LK.init.image('Arma-ui', {width:100, height:100, id:'6880b9d8303aec2e4fad813e'})
 LK.init.image('Enemy2', {width:250, height:288.29, id:'687d9735bdf42f92241c548b', flipX:1})
@@ -17,6 +15,8 @@ LK.init.image('archer-ninja', {width:500, height:500, id:'687e2b5a5089f8124e100a
 LK.init.image('archer-ninja-full-body', {width:100, height:100, id:'687e21af97be05183722092e', flipX:1})
 LK.init.image('arrow', {width:40, height:17.34, id:'687e246697be05183722093f'})
 LK.init.image('backgroundImage', {width:2048, height:2732, id:'687d7eae546d3d568db4f1d9'})
+LK.init.image('casaNinja', {width:600, height:600, id:'6893ba9c6c5d0982f48f476e'})
+LK.init.image('casaNinjaCerrada', {width:600, height:600, id:'6893e82b5896eda87911e33f'})
 LK.init.image('center-ui-bg', {width:200, height:74.22, id:'6886b03e0363b585632d55ae'})
 LK.init.image('cloud', {width:150, height:80, id:'687c37cce5cbe2bee2b1bfd1'})
 LK.init.image('cloudType2', {width:200, height:197.66, id:'687d876bbdf42f92241c53ec'})
@@ -45,6 +45,7 @@ LK.init.image('parachute', {width:80, height:80, id:'687da11abdf42f92241c54da'})
 LK.init.image('powerup1', {width:60, height:60, id:'68864d1227e10acdc345396b'})
 LK.init.image('powerup2', {width:60, height:60, id:'68864de727e10acdc345397a'})
 LK.init.image('rockObstacle', {width:300, height:296, id:'687e5d2863d16be0c7d93b80'})
+LK.init.image('shoriuken3', {width:100, height:100, id:'6891fd90eba6f1f305376673'})
 LK.init.image('spikeObstacle', {width:400, height:415, id:'687e583363d16be0c7d93b43'})
 LK.init.image('sun', {width:300, height:300, id:'687d3878be19cec154f53150'})
 LK.init.image('sunAttack', {width:150, height:150, id:'687cea1702066f9f2984ddca'})
@@ -56,36 +57,47 @@ LK.init.image('treeType3', {width:500, height:466.8, id:'687ced1902066f9f2984dde
 LK.init.image('wooden-start', {width:100, height:100, id:'687e1b0348730eff1e65a39c'})
 LK.init.image('woodenPlank', {width:400, height:109.38, id:'687f83cc5ad081944b422bbb'})
 LK.init.image('woodenPlank4', {width:400, height:235.94, id:'687d6ed8546d3d568db4f020'})
-LK.init.sound('Arcer-apears', {volume:1, start:0, end:1, id:'687e2a4c5089f8124e100a91'})
-LK.init.sound('Avion', {volume:1, start:0, end:1, id:'687d99e6bdf42f92241c54b4'})
-LK.init.sound('Congelado', {volume:1, start:0, end:1, id:'687fdb2488fabecfe2dd55df'})
+LK.init.sound('Arcer-apears', {volume:1, start:0.43, end:0.929, id:'689133a65896eda87911e25b'})
+LK.init.sound('Avion', {volume:1, start:0.194, end:1, id:'6891373a5896eda87911e273'})
+LK.init.sound('Congelado', {volume:1, start:0, end:1, id:'687fdb2488fabecfe2dd55e1'})
 LK.init.sound('Enemy3', {volume:1, start:0.292, end:0.874, id:'687d9ca7bdf42f92241c54c4'})
 LK.init.sound('Hit2', {volume:1, start:0.15, end:1, id:'687d9676bdf42f92241c5482'})
-LK.init.sound('Ninjaarrowgrito', {volume:1, start:0, end:1, id:'687ce7c702066f9f2984dd9d'})
+LK.init.sound('Ninjaarrowgrito', {volume:1, start:0.361, end:1, id:'687ce7c702066f9f2984dd9d'})
 LK.init.sound('aeroplane-fall', {volume:1, start:0.411, end:0.431, id:'6886e3ee828e2fa043a9e80e'})
-LK.init.sound('alert-sound')
-LK.init.sound('archer-shoot', {volume:1, start:0, end:1, id:'687e298f5089f8124e100a87'})
-LK.init.sound('breakIce')
+LK.init.sound('alert-sound', {volume:1, start:0.141, end:0.417, id:'689115a8eba6f1f305376639'})
+LK.init.sound('alivio', {volume:1, start:0.492, end:0.672, id:'6893d7de5896eda87911e334'})
+LK.init.sound('archer-shoot', {volume:1.5, start:0, end:1, id:'687e298f5089f8124e100a87'})
+LK.init.sound('bloop', {volume:1, start:0.309, end:0.471, id:'6893e87ceba6f1f30537671f'})
+LK.init.sound('bodyFall', {volume:1.85, start:0, end:0.512, id:'6891f718eba6f1f30537666b'})
+LK.init.sound('brbrbrbrbr', {volume:1, start:0.385, end:0.763, id:'689134375896eda87911e261'})
+LK.init.sound('breakIce', {volume:0.5, start:0.453, end:0.669, id:'688f817ce0d9f2c7c65f34cd'})
 LK.init.sound('electric-cloud-hit')
-LK.init.sound('fallBox')
+LK.init.sound('fallBox', {volume:1, start:0.223, end:0.63, id:'689134375896eda87911e267'})
 LK.init.sound('hit', {volume:1, start:0, end:1, id:'687ce7e702066f9f2984dda1'})
 LK.init.sound('ice-throw')
 LK.init.sound('icesun', {volume:1, start:0, end:1, id:'687e621463d16be0c7d93bbd'})
 LK.init.sound('jump', {volume:1, start:0, end:1, id:'687ce4f802066f9f2984dd49'})
-LK.init.sound('lightning', {volume:0.8, start:0, end:0.677, id:'687d04424caaf4399f3ee1ec'})
+LK.init.sound('lightning', {volume:0.8, start:0, end:1, id:'687d04424caaf4399f3ee1ec'})
 LK.init.music('main-theme', {volume:1, start:0, end:1, id:'687ce4796abc931f9db9a9e1'})
 LK.init.music('mainTheme')
-LK.init.sound('meteoro-golpe', {volume:1, start:0, end:1, id:'687d52a7c4a1a36a58c6553e'})
-LK.init.sound('meteoro-grito', {volume:1, start:0, end:1, id:'687d42a0eec7e75544ba1ac5'})
+LK.init.sound('meo', {volume:1, start:0.686, end:0.941, id:'6893d7df5896eda87911e337'})
+LK.init.sound('meteoro-golpe', {volume:2, start:0.495, end:0.692, id:'689134375896eda87911e264'})
+LK.init.sound('meteoro-grito', {volume:1, start:0.51, end:0.68, id:'689134375896eda87911e263'})
 LK.init.sound('meterito-voltea')
-LK.init.sound('mushroom-hit')
+LK.init.sound('mushroom-hit', {volume:1, start:0.281, end:0.779, id:'689133d65896eda87911e25e'})
 LK.init.sound('ninja-ouch', {volume:1, start:0, end:0.783, id:'687d60a5546d3d568db4ef95'})
 LK.init.sound('ninjaJump', {volume:1, start:0, end:1, id:'687cf1f902066f9f2984de22'})
+LK.init.sound('pedoLargo', {volume:1, start:0.295, end:0.612, id:'6893e87ceba6f1f30537671e'})
+LK.init.sound('pedos', {volume:1, start:0.565, end:0.668, id:'6893e87ceba6f1f30537671c'})
 LK.init.sound('pipipipipi', {volume:1, start:0, end:0.714, id:'687e658de214dcb39e5b1d0d'})
-LK.init.sound('planefall', {volume:1, start:0, end:1, id:'687e25fe97be051837220948'})
+LK.init.sound('planefall', {volume:0.5, start:0, end:1, id:'687e25fe97be051837220948'})
+LK.init.sound('portazo', {volume:1, start:0.421, end:0.582, id:'6893d7de5896eda87911e333'})
+LK.init.sound('powerUp', {volume:1, start:0.501, end:0.77, id:'689133d6eba6f1f305376642'})
+LK.init.sound('puerta-abre', {volume:1, start:0.433, end:0.724, id:'6893d7de5896eda87911e335'})
 LK.init.sound('sol-grito', {volume:1, start:0, end:1, id:'687d17df4caaf4399f3ee290'})
 LK.init.sound('sol-risa', {volume:1, start:0.103, end:0.953, id:'687d50c6c4a1a36a58c65538'})
 LK.init.sound('throw', {volume:1, start:0, end:1, id:'687ce54002066f9f2984dd53'})
+LK.init.sound('wc', {volume:1, start:0.127, end:0.736, id:'6893d7df5896eda87911e336'})
 
 /**** 
 * Plugins
@@ -120,21 +132,18 @@ var Airplane = Container.expand(function () {
 			// Move with falling physics
 			self.x += self.fallVelocityX;
 			self.y += self.fallVelocityY;
-			// Rotate airplane to point downward during fall
+			// Keep original rotation - no rotation during fall
 			var airplaneGraphics = self.children[0];
 			if (airplaneGraphics) {
-				// Gradually rotate to point downward
-				var targetRotation = Math.PI / 2; // 90 degrees down
-				if (Math.abs(airplaneGraphics.rotation - targetRotation) > 0.1) {
-					airplaneGraphics.rotation += (targetRotation - airplaneGraphics.rotation) * 0.1;
-				}
+				// Maintain original rotation (0 degrees)
+				airplaneGraphics.rotation = 0;
 			}
 		} else {
 			// Normal airplane flight
 			self.x += self.speed * self.direction;
 		}
 		// Remove if off screen
-		if (self.x < -200 || self.x > 2248 || self.y > 3332) {
+		if (self.x < -200 || self.x > 2248 || self.y > 4000) {
 			// Play break ice sound if airplane was frozen when leaving screen
 			if (self.frozen) {
 				LK.getSound('breakIce').play();
@@ -214,16 +223,16 @@ var Alert = Container.expand(function () {
 	self.maxLifetime = 180; // 3 seconds - longer duration
 	// Animate alert appearance with better visibility - animate the graphics directly
 	tween(alertGraphics, {
-		scaleX: 2.5,
-		scaleY: 2.5
+		scaleX: 4,
+		scaleY: 4
 	}, {
 		duration: 200,
 		easing: tween.easeOut,
 		onFinish: function onFinish() {
 			// Hold at full size for a moment
 			tween(alertGraphics, {
-				scaleX: 2.0,
-				scaleY: 2.0
+				scaleX: 3.0,
+				scaleY: 3.0
 			}, {
 				duration: 300,
 				easing: tween.linear,
@@ -314,6 +323,72 @@ var Arrow = Container.expand(function () {
 	};
 	return self;
 });
+var CasaNinja = Container.expand(function () {
+	var self = Container.call(this);
+	var casaGraphics = self.attachAsset('casaNinja', {
+		anchorX: 0.5,
+		anchorY: 1.0
+	});
+	self.speed = 3;
+	self.active = true;
+	self.baseX = 1024;
+	self.isOpen = true; // Track if house is open or closed
+	// Start with zero scale and tween to grow (same as tori)
+	self.scaleX = 0.1;
+	self.scaleY = 0.1;
+	tween(self, {
+		scaleX: 1,
+		scaleY: 1
+	}, {
+		duration: 700,
+		easing: tween.easeOut
+	});
+	self.update = function () {
+		if (!self.active || game.paused) {
+			return;
+		}
+		// Move toward player from horizon with acceleration (exactly like tori)
+		self.z = self.z || 1000; // Start far away
+		// Calculate acceleration based on distance - closer objects move faster
+		var distanceFactor = Math.max(0.1, 1 - self.z / 1000); // 0.1 to 1.0
+		var currentSpeed = self.speed * (0.3 + distanceFactor * 2); // Speed ranges from 0.9 to 6.9
+		self.z -= currentSpeed;
+		// Calculate perspective scaling and position (exactly like tori)
+		var scale = Math.max(0.1, 1 - self.z / 1000);
+		var horizonY = 1503; // Horizon line position moved 10% lower
+		var groundY = 2532; // Ground position
+		var perspectiveY = horizonY + (groundY - horizonY) * scale;
+		self.y = perspectiveY;
+		// Casa ninja stays in center like tori
+		self.x = self.baseX; // Keep in center, no spreading
+		// Scale casa ninja exactly like tori
+		var casaScale = scale * 2.0; // Same scaling as tori
+		self.scaleX = casaScale;
+		self.scaleY = casaScale;
+		// Remove if too close or below screen (same as tori)
+		if (self.z <= -500 || self.y > 3000) {
+			self.active = false;
+		}
+	};
+	// Method to change house state (open/closed)
+	self.changeState = function (isOpen) {
+		self.isOpen = isOpen;
+		if (isOpen) {
+			casaGraphics.destroy();
+			casaGraphics = self.attachAsset('casaNinja', {
+				anchorX: 0.5,
+				anchorY: 1.0
+			});
+		} else {
+			casaGraphics.destroy();
+			casaGraphics = self.attachAsset('casaNinjaCerrada', {
+				anchorX: 0.5,
+				anchorY: 1.0
+			});
+		}
+	};
+	return self;
+});
 var Cloud = Container.expand(function () {
 	var self = Container.call(this);
 	var cloudGraphics = self.attachAsset('cloud', {
@@ -324,48 +399,51 @@ var Cloud = Container.expand(function () {
 	});
 	self.speed = Math.random() * 2 + 1; // Random speed between 1-3
 	self.active = true;
-	// Start with smaller scale and transparency
-	self.scaleX = 0.3;
-	self.scaleY = 0.3;
-	cloudGraphics.alpha = 0.2; // Start very transparent
+	// Start with much smaller scale and transparency
+	self.scaleX = 0.05;
+	self.scaleY = 0.05;
+	cloudGraphics.alpha = 0.1; // Start very transparent
 	tween(self, {
-		scaleX: 1,
-		scaleY: 1
+		scaleX: 0.3,
+		scaleY: 0.3
 	}, {
-		duration: 500,
+		duration: 800,
 		easing: tween.easeOut
 	});
 	self.update = function () {
 		if (!self.active || game.paused) {
 			return;
 		}
-		// Move toward player from horizon (slower for depth)
+		// Simulate running toward horizon - clouds approach from distance
 		self.z = self.z || 2000; // Start very far away
 		self.z -= self.speed;
-		// Calculate perspective scaling and position (clouds stay in sky)
-		var scale = Math.max(0.05, 1 - self.z / 2000);
-		// Update transparency based on distance - closer clouds are more opaque
-		var alpha = Math.min(1.0, Math.max(0.2, 1 - self.z / 1500));
+		// Racing game perspective: tiny at horizon, grow gradually
+		var distanceProgress = (2000 - self.z) / 2000; // 0 at start, 1 when very close
+		var scale = 0.02 + distanceProgress * 1.8; // Grow from 0.02 to 1.82 (bigger clouds)
+		// Transparency: faint at distance, solid when close
+		var alpha = Math.min(1.0, 0.3 + distanceProgress * 0.7);
 		cloudGraphics.alpha = alpha;
-		// Keep clouds in upper portion, slight perspective movement
+		// Y movement: start near horizon, escape dramatically upward when close
 		self.baseY = self.baseY || self.y;
-		self.y = self.baseY + (horizonY - self.baseY) * (1 - scale) * 0.3;
+		var horizonCloudY = self.baseY; // Original Y position (near horizon)
+		// Gradual upward movement - clouds rise slowly and smoothly
+		var escapeFactor = distanceProgress * distanceProgress; // Quadratic progression for gradual effect
+		var maxEscapeHeight = 950; // Extremely high upward movement - clouds escape far above screen
+		self.y = horizonCloudY - escapeFactor * maxEscapeHeight;
+		// Scale dramatically as clouds approach
 		self.scaleX = scale;
 		self.scaleY = scale;
-		// Add horizontal movement proportional to distance from screen center
+		// Horizon perspective: clouds spread to sides as you approach them
 		var screenCenter = 1024;
-		var distanceFromCenter = self.x - screenCenter;
-		var horizontalSpeed = distanceFromCenter * 0.001; // Proportional movement
-		self.x += horizontalSpeed;
-		// When clouds get close, make them flee upward dramatically
-		if (self.z <= 200) {
-			// Start fleeing earlier when still some distance away
-			var fleeSpeed = Math.max(8, (200 - self.z) * 0.3); // Increase speed as they get closer
-			self.y -= fleeSpeed; // Move upward faster
-			// Only remove when completely above screen
-			if (self.y < -200) {
-				self.active = false;
-			}
+		self.baseX = self.baseX || self.x; // Store original X position
+		var distanceFromCenter = self.baseX - screenCenter;
+		// Exponential spreading - closer clouds spread much more to sides
+		var spreadFactor = distanceProgress * distanceProgress * 2; // Quadratic spreading
+		var horizontalOffset = distanceFromCenter * spreadFactor;
+		self.x = self.baseX + horizontalOffset;
+		// Remove when cloud is completely off screen - much higher up (800px above screen)
+		if (self.y < -800 || self.z <= -100) {
+			self.active = false;
 		}
 	};
 	return self;
@@ -380,43 +458,51 @@ var CloudType3 = Container.expand(function () {
 	});
 	self.speed = Math.random() * 3 + 2; // Faster clouds
 	self.active = true;
-	// Start with smaller scale and transparency
-	self.scaleX = 0.3;
-	self.scaleY = 0.3;
-	cloudGraphics.alpha = 0.2; // Start very transparent
+	// Start with much smaller scale and transparency
+	self.scaleX = 0.05;
+	self.scaleY = 0.05;
+	cloudGraphics.alpha = 0.1; // Start very transparent
 	tween(self, {
-		scaleX: 1,
-		scaleY: 1
+		scaleX: 0.3,
+		scaleY: 0.3
 	}, {
-		duration: 500,
+		duration: 800,
 		easing: tween.easeOut
 	});
 	self.update = function () {
 		if (!self.active || game.paused) {
 			return;
 		}
+		// Simulate running toward horizon - clouds approach from distance
 		self.z = self.z || 2000;
 		self.z -= self.speed;
-		var scale = Math.max(0.05, 1 - self.z / 2000);
-		// Update transparency based on distance - closer clouds are more opaque
-		var alpha = Math.min(1.0, Math.max(0.2, 1 - self.z / 1500));
+		// Racing game perspective: tiny at horizon, grow gradually
+		var distanceProgress = (2000 - self.z) / 2000; // 0 at start, 1 when very close
+		var scale = 0.02 + distanceProgress * 2.1; // CloudType3 grows biggest of all clouds
+		// Transparency: faint at distance, solid when close
+		var alpha = Math.min(1.0, 0.3 + distanceProgress * 0.7);
 		cloudGraphics.alpha = alpha;
+		// Y movement: start near horizon, escape dramatically upward when close
 		self.baseY = self.baseY || self.y;
-		self.y = self.baseY + (horizonY - self.baseY) * (1 - scale) * 0.3;
+		var horizonCloudY = self.baseY; // Original Y position (near horizon)
+		// Gradual upward movement - clouds rise slowly and smoothly
+		var escapeFactor = distanceProgress * distanceProgress; // Quadratic progression for gradual effect
+		var maxEscapeHeight = 1100; // CloudType3 escapes extremely high - reaches furthest up
+		self.y = horizonCloudY - escapeFactor * maxEscapeHeight;
+		// Scale dramatically as clouds approach
 		self.scaleX = scale;
 		self.scaleY = scale;
-		// Add horizontal movement proportional to distance from screen center
+		// Horizon perspective: clouds spread to sides as you approach them
 		var screenCenter = 1024;
-		var distanceFromCenter = self.x - screenCenter;
-		var horizontalSpeed = distanceFromCenter * 0.001; // Proportional movement
-		self.x += horizontalSpeed;
-		if (self.z <= 200) {
-			// Start fleeing earlier when still some distance away
-			var fleeSpeed = Math.max(10, (200 - self.z) * 0.4); // Faster flee speed for this cloud type
-			self.y -= fleeSpeed;
-			if (self.y < -200) {
-				self.active = false;
-			}
+		self.baseX = self.baseX || self.x; // Store original X position
+		var distanceFromCenter = self.baseX - screenCenter;
+		// Exponential spreading - closer clouds spread much more to sides
+		var spreadFactor = distanceProgress * distanceProgress * 2.2; // Slightly more spreading for CloudType3
+		var horizontalOffset = distanceFromCenter * spreadFactor;
+		self.x = self.baseX + horizontalOffset;
+		// Remove when cloud is completely off screen - much higher up (800px above screen)
+		if (self.y < -800 || self.z <= -100) {
+			self.active = false;
 		}
 	};
 	return self;
@@ -479,11 +565,12 @@ var Enemy = Container.expand(function () {
 			self.isJumping = false;
 		}
 		// Remove if off screen or fallen enemies that have fallen off screen bottom
-		if (self.x < -200 || self.x > 2248 || self.falling && self.y > 2800 || !self.falling && self.y > 3300) {
+		if (self.x < -200 || self.x > 2248 || self.falling && self.y > 2800 || !self.falling && self.y > 4000) {
 			// Play break ice sound if enemy was frozen when leaving screen
 			if (self.frozen) {
 				LK.getSound('breakIce').play();
 			}
+			LK.getSound('bodyFall').play();
 			self.active = false;
 		}
 	};
@@ -547,10 +634,12 @@ var Enemy2 = Container.expand(function () {
 			self.isJumping = false;
 		}
 		// Remove if off screen or fallen enemies that have fallen off screen bottom
-		if (self.x < -200 || self.x > 2248 || self.falling && self.y > 2800 || !self.falling && self.y > 3300) {
+		if (self.x < -200 || self.x > 2248 || self.falling && self.y > 2800 || !self.falling && self.y > 4000) {
 			// Play break ice sound if enemy was frozen when leaving screen
 			if (self.frozen) {
 				LK.getSound('breakIce').play();
+			} else {
+				LK.getSound('bodyFall').play();
 			}
 			self.active = false;
 		}
@@ -615,10 +704,12 @@ var Enemy3 = Container.expand(function () {
 			self.isJumping = false;
 		}
 		// Remove if off screen or fallen enemies that have fallen off screen bottom
-		if (self.x < -200 || self.x > 2248 || self.falling && self.y > 2800 || !self.falling && self.y > 3300) {
+		if (self.x < -200 || self.x > 2248 || self.falling && self.y > 2800 || !self.falling && self.y > 4000) {
 			// Play break ice sound if enemy was frozen when leaving screen
 			if (self.frozen) {
 				LK.getSound('breakIce').play();
+			} else {
+				LK.getSound('bodyFall').play();
 			}
 			self.active = false;
 		}
@@ -668,7 +759,11 @@ var EnemyArcher = Container.expand(function () {
 			self.x += self.velocityX;
 			self.y += self.velocityY;
 			// Remove archer when it falls off screen - use lower threshold for fallen archers
-			if (self.falling && self.y > 2800 || !self.falling && self.y > 3332) {
+			if (self.falling && self.y > 2800 || !self.falling && self.y > 4000) {
+				// Play breakIce sound if archer was frozen when leaving screen
+				if (self.frozen) {
+					LK.getSound('breakIce').play();
+				}
 				self.active = false;
 			}
 			return; // Skip normal tree positioning when falling
@@ -841,27 +936,21 @@ var Lightning = Container.expand(function () {
 		if (!ninja || !self.sourceCloud) {
 			return;
 		}
-		
 		var cloud = self.sourceCloud;
-		
 		// Bottom center de cloudType2 (height=197.66, anchored at center)
 		var cloudBottomX = cloud.x;
 		var cloudBottomY = cloud.y + 98.83; // 197.66/2
-		
 		// Top center del ninja (height=538.95, anchored at bottom)
 		var ninjaTopX = ninja.x;
 		var ninjaTopY = ninja.y - 538.95;
-		
 		// Distancia y ángulo
 		var dx = ninjaTopX - cloudBottomX;
 		var dy = ninjaTopY - cloudBottomY;
 		var distance = Math.sqrt(dx * dx + dy * dy);
 		var angle = Math.atan2(dy, dx) - Math.PI / 2;
-		
 		// Posicionar container en bottom center de nube
 		self.x = cloudBottomX;
 		self.y = cloudBottomY;
-		
 		// Lightning asset (height=50, anchorY=0 significa top del asset está en el container)
 		lightningGraphics.scaleY = distance / 50;
 		lightningGraphics.rotation = angle;
@@ -947,28 +1036,50 @@ var Ninja = Container.expand(function () {
 			self.jumpCount++;
 			self.isJumping = true;
 			LK.getSound('jump').play();
-			// Change sprite to ninja-jump during jump
-			ninjaGraphics.destroy();
-			ninjaGraphics = self.attachAsset('ninja-jump', {
-				anchorX: 0.5,
-				anchorY: 0.5
-			});
-			// Determine jump height and timing - second jump goes higher than first
-			var jumpHeight = self.jumpCount === 1 ? self.maxJumpHeight : self.maxJumpHeight - 300;
-			var totalJumpDuration = 800; // Total time for complete jump cycle
-			// If this is the second jump (double jump), stop any existing tweens and jump from current position
+			// For double jump, ensure we use ninja-jump asset and keep spinning
 			if (self.jumpCount === 2) {
-				tween.stop(self); // Stop current movement
-				tween.stop(ninjaGraphics); // Stop any existing rotation
-				jumpHeight = self.y - 500; // Jump 500px higher from current position
+				// Stop any existing tweens and always recreate ninja-jump asset for consistency
+				if (self.children[0]) {
+					tween.stop(self.children[0]); // Stop any existing rotation
+					// Always destroy and recreate ninja-jump asset to ensure consistency
+					self.children[0].destroy();
+					var jumpGraphics = self.attachAsset('ninja-jump', {
+						anchorX: 0.5,
+						anchorY: 0.5
+					});
+				}
+				var jumpHeight = self.y - 500; // Jump 500px higher from current position
+				var totalJumpDuration = 800; // Total time for complete jump cycle
+				// Continue or start rotation for double jump
+				if (self.children[0]) {
+					tween(self.children[0], {
+						rotation: self.children[0].rotation + Math.PI * 6 // Add 3 more rotations
+					}, {
+						duration: totalJumpDuration,
+						easing: tween.linear
+					});
+				}
+			} else {
+				// First jump - change sprite to ninja-jump
+				if (self.children[0]) {
+					self.children[0].destroy();
+				}
+				var jumpGraphics = self.attachAsset('ninja-jump', {
+					anchorX: 0.5,
+					anchorY: 0.5
+				});
+				var jumpHeight = self.maxJumpHeight;
+				var totalJumpDuration = 800; // Total time for complete jump cycle
+				// Add 3 rotations during jump - duration matches total jump time
+				if (self.children[0]) {
+					tween(self.children[0], {
+						rotation: Math.PI * 6
+					}, {
+						duration: totalJumpDuration,
+						easing: tween.linear
+					});
+				}
 			}
-			// Add 3 rotations during jump - duration matches total jump time
-			tween(ninjaGraphics, {
-				rotation: Math.PI * 6
-			}, {
-				duration: totalJumpDuration,
-				easing: tween.linear
-			});
 			// Use tween for smooth, high, faster jump
 			tween(self, {
 				y: jumpHeight
@@ -989,15 +1100,17 @@ var Ninja = Container.expand(function () {
 							self.jumpVelocity = 0;
 							self.jumpCount = 0; // Reset jump count when landing
 							// Stop rotation immediately when landing
-							tween.stop(ninjaGraphics);
-							// Change back to normal ninja sprite
-							ninjaGraphics.destroy();
-							ninjaGraphics = self.attachAsset('ninja', {
+							if (self.children[0]) {
+								tween.stop(self.children[0]);
+								// Change back to normal ninja sprite
+								self.children[0].destroy();
+							}
+							var normalGraphics = self.attachAsset('ninja', {
 								anchorX: 0.5,
 								anchorY: 1.0
 							});
 							// Reset rotation
-							ninjaGraphics.rotation = 0;
+							normalGraphics.rotation = 0;
 						}
 					});
 				}
@@ -1012,7 +1125,10 @@ var Ninja = Container.expand(function () {
 		self.runningTimer++;
 		if (self.runningTimer >= 30) {
 			self.flipDirection = -self.flipDirection;
-			ninjaGraphics.scaleX = self.flipDirection;
+			// Use self.children[0] instead of ninjaGraphics to handle sprite changes correctly
+			if (self.children[0]) {
+				self.children[0].scaleX = self.flipDirection;
+			}
 			self.runningTimer = 0;
 		}
 	};
@@ -1218,50 +1334,6 @@ var RockObstacle = Container.expand(function () {
 	};
 	return self;
 });
-var SpikeObstacle = Container.expand(function () {
-	var self = Container.call(this);
-	var obstacleGraphics = self.attachAsset('spikeObstacle', {
-		anchorX: 0.5,
-		anchorY: 1.0
-	});
-	self.speed = 3;
-	self.active = true;
-	self.baseX = 1024;
-	self.side = 0; // Keep in center for jumping
-	// Start with zero scale and tween to grow
-	self.scaleX = 0.1;
-	self.scaleY = 0.1;
-	tween(self, {
-		scaleX: 1,
-		scaleY: 1
-	}, {
-		duration: 600,
-		easing: tween.easeOut
-	});
-	self.update = function () {
-		if (!self.active || game.paused) {
-			return;
-		}
-		self.z = self.z || 1000;
-		// Calculate acceleration based on distance - closer objects move faster
-		var distanceFactor = Math.max(0.1, 1 - self.z / 1000); // 0.1 to 1.0
-		var currentSpeed = self.speed * (0.3 + distanceFactor * 2); // Speed ranges from 0.9 to 6.9
-		self.z -= currentSpeed;
-		var scale = Math.max(0.1, 1 - self.z / 1000);
-		var horizonY = 1503;
-		var groundY = 2532;
-		var perspectiveY = horizonY + (groundY - horizonY) * scale;
-		self.y = perspectiveY - 35;
-		// Keep obstacles in center for ninja to jump over them
-		self.x = self.baseX; // Stay in center for jumping
-		self.scaleX = scale;
-		self.scaleY = scale;
-		if (self.z <= -500 || self.y > 3000) {
-			self.active = false;
-		}
-	};
-	return self;
-});
 var Tori = Container.expand(function () {
 	var self = Container.call(this);
 	var toriGraphics = self.attachAsset('tori', {
@@ -1338,7 +1410,7 @@ var Tree = Container.expand(function () {
 		easing: tween.easeOut
 	});
 	self.update = function () {
-		if (!self.active || game.paused) {
+		if (!self.active || game.paused || isInCasaNinja) {
 			return;
 		}
 		// Move toward player from horizon with acceleration
@@ -1397,7 +1469,7 @@ var TreeType2 = Container.expand(function () {
 		easing: tween.easeOut
 	});
 	self.update = function () {
-		if (!self.active || game.paused) {
+		if (!self.active || game.paused || isInCasaNinja) {
 			return;
 		}
 		self.z = self.z || 1000;
@@ -1452,7 +1524,7 @@ var TreeType3 = Container.expand(function () {
 		easing: tween.easeOut
 	});
 	self.update = function () {
-		if (!self.active || game.paused) {
+		if (!self.active || game.paused || isInCasaNinja) {
 			return;
 		}
 		self.z = self.z || 1000;
@@ -1500,7 +1572,7 @@ var WoodenPlank = Container.expand(function () {
 		easing: tween.easeOut
 	});
 	self.update = function () {
-		if (!self.active || game.paused) {
+		if (!self.active || game.paused || isInCasaNinja) {
 			return;
 		}
 		// Move toward player from horizon with acceleration
@@ -1564,8 +1636,9 @@ var WoodenStar = Container.expand(function () {
 			self.scaleY = scale;
 		}
 		// Wooden stars don't rotate - they maintain their orientation
-		// Remove if off screen
-		if (self.x < -100 || self.x > 2148 || self.y < -100 || self.y > 3332) {
+		// Remove if off screen or above 50% of screen height (limited range)
+		var screenMiddle = 1366; // 50% of 2732px screen height
+		if (self.x < -100 || self.x > 2148 || self.y < screenMiddle || self.y > 3332) {
 			self.active = false;
 		}
 	};
@@ -1581,66 +1654,169 @@ var electroCloud = Container.expand(function () {
 	});
 	self.speed = Math.random() * 1.5 + 0.5; // Different speed range
 	self.active = true;
-	// Start with smaller scale and transparency
-	self.scaleX = 0.3;
-	self.scaleY = 0.3;
-	cloudGraphics.alpha = 0.2; // Start very transparent
+	self.isCharged = false; // Track if cloud is charged and ready for interaction
+	self.chargeTimer = 0; // Timer for charging sequence
+	self.interactionRange = 150; // Defined interaction area radius
+	// Start with much smaller scale and transparency
+	self.scaleX = 0.05;
+	self.scaleY = 0.05;
+	cloudGraphics.alpha = 0.1; // Start very transparent
 	tween(self, {
-		scaleX: 1,
-		scaleY: 1
+		scaleX: 0.3,
+		scaleY: 0.3
 	}, {
-		duration: 500,
+		duration: 800,
 		easing: tween.easeOut
 	});
 	self.update = function () {
 		if (!self.active || game.paused) {
 			return;
 		}
+		// Simulate running toward horizon - clouds approach from distance  
 		self.z = self.z || 2000;
 		self.z -= self.speed;
-		var scale = Math.max(0.05, 1 - self.z / 2000);
-		// Update transparency based on distance - closer clouds are more opaque
-		var alpha = Math.min(1.0, Math.max(0.2, 1 - self.z / 1500));
-		// Add flickering effect to indicate charged lightning cloud
-		self.flickerTimer = self.flickerTimer || 0;
-		self.flickerTimer++;
-		if (self.flickerTimer % 30 === 0) {
-			// Flicker every 0.5 seconds
-			// Create a slight pulsing tint effect
-			var tintPhase = Math.sin(self.flickerTimer * 0.2) * 0.5 + 0.5; // 0 to 1
-			var lightningTint = 0x9999FF; // Light blue tint to indicate electricity
-			tween(cloudGraphics, {
-				tint: lightningTint
-			}, {
-				duration: 150,
-				easing: tween.easeInOut,
-				onFinish: function onFinish() {
-					tween(cloudGraphics, {
-						tint: 0xFFFFFF
-					}, {
-						duration: 150,
-						easing: tween.easeInOut
-					});
-				}
-			});
+		// Racing game perspective: calculate distance progress
+		var distanceProgress = (2000 - self.z) / 2000; // 0 at start, 1 when very close
+		// Determine if cloud is in interaction range (when it's close enough to be affected)
+		var isInInteractionRange = distanceProgress > 0.3 && distanceProgress < 0.8; // Between 30% and 80% of approach
+		// Update charging state based on interaction range
+		if (isInInteractionRange && !self.isCharged) {
+			// Start charging when entering interaction range
+			self.isCharged = true;
+			self.chargeTimer = 0;
+		} else if (!isInInteractionRange && self.isCharged) {
+			// Stop charging when leaving interaction range
+			self.isCharged = false;
+			cloudGraphics.tint = 0xFFFFFF; // Reset to normal color
 		}
-		cloudGraphics.alpha = alpha;
+		// Update charge timer and visual effects
+		if (self.isCharged) {
+			self.chargeTimer++;
+			// Intense lightning flickering when charged and ready for interaction
+			if (self.chargeTimer % 15 === 0) {
+				// Faster flicker when charged
+				var lightningTint = 0x00FFFF; // Bright cyan for charged state
+				tween(cloudGraphics, {
+					tint: lightningTint
+				}, {
+					duration: 100,
+					easing: tween.easeInOut,
+					onFinish: function onFinish() {
+						tween(cloudGraphics, {
+							tint: 0xFFFFFF
+						}, {
+							duration: 100,
+							easing: tween.easeInOut
+						});
+					}
+				});
+			}
+		} else {
+			// Subtle flickering when not in interaction range (distant or too close)
+			self.flickerTimer = self.flickerTimer || 0;
+			self.flickerTimer++;
+			if (self.flickerTimer % 45 === 0) {
+				// Slower, more subtle flicker
+				var distantTint = 0xCCCCCC; // Gray tint for distant clouds
+				tween(cloudGraphics, {
+					tint: distantTint
+				}, {
+					duration: 200,
+					easing: tween.easeInOut,
+					onFinish: function onFinish() {
+						tween(cloudGraphics, {
+							tint: 0xFFFFFF
+						}, {
+							duration: 200,
+							easing: tween.easeInOut
+						});
+					}
+				});
+			}
+		}
+		// Transparency: faint at distance, solid when close, but dimmed when not in interaction range
+		var baseAlpha = Math.min(1.0, 0.3 + distanceProgress * 0.7);
+		var finalAlpha = self.isCharged ? baseAlpha : baseAlpha * 0.6; // Dimmed when not charged
+		cloudGraphics.alpha = finalAlpha;
+		// Y movement: start near horizon, escape dramatically upward when close
 		self.baseY = self.baseY || self.y;
-		self.y = self.baseY + (horizonY - self.baseY) * (1 - scale) * 0.3;
+		var horizonCloudY = self.baseY; // Original Y position (near horizon)
+		// Gradual upward movement - clouds rise slowly and smoothly
+		var escapeFactor = distanceProgress * distanceProgress; // Quadratic progression for gradual effect
+		var maxEscapeHeight = 1000; // ElectroCloud escapes extremely high - nearly as high as CloudType3
+		self.y = horizonCloudY - escapeFactor * maxEscapeHeight;
+		// Racing game perspective: tiny at horizon, grow gradually
+		var scale = 0.02 + distanceProgress * 1.9; // ElectroCloud grows bigger and more dramatically
 		self.scaleX = scale;
 		self.scaleY = scale;
-		// Add horizontal movement proportional to distance from screen center
+		// Horizon perspective: clouds spread to sides as you approach them
 		var screenCenter = 1024;
-		var distanceFromCenter = self.x - screenCenter;
-		var horizontalSpeed = distanceFromCenter * 0.001; // Proportional movement
-		self.x += horizontalSpeed;
-		if (self.z <= 200) {
-			// Start fleeing earlier when still some distance away
-			var fleeSpeed = Math.max(6, (200 - self.z) * 0.2); // Increase speed as they get closer
-			self.y -= fleeSpeed;
-			if (self.y < -200) {
-				self.active = false;
-			}
+		self.baseX = self.baseX || self.x; // Store original X position
+		var distanceFromCenter = self.baseX - screenCenter;
+		// Exponential spreading - closer clouds spread much more to sides
+		var spreadFactor = distanceProgress * distanceProgress * 1.8; // Moderate spreading for electroCloud
+		var horizontalOffset = distanceFromCenter * spreadFactor;
+		self.x = self.baseX + horizontalOffset;
+		// Remove when cloud is completely off screen - much higher up (800px above screen)
+		if (self.y < -800 || self.z <= -100) {
+			self.active = false;
+		}
+	};
+	// Custom intersection method for electroCloud with defined interaction area
+	self.intersects = function (target) {
+		if (!self.isCharged) {
+			return false; // Only interact when charged
+		}
+		// Calculate distance between centers
+		var dx = target.x - self.x;
+		var dy = target.y - self.y;
+		var distance = Math.sqrt(dx * dx + dy * dy);
+		// Use defined interaction range instead of default collision detection
+		var interactionDistance = self.interactionRange * self.scaleX; // Scale with cloud size
+		return distance <= interactionDistance;
+	};
+	return self;
+});
+var mushroomObstacle = Container.expand(function () {
+	var self = Container.call(this);
+	var obstacleGraphics = self.attachAsset('spikeObstacle', {
+		anchorX: 0.5,
+		anchorY: 1.0
+	});
+	self.speed = 3;
+	self.active = true;
+	self.baseX = 1024;
+	self.side = 0; // Keep in center for jumping
+	// Start with zero scale and tween to grow
+	self.scaleX = 0.1;
+	self.scaleY = 0.1;
+	tween(self, {
+		scaleX: 1,
+		scaleY: 1
+	}, {
+		duration: 600,
+		easing: tween.easeOut
+	});
+	self.update = function () {
+		if (!self.active || game.paused) {
+			return;
+		}
+		self.z = self.z || 1000;
+		// Calculate acceleration based on distance - closer objects move faster
+		var distanceFactor = Math.max(0.1, 1 - self.z / 1000); // 0.1 to 1.0
+		var currentSpeed = self.speed * (0.3 + distanceFactor * 2); // Speed ranges from 0.9 to 6.9
+		self.z -= currentSpeed;
+		var scale = Math.max(0.1, 1 - self.z / 1000);
+		var horizonY = 1503;
+		var groundY = 2532;
+		var perspectiveY = horizonY + (groundY - horizonY) * scale;
+		self.y = perspectiveY - 35;
+		// Keep obstacles in center for ninja to jump over them
+		self.x = self.baseX; // Stay in center for jumping
+		self.scaleX = scale;
+		self.scaleY = scale;
+		if (self.z <= -500 || self.y > 3000) {
+			self.active = false;
 		}
 	};
 	return self;
@@ -1741,8 +1917,94 @@ function getCurrentDifficultyLevel() {
 }
 // Function to check if feature is unlocked at current difficulty
 function isFeatureUnlocked(feature) {
-	// All features unlocked from the start - no difficulty restrictions
-	return true;
+	// Phase system based on casa ninja visits
+	var currentPhase = Math.min(casaNinjaVisitCount + 1, 4); // Phase 1-4
+	switch (feature) {
+		case 'obstacles':
+			return currentPhase >= 2;
+		// Available from phase 2
+		case 'enemies':
+			return currentPhase >= 1;
+		// Available from phase 1
+		case 'toris':
+			return currentPhase >= 2;
+		// Available from phase 2
+		case 'lightningClouds':
+			return currentPhase >= 3;
+		// Available from phase 3
+		case 'airplanes':
+			return currentPhase >= 3;
+		// Available from phase 3
+		case 'archers':
+			return currentPhase >= 4;
+		// Available from phase 4
+		case 'sun':
+			return currentPhase >= 2;
+		// Available from phase 2
+		default:
+			return true;
+	}
+}
+// Function to show current phase above score
+function showCurrentPhase() {
+	var currentPhase = Math.min(casaNinjaVisitCount + 1, 4);
+	var phaseText = 'FASE ' + currentPhase;
+	// Create or update phase display
+	if (!window.phaseDisplay) {
+		window.phaseDisplay = new Text2();
+		window.phaseDisplay.x = 1024; // Center of screen
+		window.phaseDisplay.y = 160; // 160px from top
+		window.phaseDisplay.size = 50;
+		window.phaseDisplay.fill = '#FFFFFF';
+		window.phaseDisplay.anchorX = 0.5;
+		window.phaseDisplay.anchorY = 0.5;
+		game.addChild(window.phaseDisplay);
+	}
+	window.phaseDisplay.setText(phaseText);
+}
+// Function to show phase information in casa ninja
+function showPhaseInfo() {
+	if (!isInCasaNinja || !casaNinja) {
+		return;
+	}
+	var currentPhase = Math.min(casaNinjaVisitCount + 1, 4);
+	var message = '';
+	switch (currentPhase) {
+		case 1:
+			message = 'FASE 1: Enemigos básicos y obstáculos';
+			break;
+		case 2:
+			message = 'FASE 2: Aparecerán TORIS\n¡No saltes para pasar sin daño!';
+			break;
+		case 3:
+			message = 'FASE 3: Nubes eléctricas y aviones\n¡Cuidado con los rayos!';
+			break;
+		case 4:
+			message = 'FASE 4: Arqueros ninja\n¡Mátalos antes que tiren o salta la flecha!';
+			break;
+	}
+	// Create phase info text
+	var phaseInfo = new Text2();
+	phaseInfo.setText(message);
+	phaseInfo.x = casaNinja.x;
+	phaseInfo.y = casaNinja.y - 200;
+	phaseInfo.size = 40;
+	phaseInfo.fill = '#FFFFFF';
+	// Initialize style object if it doesn't exist
+	if (!phaseInfo.style) {
+		phaseInfo.style = {};
+	}
+	phaseInfo.style.stroke = '#000000';
+	phaseInfo.style.strokeThickness = 3;
+	phaseInfo.anchorX = 0.5;
+	phaseInfo.anchorY = 0.5;
+	game.addChild(phaseInfo);
+	// Remove after 3 seconds
+	LK.setTimeout(function () {
+		if (phaseInfo && phaseInfo.parent) {
+			phaseInfo.destroy();
+		}
+	}, 3000);
 }
 // Function to show alert above ninja head when objects spawn
 function showAlert() {
@@ -1802,21 +2064,12 @@ for (var row = 0; row < perspectiveRows; row++) {
 		_loop();
 	}
 }
-// Create sky background covering from top to 60% of screen height (1640px) - at the very back
-var skyBackground = game.addChildAt(LK.getAsset('skyBackground', {
-	anchorX: 0,
-	anchorY: 0,
-	x: 0,
-	y: 0,
-	scaleX: 1,
-	scaleY: 1.2
-}), 0);
 // Create solid green background layer beneath grass tiles - covers lower half of screen
 var greenLayer = game.addChildAt(LK.getAsset('grassMask', {
 	anchorX: 0,
 	anchorY: 0,
 	x: 0,
-	y: 1200,
+	y: 1600,
 	// Position higher up (moved from 1366 to 1200)
 	scaleX: 1,
 	scaleY: 0.61,
@@ -1825,7 +2078,7 @@ var greenLayer = game.addChildAt(LK.getAsset('grassMask', {
 	// Light green color
 	alpha: 1 // Fully opaque
 }), 0);
-// Create sun in background (behind everything else but above mask)
+// Create sun in background (behind everything else but above mask) - only visible in phase 2+
 var sun = game.addChild(LK.getAsset('sun', {
 	anchorX: 0.5,
 	anchorY: 0.5,
@@ -1833,7 +2086,8 @@ var sun = game.addChild(LK.getAsset('sun', {
 	// Position sun in upper right
 	y: 300,
 	scaleX: 1.5,
-	scaleY: 1.5
+	scaleY: 1.5,
+	alpha: 0 // Start invisible
 }));
 // Pre-populate with wooden planks to create running walkway
 for (var prePlankIndex = 0; prePlankIndex < 8; prePlankIndex++) {
@@ -1909,7 +2163,7 @@ for (var preCloudIndex = 0; preCloudIndex < 8; preCloudIndex++) {
 		cloud = new CloudType3();
 	}
 	cloud.x = Math.random() * 1200 + 400;
-	cloud.y = horizonY - 200 + Math.random() * 200 - 100; // Spawn higher in sky with some variation
+	cloud.y = horizonY - 50 + Math.random() * 100 - 50; // Spawn closer to horizon with some variation
 	cloud.baseY = cloud.y;
 	cloud.z = 500 + preCloudIndex * 200; // Spread clouds at different distances
 	clouds.push(cloud);
@@ -1923,12 +2177,34 @@ for (var preCloudIndex = 0; preCloudIndex < 8; preCloudIndex++) {
 ninja = game.addChild(new Ninja());
 ninja.x = 1024;
 ninja.y = 2673; // Keep ninja at same ground position regardless of horizon change
+// Create ninja house (casa ninja) - initially hidden/inactive
+var casaNinja = null; // Will be created when needed
+// Game state for casa ninja functionality
+var isInCasaNinja = false;
+var casaNinjaSequenceTimer = 0;
+var casaNinjaSequenceStage = 0; // 0=entering, 1=door_close, 2=pee, 3=wc, 4=relief, 5=door_open, 6=door_close_final
+var casaNinjaActivated = false; // Track if casa ninja has been activated for this game
+var casaNinjaActivatedPoints = []; // Track which activation points have been used
+var casaNinjaVisitCount = 0; // Track how many times ninja has visited the house
 // Initialize background animation system for grass tiles
 var backgroundOffsetY = 0;
 var backgroundAnimationSpeed = 2; // Speed of background scrolling
 var grassAnimationTimer = 0; // Timer for coordinated grass movements
 // Start continuous background animation with enhanced forward motion for ninja advancement illusion
 function animateGrassBackground() {
+	// Stop background animation when ninja is in casa ninja
+	if (isInCasaNinja) {
+		// Continue animation loop but don't update positions
+		tween({}, {}, {
+			duration: 16,
+			// ~60fps update rate
+			easing: tween.linear,
+			onFinish: function onFinish() {
+				animateGrassBackground();
+			}
+		});
+		return;
+	}
 	// Drive background animation primarily based on ninja's Y position for powerful forward motion effect
 	if (ninja) {
 		// Use ninja's Y position as primary driver - higher Y creates stronger backward flow effect
@@ -2077,35 +2353,17 @@ function updateWeaponIndicator() {
 		weaponIcon.destroy();
 	}
 	if (hasIcePower) {
-		// Add spinning animation for active power
-		var _startIceSpinning = function startIceSpinning() {
-			if (!weaponIcon || weaponIcon.destroyed || !hasIcePower) {
-				return;
-			}
-			tween(weaponIcon, {
-				rotation: Math.PI * 2
-			}, {
-				duration: 2000,
-				easing: tween.linear,
-				onFinish: function onFinish() {
-					if (weaponIcon && !weaponIcon.destroyed && hasIcePower) {
-						weaponIcon.rotation = 0;
-					}
-				}
-			});
-		};
 		// Show ice weapon icon - positioned in front of Arma-ui background with enhanced styling
 		weaponIcon = game.addChild(LK.getAsset('Ice-horiuken', {
 			anchorX: 0.5,
 			anchorY: 0.5,
 			x: 300,
 			y: 300,
-			scaleX: 1.1,
-			scaleY: 1.1
+			scaleX: 0.8,
+			scaleY: 0.8
 		}));
 		// Enhanced ice blue tint with glow effect
 		weaponIcon.tint = 0x00BFFF;
-		_startIceSpinning();
 	} else if (hasWoodenStarPower) {
 		// Add spinning animation for active power
 		var _startWoodenStarSpinning = function startWoodenStarSpinning() {
@@ -2126,7 +2384,7 @@ function updateWeaponIndicator() {
 			});
 		};
 		// Show wooden star icon - positioned in front of Arma-ui background with enhanced styling
-		weaponIcon = game.addChild(LK.getAsset('wooden-start', {
+		weaponIcon = game.addChild(LK.getAsset('shoriuken3', {
 			anchorX: 0.5,
 			anchorY: 0.5,
 			x: 300,
@@ -2552,7 +2810,7 @@ function spawnObstacle() {
 	} else if (obstacleType < 0.5) {
 		obstacle = new RockObstacle();
 	} else if (obstacleType < 0.75) {
-		obstacle = new SpikeObstacle();
+		obstacle = new mushroomObstacle();
 	} else {
 		obstacle = new RockObstacle();
 	}
@@ -2590,7 +2848,7 @@ function spawnCloud() {
 		}
 	}
 	cloud.x = Math.random() * 1200 + 400; // Random x position
-	cloud.y = horizonY - 400; // Start much higher in the sky
+	cloud.y = horizonY - 100; // Start closer to horizon, only 100px above it
 	cloud.baseY = cloud.y; // Store original y for perspective calculation
 	cloud.z = 2000; // Start very far away
 	clouds.push(cloud);
@@ -2749,6 +3007,8 @@ function dropPowerUp(airplane) {
 	powerUp.setPowerUpType(powerUpType);
 	powerUps.push(powerUp);
 	game.addChild(powerUp);
+	// Play fallBox sound when item box drops from airplane
+	LK.getSound('fallBox').play();
 }
 // Spawn wooden planks for walkway effect
 function spawnWoodenPlanks() {
@@ -2809,20 +3069,22 @@ function throwNinjaStar(targetX, targetY) {
 			var dx = targetX - woodenStar.x;
 			var dy = targetY - woodenStar.y;
 			var distance = Math.sqrt(dx * dx + dy * dy);
-			// Limit target Y to horizon level (no higher than horizonY)
-			var limitedTargetY = Math.max(targetY, horizonY);
+			// Limit target Y to 50% of screen height (1366px) - wooden stars limited range
+			var screenMiddle = 1366; // 50% of 2732px screen height
+			var limitedTargetY = Math.max(targetY, screenMiddle);
 			var limitedDy = limitedTargetY - woodenStar.y;
 			// Add spread angle: -15, 0, +15 degrees
 			var spreadAngle = (starIndex - 1) * (Math.PI / 12); // 15 degrees in radians
 			var baseAngle = Math.atan2(limitedDy, dx);
 			var finalAngle = baseAngle + spreadAngle;
-			// Set velocity with spread - but limit Y velocity to not go above horizon
+			// Set velocity with spread - but limit Y velocity to not go above 50% of screen
 			var velocityX = Math.cos(finalAngle) * woodenStar.speed;
 			var velocityY = Math.sin(finalAngle) * woodenStar.speed;
-			// If velocity would make star go above horizon, limit it to horizontal only
-			if (velocityY < 0 && woodenStar.y + velocityY * 50 < horizonY) {
+			// If velocity would make star go above 50% of screen, limit it to horizontal only
+			var screenMiddle = 1366; // 50% of 2732px screen height
+			if (velocityY < 0 && woodenStar.y + velocityY * 50 < screenMiddle) {
 				// 50 frames lookahead
-				velocityY = Math.max(velocityY, 0); // Don't allow upward movement that would cross horizon
+				velocityY = Math.max(velocityY, 0); // Don't allow upward movement that would cross 50% screen
 			}
 			woodenStar.velocityX = velocityX;
 			woodenStar.velocityY = velocityY;
@@ -3055,15 +3317,17 @@ game.update = function () {
 			spawnWoodenPlanks();
 		}
 		// Fog spawning removed - cleaner atmosphere without fog
-		// Sort objects by depth during main screen for proper layering
-		if (LK.ticks % 10 === 0) {
+		// Sort objects by depth during main screen for proper layering - but not when in casa ninja
+		if (!isInCasaNinja && LK.ticks % 10 === 0) {
 			sortObjectsByDepth();
 		}
 		// Skip all other updates while main screen is active
 		return;
 	}
-	// Update ninja
-	ninja.update();
+	// Update ninja - but not when in casa ninja
+	if (!isInCasaNinja) {
+		ninja.update();
+	}
 	// Update wooden star power timer
 	if (hasWoodenStarPower && woodenStarPowerTimer > 0) {
 		woodenStarPowerTimer--;
@@ -3320,9 +3584,11 @@ game.update = function () {
 			// Check collision with CloudType2 (electric clouds) to disable them
 			for (var cl = clouds.length - 1; cl >= 0; cl--) {
 				var cloud = clouds[cl];
-				if (cloud.active && cloud.constructor === electroCloud && iceStar.intersects(cloud)) {
+				if (cloud.active && cloud.constructor === electroCloud && cloud.isCharged && iceStar.intersects(cloud)) {
 					// Play electric cloud hit sound
 					LK.getSound('electric-cloud-hit').play();
+					// Play brbrbrbrbr sound when freezing cloud
+					LK.getSound('brbrbrbrbr').play();
 					// Change cloud to freeze cloud asset (disable electric properties)
 					var cloudGraphics = cloud.children[0];
 					var originalScale = {
@@ -3341,6 +3607,41 @@ game.update = function () {
 					});
 					// Maintain visual properties
 					newCloudGraphics.alpha = originalAlpha;
+					// Add trembling cold effect to frozen cloud
+					var coldTrembleCount = 0;
+					var maxColdTrembles = 25; // About 3 seconds of trembling (25 * 120ms)
+					var createColdTrembling = function createColdTrembling() {
+						if (coldTrembleCount >= maxColdTrembles || !cloud.active || cloud.constructor !== Cloud) {
+							// Stop trembling and return to original position
+							tween(cloud, {
+								x: cloud.baseX || cloud.x,
+								y: cloud.baseY || cloud.y
+							}, {
+								duration: 500,
+								easing: tween.easeOut
+							});
+							return;
+						}
+						coldTrembleCount++;
+						var coldIntensity = 8; // Moderate trembling intensity
+						var coldDuration = 120; // Quick cold shivers
+						// Random trembling in both X and Y
+						var offsetX = (Math.random() - 0.5) * coldIntensity * 2;
+						var offsetY = (Math.random() - 0.5) * coldIntensity * 2;
+						tween(cloud, {
+							x: cloud.x + offsetX,
+							y: cloud.y + offsetY
+						}, {
+							duration: coldDuration,
+							easing: tween.easeInOut,
+							onFinish: function onFinish() {
+								// Continue trembling
+								createColdTrembling();
+							}
+						});
+					};
+					// Start the cold trembling effect
+					createColdTrembling();
 					// Stop any flickering effects by removing the constructor reference
 					// This prevents the cloud from creating lightning
 					cloud.constructor = Cloud;
@@ -3753,9 +4054,13 @@ game.update = function () {
 						// Paralyze ninja for 2 seconds (lightning paralysis, not damage)
 						ninjaParalyzed = true;
 						ninjaParalyzeTimer = 120; // 2 seconds at 60fps
+						// Remove star only when the cloud is ready to shoot lightning
+						star.active = false;
+						star.destroy();
+						ninjaStars.splice(i, 1);
+						return 1; // break
 					}
-					// Star passes through lightning - don't destroy it, just continue
-					return 1; // break
+					// If cloud is not ready to shoot (z > 300), star passes through without being destroyed
 				}
 			},
 			cloud,
@@ -3768,6 +4073,10 @@ game.update = function () {
 			if (_loop2()) {
 				break;
 			}
+		}
+		// If star was destroyed by electric cloud, skip remaining collision checks
+		if (!star.active) {
+			continue;
 		}
 		// Check collision with meteorites
 		for (var m = meteorites.length - 1; m >= 0; m--) {
@@ -3803,7 +4112,7 @@ game.update = function () {
 				// Hit airplane - drop power-up
 				dropPowerUp(airplane);
 				// Play special airplane hit sound
-				LK.getSound('Avion').play();
+				LK.getSound('hit').play();
 				// Remove star
 				star.active = false;
 				star.destroy();
@@ -4201,45 +4510,47 @@ game.update = function () {
 			return;
 		}
 	}
-	// Update toris
-	for (var i = toris.length - 1; i >= 0; i--) {
-		var tori = toris[i];
-		tori.update();
-		if (!tori.active) {
-			tori.destroy();
-			toris.splice(i, 1);
-			continue;
-		}
-		// Check if ninja is jumping and near the tori
-		if (ninja.isJumping && tori.y > 2200 && ninja.intersects(tori)) {
-			LK.getSound('ninja-ouch').play();
-			// Turn screen red and stop ninja walking
-			tween(game, {
-				tint: 0xff0000
-			}, {
-				duration: 100,
-				easing: tween.linear
-			});
-			ninjaParalyzed = true;
-			var impactImage = game.addChild(LK.getAsset('impact', {
-				anchorX: 0.5,
-				anchorY: 0.5,
-				x: ninja.x,
-				y: ninja.y - 250,
-				scaleX: 2.0,
-				scaleY: 2.0
-			}));
-			LK.getSound('hit').play();
-			LK.effects.flashScreen(0xff0000, 1000);
-			game.paused = true;
-			LK.setTimeout(function () {
-				LK.showGameOver();
-			}, 2000);
-			return;
+	// Update toris - but not when in casa ninja
+	if (!isInCasaNinja) {
+		for (var i = toris.length - 1; i >= 0; i--) {
+			var tori = toris[i];
+			tori.update();
+			if (!tori.active) {
+				tori.destroy();
+				toris.splice(i, 1);
+				continue;
+			}
+			// Check if ninja is jumping and near the tori
+			if (ninja.isJumping && tori.y > 2200 && ninja.intersects(tori)) {
+				LK.getSound('ninja-ouch').play();
+				// Turn screen red and stop ninja walking
+				tween(game, {
+					tint: 0xff0000
+				}, {
+					duration: 100,
+					easing: tween.linear
+				});
+				ninjaParalyzed = true;
+				var impactImage = game.addChild(LK.getAsset('impact', {
+					anchorX: 0.5,
+					anchorY: 0.5,
+					x: ninja.x,
+					y: ninja.y - 250,
+					scaleX: 2.0,
+					scaleY: 2.0
+				}));
+				LK.getSound('hit').play();
+				LK.effects.flashScreen(0xff0000, 1000);
+				game.paused = true;
+				LK.setTimeout(function () {
+					LK.showGameOver();
+				}, 2000);
+				return;
+			}
 		}
 	}
-	// Spawn enemies - only after main screen is dismissed
-	if (!mainScreenActive) {
+	// Spawn enemies - only after main screen is dismissed and not in casa ninja
+	if (!mainScreenActive && !isInCasaNinja && isFeatureUnlocked('enemies')) {
 		enemySpawnTimer++;
 		if (enemySpawnTimer > 600) {
 			spawnEnemy();
@@ -4259,68 +4570,80 @@ game.update = function () {
 			spawnEnemy3();
 			enemy3SpawnTimer = 0;
 		}
-		// Spawn enemy archers on trees - only at medium-advanced level (Level 4+)
-		if (LK.ticks % 900 === 0 && getCurrentDifficultyLevel() >= 4) {
-			// Every 15 seconds, only at Level 4+
+		// Spawn enemy archers on trees - only in phase 4+
+		if (LK.ticks % 900 === 0 && isFeatureUnlocked('archers')) {
+			// Every 15 seconds, only in phase 4+
 			spawnEnemyArcher();
 		}
 	}
-	// Spawn obstacles - much less frequently and with conflict detection
-	obstacleSpawnTimer++;
-	if (obstacleSpawnTimer > 1200) {
-		// Doubled from 600 to 1200 for fewer obstacles
-		// Check if there's been a recent enemy spawn to avoid conflicts
-		if (LK.ticks - lastEnemySpawnTime > 180) {
-			// 3 seconds buffer after enemy spawn
-			spawnObstacle();
-			obstacleSpawnTimer = 0;
-		} else {
-			// Reset timer partially to retry sooner
-			obstacleSpawnTimer = 800; // Retry in 400 ticks instead of full 1200
+	// Spawn obstacles - much less frequently and with conflict detection, but not in casa ninja
+	if (!isInCasaNinja && isFeatureUnlocked('obstacles')) {
+		obstacleSpawnTimer++;
+		if (obstacleSpawnTimer > 1200) {
+			// Doubled from 600 to 1200 for fewer obstacles
+			// Check if there's been a recent enemy spawn to avoid conflicts
+			if (LK.ticks - lastEnemySpawnTime > 180) {
+				// 3 seconds buffer after enemy spawn
+				spawnObstacle();
+				obstacleSpawnTimer = 0;
+			} else {
+				// Reset timer partially to retry sooner
+				obstacleSpawnTimer = 800; // Retry in 400 ticks instead of full 1200
+			}
 		}
 	}
-	// Spawn toris
-	toriSpawnTimer++;
-	if (toriSpawnTimer > 480) {
-		// Spawn every 8 seconds
-		spawnTori();
-		toriSpawnTimer = 0;
+	// Spawn toris - but not when in casa ninja
+	if (!isInCasaNinja && isFeatureUnlocked('toris')) {
+		toriSpawnTimer++;
+		if (toriSpawnTimer > 480) {
+			// Spawn every 8 seconds
+			spawnTori();
+			toriSpawnTimer = 0;
+		}
 	}
-	// Update clouds
-	for (var i = clouds.length - 1; i >= 0; i--) {
-		var cloud = clouds[i];
-		cloud.update();
-		if (!cloud.active) {
-			cloud.destroy();
-			clouds.splice(i, 1);
+	// Update clouds - but not when in casa ninja
+	if (!isInCasaNinja) {
+		for (var i = clouds.length - 1; i >= 0; i--) {
+			var cloud = clouds[i];
+			cloud.update();
+			if (!cloud.active) {
+				cloud.destroy();
+				clouds.splice(i, 1);
+			}
 		}
 	}
 	// Fog system removed - no fog updates needed
-	// Update trees
-	for (var i = trees.length - 1; i >= 0; i--) {
-		var tree = trees[i];
-		tree.update();
-		if (!tree.active) {
-			tree.destroy();
-			trees.splice(i, 1);
+	// Update trees - but not when in casa ninja
+	if (!isInCasaNinja) {
+		for (var i = trees.length - 1; i >= 0; i--) {
+			var tree = trees[i];
+			tree.update();
+			if (!tree.active) {
+				tree.destroy();
+				trees.splice(i, 1);
+			}
 		}
 	}
-	// Update wooden planks
-	for (var i = woodenPlanks.length - 1; i >= 0; i--) {
-		var plank = woodenPlanks[i];
-		plank.update();
-		if (!plank.active) {
-			plank.destroy();
-			woodenPlanks.splice(i, 1);
+	// Update wooden planks - but not when in casa ninja
+	if (!isInCasaNinja) {
+		for (var i = woodenPlanks.length - 1; i >= 0; i--) {
+			var plank = woodenPlanks[i];
+			plank.update();
+			if (!plank.active) {
+				plank.destroy();
+				woodenPlanks.splice(i, 1);
+			}
 		}
 	}
-	// Update airplanes
-	for (var i = airplanes.length - 1; i >= 0; i--) {
-		var airplane = airplanes[i];
-		airplane.update();
-		if (!airplane.active) {
-			airplane.destroy();
-			airplanes.splice(i, 1);
+	// Update airplanes - but not when in casa ninja
+	if (!isInCasaNinja) {
+		for (var i = airplanes.length - 1; i >= 0; i--) {
+			var airplane = airplanes[i];
+			airplane.update();
+			if (!airplane.active) {
+				airplane.destroy();
+				airplanes.splice(i, 1);
+			}
 		}
 	}
 	// Update power-ups
@@ -4337,7 +4660,7 @@ game.update = function () {
 			// Collect power-up
 			LK.setScore(LK.getScore() + 25);
 			updateScore();
-			LK.getSound('jump').play(); // Use jump sound for power-up collection
+			LK.getSound('powerUp').play(); // Use jump sound for power-up collection
 			// Check if this is the wooden star power-up (type 1)
 			if (powerUp.powerupType === 1) {
 				hasWoodenStarPower = true;
@@ -4358,29 +4681,35 @@ game.update = function () {
 	// Spawn clouds
 	cloudSpawnTimer++;
 	if (cloudSpawnTimer > 120) {
-		// Spawn clouds less frequently for easier gameplay
-		spawnCloud();
-		cloudSpawnTimer = 0;
+		// Spawn clouds less frequently for easier gameplay - but not when in casa ninja
+		if (!isInCasaNinja) {
+			spawnCloud();
+			cloudSpawnTimer = 0;
+		}
 	}
 	// Fog spawning removed - no fog elements needed
-	// Spawn trees on both sides
-	treeSpawnTimer++;
-	if (treeSpawnTimer > 90) {
-		// Spawn trees much more frequently - 1.5 seconds interval for many more trees
-		spawnTrees();
-		treeSpawnTimer = 0;
+	// Spawn trees on both sides - but not when in casa ninja
+	if (!isInCasaNinja) {
+		treeSpawnTimer++;
+		if (treeSpawnTimer > 90) {
+			// Spawn trees much more frequently - 1.5 seconds interval for many more trees
+			spawnTrees();
+			treeSpawnTimer = 0;
+		}
 	}
-	// Spawn wooden planks with more spacing for walkway effect
-	if (LK.ticks % 25 === 0) {
+	// Spawn wooden planks with more spacing for walkway effect - but not when in casa ninja
+	if (!isInCasaNinja && LK.ticks % 25 === 0) {
 		// Spawn wooden planks every 25 frames (0.42 seconds) for spaced walkway effect
 		spawnWoodenPlanks();
 	}
-	// Spawn airplanes periodically - only if unlocked
-	airplaneSpawnTimer++;
-	if (airplaneSpawnTimer > 600 && isFeatureUnlocked('airplanes')) {
-		// Every 10 seconds
-		spawnAirplane();
-		airplaneSpawnTimer = 0;
+	// Spawn airplanes periodically - only if unlocked and not in casa ninja
+	if (!isInCasaNinja) {
+		airplaneSpawnTimer++;
+		if (airplaneSpawnTimer > 600 && isFeatureUnlocked('airplanes')) {
+			// Every 10 seconds
+			spawnAirplane();
+			airplaneSpawnTimer = 0;
+		}
 	}
 	// Enemy spawning handled by spawnEnemy function with tree physics
 	// Handle sun frozen timer
@@ -4486,15 +4815,263 @@ game.update = function () {
 			normalNinjaGraphics.scaleX = ninja.flipDirection;
 			// Ensure completely clean rotation state
 			normalNinjaGraphics.rotation = 0;
-			// Ensure the ninja graphics reference is properly updated for the flip animation
-			var ninjaGraphics = normalNinjaGraphics;
 			// Force the ninja update to run immediately to restart walking animation loop
 			ninja.update();
 		}
 	}
+	// Update casa ninja movement using tori system
+	if (casaNinja && casaNinja.active) {
+		// Only update if ninja is not inside the house
+		if (!isInCasaNinja) {
+			casaNinja.update(); // Use the exact same update logic as tori
+		}
+		// If ninja is inside, casa ninja stays in place (no update called)
+	}
+	// Check if ninja should enter casa ninja at specific points: 300, 600, 1200, 2000, then every 1000
+	var currentScore = LK.getScore();
+	var shouldActivateCasaNinja = false;
+	var activationPoint = 0;
+	// Check specific activation points
+	if (currentScore >= 100 && currentScore < 200) {
+		activationPoint = 100;
+	} else if (currentScore >= 300 && currentScore < 400) {
+		activationPoint = 300;
+	} else if (currentScore >= 600 && currentScore < 700) {
+		activationPoint = 600;
+	} else if (currentScore >= 1000 && currentScore < 1100) {
+		activationPoint = 1000;
+	} else if (currentScore >= 2000 && currentScore % 1000 >= 0 && currentScore % 1000 < 100) {
+		// Every 1000 points after 3000
+		activationPoint = Math.floor(currentScore / 1000) * 1000;
+	}
+	// Check if this activation point hasn't been used yet
+	if (activationPoint > 0 && casaNinjaActivatedPoints.indexOf(activationPoint) === -1) {
+		shouldActivateCasaNinja = true;
+	}
+	if (!isInCasaNinja && shouldActivateCasaNinja) {
+		// Create casa ninja using the CasaNinja class (exactly like tori)
+		casaNinjaActivated = true;
+		casaNinjaActivatedPoints.push(activationPoint); // Mark this point as used
+		casaNinja = new CasaNinja();
+		casaNinja.z = 1000; // Start far away like tori
+		game.addChild(casaNinja);
+	}
+	// Check if ninja should enter the casa ninja when it's close enough (like passing under tori)
+	if (!isInCasaNinja && casaNinja && casaNinja.active && casaNinja.z < 100 && casaNinja.z > -100) {
+		isInCasaNinja = true;
+		casaNinjaVisitCount++; // Increment visit count
+		casaNinjaSequenceTimer = 0;
+		casaNinjaSequenceStage = 0;
+		// Show phase information
+		LK.setTimeout(function () {
+			showPhaseInfo();
+		}, 1000); // Show after 1 second
+		// Stop ninja running animation and movement
+		ninjaParalyzed = true;
+		// Move ninja towards casa ninja center with smooth animation
+		tween(ninja, {
+			x: casaNinja.x,
+			y: casaNinja.y - 50 // Position ninja slightly above the house entrance
+		}, {
+			duration: 1200,
+			easing: tween.easeInOut,
+			onFinish: function onFinish() {
+				// Make ninja "disappear" into the house
+				tween(ninja, {
+					alpha: 0,
+					scaleX: 0.5,
+					scaleY: 0.5
+				}, {
+					duration: 300,
+					easing: tween.easeIn,
+					onFinish: function onFinish() {
+						// Start casa ninja sequence
+						casaNinjaSequenceStage = 1;
+						casaNinjaSequenceTimer = 0;
+					}
+				});
+			}
+		});
+	}
+	// Handle casa ninja sequence
+	if (isInCasaNinja && casaNinjaSequenceStage > 0) {
+		casaNinjaSequenceTimer++;
+		switch (casaNinjaSequenceStage) {
+			case 1:
+				// Door close with dramatic effect
+				if (casaNinjaSequenceTimer === 1) {
+					// Play door slam sound
+					LK.getSound('portazo').play();
+					// Change to closed casa ninja with shake effect
+					casaNinja.changeState(false);
+					// Add shake effect to house
+					tween(casaNinja, {
+						x: casaNinja.x + 10
+					}, {
+						duration: 50,
+						easing: tween.easeInOut,
+						onFinish: function onFinish() {
+							tween(casaNinja, {
+								x: casaNinja.x - 20
+							}, {
+								duration: 50,
+								easing: tween.easeInOut,
+								onFinish: function onFinish() {
+									tween(casaNinja, {
+										x: casaNinja.x + 10
+									}, {
+										duration: 50,
+										easing: tween.easeInOut
+									});
+								}
+							});
+						}
+					});
+				}
+				if (casaNinjaSequenceTimer >= 120) {
+					// 2 seconds
+					casaNinjaSequenceStage = 2;
+					casaNinjaSequenceTimer = 0;
+				}
+				break;
+			case 2:
+				// Different sequence based on visit count
+				if (casaNinjaVisitCount === 1) {
+					// First visit: normal sequence
+					if (casaNinjaSequenceTimer === 1) {
+						LK.getSound('meo').play();
+					}
+					if (casaNinjaSequenceTimer >= 300) {
+						casaNinjaSequenceStage = 3;
+						casaNinjaSequenceTimer = 0;
+					}
+				} else if (casaNinjaVisitCount === 2) {
+					// Second visit: meo + pedos
+					if (casaNinjaSequenceTimer === 1) {
+						LK.getSound('meo').play();
+					}
+					if (casaNinjaSequenceTimer === 180) {
+						LK.getSound('pedos').play();
+					}
+					if (casaNinjaSequenceTimer >= 300) {
+						casaNinjaSequenceStage = 3;
+						casaNinjaSequenceTimer = 0;
+					}
+				} else if (casaNinjaVisitCount >= 3) {
+					// Third visit and beyond: pedoLargo + bloop + alivio
+					if (casaNinjaSequenceTimer === 1) {
+						LK.getSound('pedoLargo').play();
+					}
+					if (casaNinjaSequenceTimer >= 300) {
+						casaNinjaSequenceStage = 3;
+						casaNinjaSequenceTimer = 0;
+					}
+				}
+				break;
+			case 3:
+				// Different sound based on visit count
+				if (casaNinjaVisitCount <= 2) {
+					// First and second visit: WC sound
+					if (casaNinjaSequenceTimer === 1) {
+						LK.getSound('wc').play();
+					}
+				} else {
+					// Third visit and beyond: bloop sound
+					if (casaNinjaSequenceTimer === 1) {
+						LK.getSound('bloop').play();
+					}
+				}
+				if (casaNinjaSequenceTimer >= 120) {
+					// 2 seconds
+					casaNinjaSequenceStage = 4;
+					casaNinjaSequenceTimer = 0;
+				}
+				break;
+			case 4:
+				// Relief sound with celebration effect
+				if (casaNinjaSequenceTimer === 1) {
+					LK.getSound('alivio').play();
+					// Add celebration shake
+				}
+				if (casaNinjaSequenceTimer >= 180) {
+					// 3 seconds
+					casaNinjaSequenceStage = 5;
+					casaNinjaSequenceTimer = 0;
+				}
+				break;
+			case 5:
+				// Back door opens (not visible - ninja exits through back)
+				if (casaNinjaSequenceTimer === 1) {
+					LK.getSound('puerta-abre').play();
+					// House stays closed - ninja exits through back door
+				}
+				if (casaNinjaSequenceTimer >= 120) {
+					// 2 seconds
+					casaNinjaSequenceStage = 6;
+					casaNinjaSequenceTimer = 0;
+				}
+				break;
+			case 6:
+				// Final back door slam with exit animation
+				if (casaNinjaSequenceTimer === 1) {
+					LK.getSound('portazo').play();
+					// House stays closed - back door slams
+					// Move ninja back to original position and make him reappear
+					tween(ninja, {
+						x: 1024,
+						y: 2673,
+						alpha: 1,
+						scaleX: 1,
+						scaleY: 1
+					}, {
+						duration: 800,
+						easing: tween.easeInOut,
+						onFinish: function onFinish() {
+							// Add a little "satisfied" bounce
+							tween(ninja, {
+								y: 2673 - 20
+							}, {
+								duration: 200,
+								easing: tween.easeOut,
+								onFinish: function onFinish() {
+									tween(ninja, {
+										y: 2673
+									}, {
+										duration: 200,
+										easing: tween.easeIn
+									});
+								}
+							});
+						}
+					});
+				}
+				if (casaNinjaSequenceTimer >= 60) {
+					// 1 second
+					// Sequence complete - ninja can resume game
+					ninjaParalyzed = false;
+					isInCasaNinja = false;
+					casaNinjaSequenceStage = 0;
+					casaNinjaSequenceTimer = 0;
+					casaNinjaActivated = false; // Reset for next time
+					// Note: casaNinjaActivatedPoints array is NOT reset here - it keeps track of used points
+					// Hide casa ninja
+					if (casaNinja) {
+						casaNinja.active = false;
+						casaNinja.destroy();
+						casaNinja = null;
+					}
+				}
+				break;
+		}
+	}
 	// Continuous scoring for time survived (1 point per second) and update display
-	if (LK.ticks % 60 === 0) {
+	// Only if not in casa ninja (stop scoring during house sequence)
+	if (!isInCasaNinja && LK.ticks % 60 === 0) {
 		LK.setScore(LK.getScore() + 1);
+		updateScore();
+	}
+	// Update score display even during casa ninja sequence to show current score
+	if (isInCasaNinja) {
 		updateScore();
 	}
 	// Update alerts
@@ -4506,8 +5083,20 @@ game.update = function () {
 			alerts.splice(i, 1);
 		}
 	}
-	// Sort objects by depth every few frames for proper layering
-	if (LK.ticks % 10 === 0) {
+	// Sort objects by depth every few frames for proper layering - but not when in casa ninja
+	if (!isInCasaNinja && LK.ticks % 10 === 0) {
 		sortObjectsByDepth();
+	}
+	// Show current phase
+	showCurrentPhase();
+	// Show/hide sun based on phase
+	if (isFeatureUnlocked('sun')) {
+		if (sun.alpha < 1) {
+			sun.alpha = 1; // Make sun visible
+		}
+	} else {
+		if (sun.alpha > 0) {
+			sun.alpha = 0; // Hide sun
+		}
 	}
 };
