@@ -2,6 +2,7 @@
 * Assets
 ****/
 LK.init.shape('grassMask', {width:3000, height:3000, color:0x228b22, shape:'box'})
+LK.init.shape('instrucciones', {width:100, height:100, color:0x805cef, shape:'box'})
 LK.init.image('Archer-ninja', {width:100, height:100, id:'687e2b5a5089f8124e100aa0'})
 LK.init.image('Arma-ui', {width:100, height:100, id:'6880b9d8303aec2e4fad813e'})
 LK.init.image('Enemy2', {width:250, height:288.29, id:'687d9735bdf42f92241c548b', flipX:1})
@@ -22,7 +23,7 @@ LK.init.image('cloud', {width:150, height:80, id:'687c37cce5cbe2bee2b1bfd1'})
 LK.init.image('cloudInactive', {width:100, height:100, id:'6893ff94eba6f1f305376726'})
 LK.init.image('cloudType2', {width:200, height:197.66, id:'687d876bbdf42f92241c53ec'})
 LK.init.image('cloudType3', {width:100, height:60, id:'687c37cce5cbe2bee2b1bfce'})
-LK.init.image('electrocutado', {width:180, height:180, id:'68940cf06c5d0982f48f4818'})
+LK.init.image('electrocutado', {width:600, height:180, id:'68940cf06c5d0982f48f4818'})
 LK.init.image('enemy', {width:300, height:307, id:'687c381ae5cbe2bee2b1bfdb', flipX:1})
 LK.init.image('freeze-archer-ninja', {width:100, height:100, id:'687fda0388fabecfe2dd55cc'})
 LK.init.image('freeze-enemy', {width:100, height:100, id:'687f88b35ad081944b422bcd'})
@@ -399,7 +400,7 @@ var Cloud = Container.expand(function () {
 		scaleX: 1.5,
 		scaleY: 1.5
 	});
-	self.speed = Math.random() * 2 + 1; // Random speed between 1-3
+	self.speed = 2; // Fixed speed for all clouds
 	self.active = true;
 	// Start with much smaller scale and transparency
 	self.scaleX = 0.05;
@@ -443,8 +444,25 @@ var Cloud = Container.expand(function () {
 		var spreadFactor = distanceProgress * distanceProgress * 2; // Quadratic spreading
 		var horizontalOffset = distanceFromCenter * spreadFactor;
 		self.x = self.baseX + horizontalOffset;
-		// Remove when cloud is completely off screen - much higher up (800px above screen)
-		if (self.y < -800 || self.z <= -100) {
+		// Remove when cloud is completely off screen
+		// Check multiple conditions for cloud destruction
+		var shouldDestroy = false;
+		// Condition 1: Cloud has moved too far back (Z position)
+		if (self.z <= -100) {
+			shouldDestroy = true;
+		}
+		// Condition 2: Cloud has moved too high up (Y position)
+		// Clouds should disappear when they go above the top of the screen (Y=0)
+		if (self.y < -100) {
+			shouldDestroy = true;
+		}
+		// Condition 3: Cloud has moved too far to the sides (X position)
+		if (self.x < -500 || self.x > 2548) {
+			shouldDestroy = true;
+		}
+		if (shouldDestroy) {
+			// Debug: Log cloud position when destroying
+			console.log('Destroying cloud at Y=' + self.y + ', Z=' + self.z + ', X=' + self.x);
 			self.active = false;
 		}
 	};
@@ -458,7 +476,7 @@ var CloudType3 = Container.expand(function () {
 		scaleX: 1.5,
 		scaleY: 1.5
 	});
-	self.speed = Math.random() * 3 + 2; // Faster clouds
+	self.speed = 2; // Fixed speed for all clouds
 	self.active = true;
 	// Start with much smaller scale and transparency
 	self.scaleX = 0.05;
@@ -502,8 +520,23 @@ var CloudType3 = Container.expand(function () {
 		var spreadFactor = distanceProgress * distanceProgress * 2.2; // Slightly more spreading for CloudType3
 		var horizontalOffset = distanceFromCenter * spreadFactor;
 		self.x = self.baseX + horizontalOffset;
-		// Remove when cloud is completely off screen - much higher up (800px above screen)
-		if (self.y < -800 || self.z <= -100) {
+		// Remove when cloud is completely off screen
+		// Check multiple conditions for cloud destruction
+		var shouldDestroy = false;
+		// Condition 1: Cloud has moved too far back (Z position)
+		if (self.z <= -100) {
+			shouldDestroy = true;
+		}
+		// Condition 2: Cloud has moved too high up (Y position)
+		// Clouds should disappear when they go above the top of the screen (Y=0)
+		if (self.y < -100) {
+			shouldDestroy = true;
+		}
+		// Condition 3: Cloud has moved too far to the sides (X position)
+		if (self.x < -500 || self.x > 2548) {
+			shouldDestroy = true;
+		}
+		if (shouldDestroy) {
 			self.active = false;
 		}
 	};
@@ -1038,6 +1071,8 @@ var Ninja = Container.expand(function () {
 			self.jumpCount++;
 			self.isJumping = true;
 			LK.getSound('jump').play();
+			// Check if ninja is jumping over an obstacle to give points
+			self.checkObstacleJump();
 			// For double jump, ensure we use ninja-jump asset and keep spinning
 			if (self.jumpCount === 2) {
 				// Stop any existing tweens and always recreate ninja-jump asset for consistency
@@ -1132,6 +1167,29 @@ var Ninja = Container.expand(function () {
 				self.children[0].scaleX = self.flipDirection;
 			}
 			self.runningTimer = 0;
+		}
+	};
+	// Function to check if ninja is jumping over an obstacle and give points
+	self.checkObstacleJump = function () {
+		// Check if there are any obstacles nearby that the ninja could be jumping over
+		for (var i = 0; i < obstacles.length; i++) {
+			var obstacle = obstacles[i];
+			if (obstacle.active) {
+				// Check if obstacle is in the right position (near ninja's feet level)
+				if (obstacle.y > 2500 && obstacle.y < 2700) {
+					// Check if obstacle is horizontally close to ninja (within jumping range)
+					var distanceX = Math.abs(obstacle.x - self.x);
+					if (distanceX < 200) {
+						// Within 200px horizontally
+						// Ninja is jumping over an obstacle - give points!
+						LK.setScore(LK.getScore() + 50);
+						updateScore();
+						// Play a sound to indicate successful jump over obstacle
+						LK.getSound('jump').play();
+						return; // Only give points once per jump
+					}
+				}
+			}
 		}
 	};
 	return self;
@@ -1660,9 +1718,9 @@ var electroCloud = Container.expand(function () {
 		anchorY: 0.5,
 		scaleX: 1,
 		scaleY: 1,
-		alpha: 1 // Start invisible
+		alpha: 1 // Start visible (inactive cloud)
 	});
-	self.speed = Math.random() * 1.5 + 0.5; // Different speed range
+	self.speed = 2; // Fixed speed for all clouds
 	self.active = true;
 	self.isCharged = false; // Track if cloud is charged and ready for interaction
 	self.chargeTimer = 0; // Timer for charging sequence
@@ -1670,8 +1728,8 @@ var electroCloud = Container.expand(function () {
 	// Start with much smaller scale and transparency
 	self.scaleX = 0.05;
 	self.scaleY = 0.05;
-	cloudGraphics.alpha = 0; // Start very transparent with active cloud
-	inactiveCloudGraphics.alpha = 0.1; // Start with inactive cloud hidden
+	cloudGraphics.alpha = 0; // Start with active cloud hidden
+	inactiveCloudGraphics.alpha = 1; // Start with inactive cloud fully visible
 	tween(self, {
 		scaleX: 0.3,
 		scaleY: 0.3
@@ -1689,24 +1747,19 @@ var electroCloud = Container.expand(function () {
 		// Racing game perspective: calculate distance progress
 		var distanceProgress = (2000 - self.z) / 2000; // 0 at start, 1 when very close
 		// Determine if cloud is in interaction range (when it's close enough to be affected)
-		var isInInteractionRange = distanceProgress > 0.3 && distanceProgress < 0.8; // Between 30% and 80% of approach
+		var isInInteractionRange = distanceProgress > 0.3 && distanceProgress < 0.7; // Between 30% and 70% of approach
 		// Update charging state based on interaction range
 		if (isInInteractionRange && !self.isCharged) {
 			// Start charging when entering interaction range
 			self.isCharged = true;
 			self.chargeTimer = 0;
-			// Switch to inactive cloud graphics (cloudInactive when not charged)
-			cloudGraphics.alpha = 0;
-			inactiveCloudGraphics.alpha = 1;
-			// Play lightning sound when cloud becomes active
-		} else if (!isInInteractionRange && self.isCharged) {
-			// Stop charging when leaving interaction range
-			self.isCharged = false;
-			cloudGraphics.tint = 0xFFFFFF; // Reset to normal color
-			// Switch to active cloud graphics (cloudType2 when charged)
-			cloudGraphics.alpha = 0;
-			inactiveCloudGraphics.alpha = 1;
+			// Switch to active cloud graphics (cloudType2 when charged) - only when ready to collide
+			cloudGraphics.alpha = 1;
+			inactiveCloudGraphics.alpha = 0;
+			// Play electric cloud hit sound when cloud becomes active
+			LK.getSound('electric-cloud-hit').play();
 		}
+		// Once charged, clouds never deactivate - they stay as cloudType2 until destroyed
 		// Update charge timer and visual effects
 		if (self.isCharged) {
 			self.chargeTimer++;
@@ -1730,8 +1783,8 @@ var electroCloud = Container.expand(function () {
 				});
 			}
 			// Play lightning sound periodically while charged (every 60 frames = 1 second)
-		} else {
-			// Subtle flickering when not in interaction range (distant or too close)
+		} else if (!self.isCharged) {
+			// Subtle flickering only when not charged (inactive state)
 			self.flickerTimer = self.flickerTimer || 0;
 			self.flickerTimer++;
 			if (self.flickerTimer % 45 === 0) {
@@ -1756,10 +1809,10 @@ var electroCloud = Container.expand(function () {
 		// Transparency: faint at distance, solid when close, but dimmed when not in interaction range
 		var baseAlpha = Math.min(1.0, 0.3 + distanceProgress * 0.7);
 		var finalAlpha = self.isCharged ? baseAlpha : baseAlpha * 0.6; // Dimmed when not charged
+		// Apply transparency based on charging state (but don't override the asset changes)
 		if (self.isCharged) {
 			cloudGraphics.alpha = finalAlpha;
 			inactiveCloudGraphics.alpha = 0;
-			LK.getSound('electric-cloud-hit').play();
 		} else {
 			cloudGraphics.alpha = 0;
 			inactiveCloudGraphics.alpha = finalAlpha;
@@ -1783,8 +1836,23 @@ var electroCloud = Container.expand(function () {
 		var spreadFactor = distanceProgress * distanceProgress * 1.8; // Moderate spreading for electroCloud
 		var horizontalOffset = distanceFromCenter * spreadFactor;
 		self.x = self.baseX + horizontalOffset;
-		// Remove when cloud is completely off screen - much higher up (800px above screen)
-		if (self.y < -800 || self.z <= -100) {
+		// Remove when cloud is completely off screen
+		// Check multiple conditions for cloud destruction
+		var shouldDestroy = false;
+		// Condition 1: Cloud has moved too far back (Z position)
+		if (self.z <= -100) {
+			shouldDestroy = true;
+		}
+		// Condition 2: Cloud has moved too high up (Y position)
+		// Clouds should disappear when they go above the top of the screen (Y=0)
+		if (self.y < -100) {
+			shouldDestroy = true;
+		}
+		// Condition 3: Cloud has moved too far to the sides (X position)
+		if (self.x < -500 || self.x > 2548) {
+			shouldDestroy = true;
+		}
+		if (shouldDestroy) {
 			self.active = false;
 		}
 	};
@@ -1858,8 +1926,8 @@ var game = new LK.Game({
 /**** 
 * Game Code
 ****/
-// Fog assets removed - no fog elements in game
 // Game variables
+// Fog assets removed - no fog elements in game
 var ninja;
 var ninjaStars = [];
 var enemies = [];
@@ -1975,15 +2043,25 @@ function isFeatureUnlocked(feature) {
 function showCurrentPhase() {
 	var currentPhase = Math.min(casaNinjaVisitCount + 1, 4);
 	var phaseText = 'FASE ' + currentPhase;
-	// Create or update phase display
+	// Create or update phase display with same style as score
 	if (!window.phaseDisplay) {
-		window.phaseDisplay = new Text2();
-		window.phaseDisplay.x = 1024; // Center of screen
-		window.phaseDisplay.y = 160; // 160px from top
-		window.phaseDisplay.size = 60;
-		window.phaseDisplay.fill = '#FFD700'; // Golden yellow for better visibility
-		window.phaseDisplay.anchorX = 0.5;
-		window.phaseDisplay.anchorY = 0.5;
+		window.phaseDisplay = new Text2(phaseText, {
+			size: 76,
+			fill: 0xFFD700,
+			font: "'Arial Black', 'Impact', 'Helvetica Bold', sans-serif"
+		});
+		window.phaseDisplay.anchor.set(0.5, 0.5);
+		window.phaseDisplay.x = 1024; // Center of screen horizontally
+		window.phaseDisplay.y = 1366; // Center of screen vertically (2732/2)
+		// Initialize style object if it doesn't exist
+		if (!window.phaseDisplay.style) {
+			window.phaseDisplay.style = {};
+		}
+		// Add 3D bold effects with enhanced drop shadow (same as score)
+		window.phaseDisplay.style.dropShadow = true;
+		window.phaseDisplay.style.dropShadowColor = "#000000";
+		window.phaseDisplay.style.dropShadowDistance = 4;
+		window.phaseDisplay.style.dropShadowAngle = Math.PI / 4;
 		game.addChild(window.phaseDisplay);
 	}
 	window.phaseDisplay.setText(phaseText);
@@ -2009,20 +2087,24 @@ function showPhaseInfo() {
 			message = 'FASE 4: Arqueros ninja\n¡Mátalos antes que tiren o salta la flecha!';
 			break;
 	}
-	// Create phase info text
-	var phaseInfo = new Text2();
-	phaseInfo.setText(message);
+	// Create phase info text with same style as score
+	var phaseInfo = new Text2(message, {
+		size: 76,
+		fill: 0xFFD700,
+		font: "'Arial Black', 'Impact', 'Helvetica Bold', sans-serif"
+	});
+	phaseInfo.anchor.set(0.5, 0.5);
 	phaseInfo.x = casaNinja.x;
-	phaseInfo.y = casaNinja.y - 200;
-	phaseInfo.size = 50;
-	phaseInfo.fill = '#FFD700'; // Golden yellow for better visibility
+	phaseInfo.y = casaNinja.y - 2000;
 	// Initialize style object if it doesn't exist
 	if (!phaseInfo.style) {
 		phaseInfo.style = {};
 	}
-	// Remove stroke for LK compatibility
-	phaseInfo.anchorX = 0.5;
-	phaseInfo.anchorY = 0.5;
+	// Add 3D bold effects with enhanced drop shadow (same as score)
+	phaseInfo.style.dropShadow = true;
+	phaseInfo.style.dropShadowColor = "#000000";
+	phaseInfo.style.dropShadowDistance = 4;
+	phaseInfo.style.dropShadowAngle = Math.PI / 4;
 	game.addChild(phaseInfo);
 	// Remove after 3 seconds
 	LK.setTimeout(function () {
@@ -2107,8 +2189,8 @@ var greenLayer = game.addChildAt(LK.getAsset('grassMask', {
 var sun = game.addChild(LK.getAsset('sun', {
 	anchorX: 0.5,
 	anchorY: 0.5,
-	x: 1700,
-	// Position sun in upper right
+	x: 2500,
+	// Start off-screen to the right
 	y: 300,
 	scaleX: 1.5,
 	scaleY: 1.5,
@@ -2859,13 +2941,32 @@ function spawnCloud() {
 			cloud = new CloudType3();
 		}
 	} else {
-		// Normal distribution with lightning clouds enabled
-		if (cloudType < 0.25) {
-			cloud = new Cloud();
-		} else if (cloudType < 0.75) {
+		// Check maximum number of electric clouds allowed based on phase
+		var maxElectricClouds = Math.min(casaNinjaVisitCount + 1, 3); // Max 3 electric clouds
+		var currentElectricClouds = 0;
+		for (var i = 0; i < clouds.length; i++) {
+			if (clouds[i].constructor === electroCloud && clouds[i].active) {
+				currentElectricClouds++;
+			}
+		}
+		// Much more normal clouds - 90% chance for normal clouds
+		if (cloudType < 0.9) {
+			// 90% chance for normal clouds (many more)
+			if (cloudType < 0.45) {
+				cloud = new Cloud();
+			} else {
+				cloud = new CloudType3();
+			}
+		} else if (currentElectricClouds < maxElectricClouds) {
+			// 10% chance for electric cloud (only if under limit)
 			cloud = new electroCloud();
 		} else {
-			cloud = new CloudType3();
+			// If electric cloud limit reached, spawn normal cloud instead
+			if (cloudType < 0.95) {
+				cloud = new Cloud();
+			} else {
+				cloud = new CloudType3();
+			}
 		}
 	}
 	cloud.x = Math.random() * 1200 + 400; // Random x position
@@ -2880,7 +2981,7 @@ function spawnCloud() {
 }
 // Spawn tori
 function spawnTori() {
-	// Check if there are any obstacles that would conflict with tori spawning
+	// Check if there are any obstacles or casa ninja that would conflict with tori spawning
 	var canSpawnTori = true;
 	var minSeparationDistance = 300; // Minimum distance between toris and obstacles
 	for (var o = 0; o < obstacles.length; o++) {
@@ -2890,6 +2991,11 @@ function spawnTori() {
 			canSpawnTori = false;
 			break;
 		}
+	}
+	// Check if casa ninja is active and would conflict with tori spawning
+	if (casaNinja && casaNinja.active && casaNinja.z && casaNinja.z > 600 && casaNinja.z < 1400) {
+		// There's a casa ninja in the spawn zone - don't spawn tori
+		canSpawnTori = false;
 	}
 	// Also check existing toris to ensure proper spacing
 	for (var t = 0; t < toris.length; t++) {
@@ -3132,10 +3238,10 @@ function throwNinjaStar(targetX, targetY) {
 		star.velocityX = dx / distance * star.speed;
 		star.velocityY = dy / distance * star.speed;
 		ninjaStars.push(star);
-		// Add ninja star after ninja in display list so it appears in front
+		// Add ninja star behind ninja so it appears from behind his body
 		var ninjaIndex = game.children.indexOf(ninja);
 		if (ninjaIndex !== -1) {
-			game.addChildAt(star, ninjaIndex + 1);
+			game.addChildAt(star, ninjaIndex);
 		} else {
 			game.addChild(star);
 		}
@@ -3401,7 +3507,7 @@ game.update = function () {
 			// Check collision with all enemy types
 			for (j = enemies.length - 1; j >= 0; j--) {
 				enemy = enemies[j];
-				if (enemy.active && iceStar.intersects(enemy)) {
+				if (enemy.active && !enemy.falling && iceStar.intersects(enemy)) {
 					enemiesKilled++;
 					LK.setScore(LK.getScore() + 10);
 					updateScore();
@@ -3443,7 +3549,7 @@ game.update = function () {
 			}
 			for (j = enemies2.length - 1; j >= 0; j--) {
 				enemy2 = enemies2[j];
-				if (enemy2.active && iceStar.intersects(enemy2)) {
+				if (enemy2.active && !enemy2.falling && iceStar.intersects(enemy2)) {
 					enemiesKilled++;
 					LK.setScore(LK.getScore() + 15);
 					updateScore();
@@ -3485,7 +3591,7 @@ game.update = function () {
 			}
 			for (j = enemies3.length - 1; j >= 0; j--) {
 				enemy3 = enemies3[j];
-				if (enemy3.active && iceStar.intersects(enemy3)) {
+				if (enemy3.active && !enemy3.falling && iceStar.intersects(enemy3)) {
 					enemiesKilled++;
 					LK.setScore(LK.getScore() + 20);
 					updateScore();
@@ -3580,7 +3686,7 @@ game.update = function () {
 			// Check collision with airplanes
 			for (var ap = airplanes.length - 1; ap >= 0; ap--) {
 				var airplane = airplanes[ap];
-				if (airplane.active && iceStar.intersects(airplane)) {
+				if (airplane.active && !airplane.falling && iceStar.intersects(airplane)) {
 					LK.setScore(LK.getScore() + 30);
 					updateScore();
 					// Make airplane fall in nosedive and play crash sound
@@ -3605,7 +3711,9 @@ game.update = function () {
 			// Check collision with CloudType2 (electric clouds) to disable them
 			for (var cl = clouds.length - 1; cl >= 0; cl--) {
 				var cloud = clouds[cl];
-				if (cloud.active && cloud.constructor === electroCloud && cloud.isCharged && iceStar.intersects(cloud)) {
+				if (cloud.active && cloud.constructor === electroCloud && iceStar.intersects(cloud)) {
+					// Add 10 points for freezing electric cloud
+					LK.setScore(LK.getScore() + 10);
 					// Play electric cloud hit sound
 					LK.getSound('electric-cloud-hit').play();
 					// Play brbrbrbrbr sound when freezing cloud
@@ -3813,7 +3921,7 @@ game.update = function () {
 		// Check collision with enemies
 		for (var j = enemies.length - 1; j >= 0; j--) {
 			var enemy = enemies[j];
-			if (enemy.active && woodenStar.intersects(enemy)) {
+			if (enemy.active && !enemy.falling && woodenStar.intersects(enemy)) {
 				// Hit enemy
 				enemiesKilled++;
 				LK.setScore(LK.getScore() + 10);
@@ -3842,7 +3950,7 @@ game.update = function () {
 		// Check collision with enemies2
 		for (var j = enemies2.length - 1; j >= 0; j--) {
 			var enemy2 = enemies2[j];
-			if (enemy2.active && woodenStar.intersects(enemy2)) {
+			if (enemy2.active && !enemy2.falling && woodenStar.intersects(enemy2)) {
 				// Hit enemy2
 				enemiesKilled++;
 				LK.setScore(LK.getScore() + 15);
@@ -3871,7 +3979,7 @@ game.update = function () {
 		// Check collision with enemies3
 		for (var j = enemies3.length - 1; j >= 0; j--) {
 			var enemy3 = enemies3[j];
-			if (enemy3.active && woodenStar.intersects(enemy3)) {
+			if (enemy3.active && !enemy3.falling && woodenStar.intersects(enemy3)) {
 				// Hit enemy3
 				enemiesKilled++;
 				LK.setScore(LK.getScore() + 20);
@@ -3954,6 +4062,8 @@ game.update = function () {
 			// Hit sun - change sun image for 2 seconds
 			if (!sunIsHit) {
 				LK.getSound('sol-grito').play();
+				// Add 100 points for hitting the sun
+				LK.setScore(LK.getScore() + 100);
 				sun.destroy();
 				sun = game.addChildAt(LK.getAsset('sunHit', {
 					anchorX: 0.5,
@@ -3975,9 +4085,10 @@ game.update = function () {
 		// Check collision with CloudType2 to spawn lightning (only when clouds are near the end of the screen)
 		var _loop2 = function _loop2() {
 				cloud = clouds[c];
-				if (cloud.active && star.intersects(cloud) && cloud.constructor === electroCloud) {
-					// Only shoot lightning when cloud is close to the end of the screen (z <= 300)
-					if (cloud.z <= 300) {
+				if (cloud.active && star.intersects(cloud) && cloud.constructor === electroCloud && cloud.isCharged) {
+					// Shoot lightning when cloud is charged (active state) - more permissive z condition
+					if (cloud.z <= 1000) {
+						// Changed from 300 to 1000 to allow more lightning shots
 						// 3 complete black-white cycles
 						var _lightningFlicker = function lightningFlicker() {
 							flickerCount++;
@@ -4081,7 +4192,7 @@ game.update = function () {
 						ninjaStars.splice(i, 1);
 						return 1; // break
 					}
-					// If cloud is not ready to shoot (z > 300), star passes through without being destroyed
+					// Cloud is charged and will shoot lightning when hit by star
 				}
 			},
 			cloud,
@@ -4129,7 +4240,7 @@ game.update = function () {
 		// Check collision with airplanes
 		for (var a = airplanes.length - 1; a >= 0; a--) {
 			var airplane = airplanes[a];
-			if (airplane.active && star.intersects(airplane)) {
+			if (airplane.active && !airplane.falling && star.intersects(airplane)) {
 				// Hit airplane - drop power-up
 				dropPowerUp(airplane);
 				// Play special airplane hit sound
@@ -4144,7 +4255,7 @@ game.update = function () {
 		// Check collision with enemies
 		for (var j = enemies.length - 1; j >= 0; j--) {
 			var enemy = enemies[j];
-			if (enemy.active && star.intersects(enemy)) {
+			if (enemy.active && !enemy.falling && star.intersects(enemy)) {
 				// Hit enemy
 				enemiesKilled++;
 				LK.setScore(LK.getScore() + 10);
@@ -4173,7 +4284,7 @@ game.update = function () {
 		// Check collision with enemies2 (NMI2)
 		for (var j = enemies2.length - 1; j >= 0; j--) {
 			var enemy2 = enemies2[j];
-			if (enemy2.active && star.intersects(enemy2)) {
+			if (enemy2.active && !enemy2.falling && star.intersects(enemy2)) {
 				// Hit enemy2
 				enemiesKilled++;
 				LK.setScore(LK.getScore() + 15); // More points for NMI2
@@ -4202,7 +4313,7 @@ game.update = function () {
 		// Check collision with enemies3 (Enemy3)
 		for (var j = enemies3.length - 1; j >= 0; j--) {
 			var enemy3 = enemies3[j];
-			if (enemy3.active && star.intersects(enemy3)) {
+			if (enemy3.active && !enemy3.falling && star.intersects(enemy3)) {
 				// Hit enemy3
 				enemiesKilled++;
 				LK.setScore(LK.getScore() + 20); // More points for Enemy3
@@ -4443,8 +4554,8 @@ game.update = function () {
 			meteorites.splice(i, 1);
 			continue;
 		}
-		// Check collision with ninja
-		if (ninja.intersects(meteorite)) {
+		// Check collision with ninja - but not when in casa ninja
+		if (!isInCasaNinja && ninja.intersects(meteorite)) {
 			LK.getSound('ninja-ouch').play();
 			// Turn screen red and stop ninja walking
 			tween(game, {
@@ -4624,13 +4735,20 @@ game.update = function () {
 	}
 	// Update clouds - but not when in casa ninja
 	if (!isInCasaNinja) {
+		var activeClouds = 0;
 		for (var i = clouds.length - 1; i >= 0; i--) {
 			var cloud = clouds[i];
 			cloud.update();
 			if (!cloud.active) {
 				cloud.destroy();
 				clouds.splice(i, 1);
+			} else {
+				activeClouds++;
 			}
+		}
+		// Debug: Log cloud count every 5 seconds
+		if (LK.ticks % 300 === 0) {
+			console.log('Active clouds: ' + activeClouds + ', Total clouds array: ' + clouds.length);
 		}
 	}
 	// Fog system removed - no fog updates needed
@@ -4699,10 +4817,10 @@ game.update = function () {
 			powerUps.splice(i, 1);
 		}
 	}
-	// Spawn clouds
+	// Spawn clouds at reduced frequency
 	cloudSpawnTimer++;
-	if (cloudSpawnTimer > 120) {
-		// Spawn clouds less frequently for easier gameplay - but not when in casa ninja or when casa ninja is active
+	if (cloudSpawnTimer > 60) {
+		// Spawn clouds every 1 second (60 frames) - but not when in casa ninja or when casa ninja is active
 		if (!isInCasaNinja && !(casaNinja && casaNinja.active)) {
 			spawnCloud();
 			cloudSpawnTimer = 0;
@@ -4727,7 +4845,7 @@ game.update = function () {
 	if (!isInCasaNinja && !(casaNinja && casaNinja.active)) {
 		airplaneSpawnTimer++;
 		if (airplaneSpawnTimer > 600 && isFeatureUnlocked('airplanes')) {
-			// Every 10 seconds
+			// Every 10 seconds (600 frames at 60fps)
 			spawnAirplane();
 			airplaneSpawnTimer = 0;
 		}
@@ -4925,6 +5043,11 @@ game.update = function () {
 					LK.getSound('portazo').play();
 					// Change to closed casa ninja with shake effect
 					casaNinja.changeState(false);
+					// Show phase text when entering bathroom
+					showCurrentPhase();
+					if (window.phaseDisplay) {
+						window.phaseDisplay.alpha = 1;
+					}
 					// Add shake effect to house
 					tween(casaNinja, {
 						x: casaNinja.x + 10
@@ -4956,9 +5079,10 @@ game.update = function () {
 				}
 				break;
 			case 2:
-				// Different sequence based on visit count
-				if (casaNinjaVisitCount === 1) {
-					// First visit: normal sequence
+				// Different sequence based on visit count (cycles every 3 houses)
+				var cycleNumber = (casaNinjaVisitCount - 1) % 3 + 1; // 1, 2, 3, 1, 2, 3, etc.
+				if (cycleNumber === 1) {
+					// First cycle (houses 1, 4, 7, 10...): normal sequence
 					if (casaNinjaSequenceTimer === 1) {
 						LK.getSound('meo').play();
 					}
@@ -4966,8 +5090,8 @@ game.update = function () {
 						casaNinjaSequenceStage = 3;
 						casaNinjaSequenceTimer = 0;
 					}
-				} else if (casaNinjaVisitCount === 2) {
-					// Second visit: meo + pedos
+				} else if (cycleNumber === 2) {
+					// Second cycle (houses 2, 5, 8, 11...): meo + pedos
 					if (casaNinjaSequenceTimer === 1) {
 						LK.getSound('meo').play();
 					}
@@ -4978,8 +5102,8 @@ game.update = function () {
 						casaNinjaSequenceStage = 3;
 						casaNinjaSequenceTimer = 0;
 					}
-				} else if (casaNinjaVisitCount >= 3) {
-					// Third visit and beyond: pedoLargo + bloop + alivio
+				} else if (cycleNumber === 3) {
+					// Third cycle (houses 3, 6, 9, 12...): pedoLargo + bloop + alivio
 					if (casaNinjaSequenceTimer === 1) {
 						LK.getSound('pedoLargo').play();
 					}
@@ -4990,34 +5114,53 @@ game.update = function () {
 				}
 				break;
 			case 3:
-				// Different sound based on visit count
-				if (casaNinjaVisitCount <= 2) {
-					// First and second visit: WC sound
+				// Different sequence based on visit count (cycles every 3 houses)
+				var cycleNumber = (casaNinjaVisitCount - 1) % 3 + 1; // 1, 2, 3, 1, 2, 3, etc.
+				if (cycleNumber <= 2) {
+					// First and second cycle: Relief sound comes BEFORE WC
 					if (casaNinjaSequenceTimer === 1) {
-						LK.getSound('wc').play();
+						LK.getSound('alivio').play();
+					}
+					if (casaNinjaSequenceTimer >= 120) {
+						// 2 seconds
+						casaNinjaSequenceStage = 4;
+						casaNinjaSequenceTimer = 0;
 					}
 				} else {
-					// Third visit and beyond: bloop sound
+					// Third cycle: bloop comes BEFORE alivio
 					if (casaNinjaSequenceTimer === 1) {
 						LK.getSound('bloop').play();
 					}
-				}
-				if (casaNinjaSequenceTimer >= 120) {
-					// 2 seconds
-					casaNinjaSequenceStage = 4;
-					casaNinjaSequenceTimer = 0;
+					if (casaNinjaSequenceTimer >= 120) {
+						// 2 seconds
+						casaNinjaSequenceStage = 4;
+						casaNinjaSequenceTimer = 0;
+					}
 				}
 				break;
 			case 4:
-				// Relief sound with celebration effect
-				if (casaNinjaSequenceTimer === 1) {
-					LK.getSound('alivio').play();
-					// Add celebration shake
-				}
-				if (casaNinjaSequenceTimer >= 180) {
-					// 3 seconds
-					casaNinjaSequenceStage = 5;
-					casaNinjaSequenceTimer = 0;
+				// Different sequence based on visit count (cycles every 3 houses)
+				var cycleNumber = (casaNinjaVisitCount - 1) % 3 + 1; // 1, 2, 3, 1, 2, 3, etc.
+				if (cycleNumber <= 2) {
+					// First and second cycle: WC sound after relief
+					if (casaNinjaSequenceTimer === 1) {
+						LK.getSound('wc').play();
+					}
+					if (casaNinjaSequenceTimer >= 120) {
+						// 2 seconds
+						casaNinjaSequenceStage = 5;
+						casaNinjaSequenceTimer = 0;
+					}
+				} else {
+					// Third cycle: alivio comes AFTER bloop
+					if (casaNinjaSequenceTimer === 1) {
+						LK.getSound('alivio').play();
+					}
+					if (casaNinjaSequenceTimer >= 120) {
+						// 2 seconds
+						casaNinjaSequenceStage = 5;
+						casaNinjaSequenceTimer = 0;
+					}
 				}
 				break;
 			case 5:
@@ -5037,6 +5180,33 @@ game.update = function () {
 				if (casaNinjaSequenceTimer === 1) {
 					LK.getSound('portazo').play();
 					// House stays closed - back door slams
+					// Add shake effect to house when closing door to leave
+					tween(casaNinja, {
+						x: casaNinja.x + 10
+					}, {
+						duration: 50,
+						easing: tween.easeInOut,
+						onFinish: function onFinish() {
+							tween(casaNinja, {
+								x: casaNinja.x - 20
+							}, {
+								duration: 50,
+								easing: tween.easeInOut,
+								onFinish: function onFinish() {
+									tween(casaNinja, {
+										x: casaNinja.x + 10
+									}, {
+										duration: 50,
+										easing: tween.easeInOut
+									});
+								}
+							});
+						}
+					});
+					// Hide phase text when closing door to leave
+					if (window.phaseDisplay) {
+						window.phaseDisplay.alpha = 0;
+					}
 					// Move ninja back to original position and make him reappear
 					tween(ninja, {
 						x: 1024,
@@ -5108,16 +5278,36 @@ game.update = function () {
 	if (!isInCasaNinja && LK.ticks % 10 === 0) {
 		sortObjectsByDepth();
 	}
-	// Show current phase
-	showCurrentPhase();
-	// Show/hide sun based on phase
+	// Show current phase only when ninja is in casa ninja
+	if (isInCasaNinja && window.phaseDisplay) {
+		window.phaseDisplay.alpha = 1;
+	} else if (window.phaseDisplay) {
+		window.phaseDisplay.alpha = 0;
+	}
+	// Show/hide sun based on phase with slide animation
 	if (isFeatureUnlocked('sun')) {
 		if (sun.alpha < 1) {
-			sun.alpha = 1; // Make sun visible
+			// Slide sun in from the right
+			sun.alpha = 1;
+			tween(sun, {
+				x: 1700 // Slide to final position
+			}, {
+				duration: 1000,
+				easing: tween.easeOut
+			});
 		}
 	} else {
 		if (sun.alpha > 0) {
-			sun.alpha = 0; // Hide sun
+			// Slide sun out to the right
+			tween(sun, {
+				x: 2500 // Slide off-screen
+			}, {
+				duration: 500,
+				easing: tween.easeIn,
+				onFinish: function onFinish() {
+					sun.alpha = 0;
+				}
+			});
 		}
 	}
 };
