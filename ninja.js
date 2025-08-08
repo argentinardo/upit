@@ -2,7 +2,7 @@
 * Assets
 ****/
 LK.init.shape('grassMask', {width:3000, height:3000, color:0x228b22, shape:'box'})
-LK.init.shape('instrucciones', {width:100, height:100, color:0x805cef, shape:'box'})
+LK.init.shape('grassSolid', {width:2048, height:2000, color:0x078134, shape:'box'})
 LK.init.image('Archer-ninja', {width:100, height:100, id:'687e2b5a5089f8124e100aa0'})
 LK.init.image('Arma-ui', {width:100, height:100, id:'6880b9d8303aec2e4fad813e'})
 LK.init.image('Enemy2', {width:250, height:288.29, id:'687d9735bdf42f92241c548b', flipX:1})
@@ -19,20 +19,22 @@ LK.init.image('backgroundImage', {width:2048, height:2732, id:'687d7eae546d3d568
 LK.init.image('casaNinja', {width:600, height:600, id:'6893ba9c6c5d0982f48f476e'})
 LK.init.image('casaNinjaCerrada', {width:600, height:600, id:'6893e82b5896eda87911e33f'})
 LK.init.image('center-ui-bg', {width:200, height:74.22, id:'6886b03e0363b585632d55ae'})
-LK.init.image('cloud', {width:150, height:80, id:'687c37cce5cbe2bee2b1bfd1'})
+LK.init.image('cloud', {width:50, height:26.8, id:'687c37cce5cbe2bee2b1bfd1'})
 LK.init.image('cloudInactive', {width:100, height:100, id:'6893ff94eba6f1f305376726'})
 LK.init.image('cloudType2', {width:200, height:197.66, id:'687d876bbdf42f92241c53ec'})
 LK.init.image('cloudType3', {width:100, height:60, id:'687c37cce5cbe2bee2b1bfce'})
 LK.init.image('electrocutado', {width:600, height:180, id:'68940cf06c5d0982f48f4818'})
 LK.init.image('enemy', {width:300, height:307, id:'687c381ae5cbe2bee2b1bfdb', flipX:1})
-LK.init.image('freeze-archer-ninja', {width:100, height:100, id:'687fda0388fabecfe2dd55cc'})
-LK.init.image('freeze-enemy', {width:100, height:100, id:'687f88b35ad081944b422bcd'})
-LK.init.image('freeze-enemy2', {width:100, height:100, id:'687f7fbeffc990ba21391f96'})
-LK.init.image('freeze-enemy3', {width:100, height:100, id:'687f7de9ffc990ba21391f79'})
+LK.init.image('freeze-archer-ninja', {width:400, height:400, id:'687fda0388fabecfe2dd55cc'})
+LK.init.image('freeze-enemy', {width:300, height:300, id:'687f88b35ad081944b422bcd'})
+LK.init.image('freeze-enemy2', {width:300, height:300, id:'687f7fbeffc990ba21391f96'})
+LK.init.image('freeze-enemy3', {width:300, height:300, id:'687f7de9ffc990ba21391f79'})
 LK.init.image('frezze-airplane', {width:300, height:300, id:'687f7d395ad081944b422bab', flipX:1})
-LK.init.image('greenBackground', {width:60, height:60, id:'687cda9602066f9f2984dce7'})
+LK.init.image('greenBackground', {width:137, height:100, id:'687cda9602066f9f2984dce7'})
 LK.init.image('icesun', {width:300, height:300, id:'687e5ec363d16be0c7d93b9f'})
 LK.init.image('impact', {width:200, height:200, id:'687d5767c4a1a36a58c65588'})
+LK.init.image('indicaciones', {width:130, height:50, id:'6894cce7eba6f1f30537677a'})
+LK.init.image('instrucciones', {width:100, height:100, id:'6894c4a8eba6f1f30537676c'})
 LK.init.image('lightning', {width:33, height:50, id:'687d88e8bdf42f92241c5405', orientation:1})
 LK.init.image('meteor', {width:100, height:100, id:'687cfa104caaf4399f3ee147'})
 LK.init.image('meteorHit1', {width:100, height:100, id:'687d4065be19cec154f53235'})
@@ -84,7 +86,7 @@ LK.init.music('main-theme', {volume:0.5, start:0, end:1, id:'687ce4796abc931f9db
 LK.init.music('mainTheme')
 LK.init.sound('meo', {volume:1.5, start:0.686, end:0.941, id:'6893d7df5896eda87911e337'})
 LK.init.sound('meteoro-golpe', {volume:2, start:0.495, end:0.692, id:'689134375896eda87911e264'})
-LK.init.sound('meteoro-grito', {volume:1, start:0.51, end:0.68, id:'689134375896eda87911e263'})
+LK.init.sound('meteoro-grito', {volume:2, start:0.51, end:0.68, id:'689134375896eda87911e263'})
 LK.init.sound('meterito-voltea')
 LK.init.sound('mushroom-hit', {volume:1, start:0.281, end:0.779, id:'689133d65896eda87911e25e'})
 LK.init.sound('ninja-ouch', {volume:1, start:0, end:0.783, id:'687d60a5546d3d568db4ef95'})
@@ -120,47 +122,36 @@ var Airplane = Container.expand(function () {
 	});
 	self.active = true;
 	self.speed = 2;
-	self.direction = 1; // 1 for right, -1 for left
-	self.altitude = 800; // Flying height - much lower
-	self.frozen = false; // Track if airplane is frozen
+	self.direction = 1;
+	self.altitude = 800;
+	self.frozen = false;
 	self.update = function () {
 		if (!self.active || game.paused) {
 			return;
 		}
-		// Check if airplane is falling (hit by ice)
 		if (self.falling) {
-			// Apply gravity for nosedive
 			self.fallVelocityY = self.fallVelocityY || 0;
-			self.fallVelocityY += 1.2; // Strong gravity for fast fall
-			// Move with falling physics
+			self.fallVelocityY += 1.2;
 			self.x += self.fallVelocityX;
 			self.y += self.fallVelocityY;
-			// Keep original rotation - no rotation during fall
 			var airplaneGraphics = self.children[0];
 			if (airplaneGraphics) {
-				// Maintain original rotation (0 degrees)
 				airplaneGraphics.rotation = 0;
 			}
 		} else {
-			// Normal airplane flight
 			self.x += self.speed * self.direction;
 		}
-		// Remove if off screen
 		if (self.x < -200 || self.x > 2248 || self.y > 4000) {
-			// Play break ice sound if airplane was frozen when leaving screen
 			if (self.frozen) {
 				LK.getSound('breakIce').play();
 			}
 			self.active = false;
 		}
 	};
-	// Method to make airplane fall when hit by ice
 	self.startFalling = function () {
 		self.falling = true;
-		self.frozen = true; // Mark airplane as frozen
-		// Change to frozen airplane asset
+		self.frozen = true;
 		var airplaneGraphics = self.children[0];
-		// Preserve original scale before destroying
 		var originalScaleX = airplaneGraphics.scaleX;
 		var originalScaleY = airplaneGraphics.scaleY;
 		airplaneGraphics.destroy();
@@ -170,16 +161,14 @@ var Airplane = Container.expand(function () {
 			scaleX: 1,
 			scaleY: 1
 		});
-		// Apply ice blue tint
 		tween(frozenGraphics, {
 			tint: 0x87CEEB
 		}, {
 			duration: 300,
 			easing: tween.easeOut
 		});
-		// Add trembling effect for 1 second
 		var trembleCount = 0;
-		var maxTrembles = 30; // 30 trembles over 1 second (30 frames)
+		var maxTrembles = 30;
 		var trembleIntensity = 15;
 		function createTrembling() {
 			if (trembleCount < maxTrembles) {
@@ -191,22 +180,25 @@ var Airplane = Container.expand(function () {
 					y: self.y + offsetY
 				}, {
 					duration: 33,
-					// About 33ms per trembling
 					easing: tween.linear,
 					onFinish: function onFinish() {
-						createTrembling(); // Continue trembling
+						createTrembling();
 					}
 				});
 			} else {
-				// After trembling, start falling
-				self.fallVelocityX = self.speed * self.direction * 0.5; // Reduced horizontal speed
-				self.fallVelocityY = 1; // Initial downward velocity
-				// Play plane fall sound when frozen/congealed
+				self.fallVelocityX = self.speed * self.direction * 0.5;
+				self.fallVelocityY = 1;
 				LK.getSound('planefall').play();
 			}
 		}
-		// Start trembling sequence
 		createTrembling();
+	};
+	// Caída sin congelar (para estrellas normales)
+	self.startFallingNoFreeze = function () {
+		self.falling = true;
+		self.frozen = false;
+		self.fallVelocityX = self.speed * self.direction * 0.5;
+		self.fallVelocityY = 1;
 	};
 	return self;
 });
@@ -218,13 +210,11 @@ var Alert = Container.expand(function () {
 		scaleX: 0.1,
 		scaleY: 0.1
 	});
-	// Set initial scale on the graphics directly
 	alertGraphics.scaleX = 0.1;
 	alertGraphics.scaleY = 0.1;
 	self.active = true;
 	self.lifeTimer = 0;
-	self.maxLifetime = 180; // 3 seconds - longer duration
-	// Animate alert appearance with better visibility - animate the graphics directly
+	self.maxLifetime = 180;
 	tween(alertGraphics, {
 		scaleX: 4,
 		scaleY: 4
@@ -232,7 +222,6 @@ var Alert = Container.expand(function () {
 		duration: 200,
 		easing: tween.easeOut,
 		onFinish: function onFinish() {
-			// Hold at full size for a moment
 			tween(alertGraphics, {
 				scaleX: 3.0,
 				scaleY: 3.0
@@ -240,7 +229,6 @@ var Alert = Container.expand(function () {
 				duration: 300,
 				easing: tween.linear,
 				onFinish: function onFinish() {
-					// Then fade out
 					tween(alertGraphics, {
 						scaleX: 0.1,
 						scaleY: 0.1,
@@ -274,10 +262,8 @@ var Arrow = Container.expand(function () {
 	self.velocityY = 0;
 	self.speed = 5;
 	self.active = true;
-	// Start small and scale up as it approaches
 	self.scaleX = 3;
 	self.scaleY = 3;
-	// Tween to grow as arrow approaches
 	tween(self, {
 		scaleX: 4,
 		scaleY: 4
@@ -289,39 +275,28 @@ var Arrow = Container.expand(function () {
 		if (!self.active || game.paused) {
 			return;
 		}
-		// Check if arrow is falling (hit state)
 		if (self.falling) {
-			// Apply gravity for falling
 			self.fallVelocityY = self.fallVelocityY || 0;
-			self.fallVelocityY += 0.8; // Gravity
-			// Move with falling physics
+			self.fallVelocityY += 0.8;
 			self.x += self.fallVelocityX;
 			self.y += self.fallVelocityY;
-			// Continuous spinning rotation
 			arrowGraphics.rotation += self.spinSpeed;
 		} else {
-			// Normal arrow flight
 			self.x += self.velocityX;
 			self.y += self.velocityY;
-			// Arrow maintains direction and grows as it approaches
 			var angle = Math.atan2(self.velocityY, self.velocityX);
 			arrowGraphics.rotation = angle;
 		}
-		// Remove if off screen
-		if (self.x < -100 || self.x > 2148 || self.y < -100 || self.y > 3332) {
+		if (self.x < -100 || self.x > 2148 || self.y < WORLD_MIN_Y || self.y > SCREEN_HEIGHT + 600) {
 			self.active = false;
 		}
 	};
-	// Method to make arrow fall when hit
 	self.startFalling = function () {
 		self.falling = true;
-		// Set random sideways velocity (left or right)
 		var direction = Math.random() < 0.5 ? -1 : 1;
-		self.fallVelocityX = direction * (Math.random() * 4 + 2); // 2-6 speed sideways
-		self.fallVelocityY = -(Math.random() * 3 + 1); // Small upward initial velocity
-		// Set random spin speed
-		self.spinSpeed = (Math.random() * 0.3 + 0.2) * direction; // 0.2-0.5 radians per frame
-		// Stop scaling animation
+		self.fallVelocityX = direction * (Math.random() * 4 + 2);
+		self.fallVelocityY = -(Math.random() * 3 + 1);
+		self.spinSpeed = (Math.random() * 0.3 + 0.2) * direction;
 		tween.stop(self);
 	};
 	return self;
@@ -335,8 +310,7 @@ var CasaNinja = Container.expand(function () {
 	self.speed = 3;
 	self.active = true;
 	self.baseX = 1024;
-	self.isOpen = true; // Track if house is open or closed
-	// Start with zero scale and tween to grow (same as tori)
+	self.isOpen = true;
 	self.scaleX = 0.1;
 	self.scaleY = 0.1;
 	tween(self, {
@@ -350,30 +324,19 @@ var CasaNinja = Container.expand(function () {
 		if (!self.active || game.paused) {
 			return;
 		}
-		// Move toward player from horizon with acceleration (exactly like tori)
-		self.z = self.z || 1000; // Start far away
-		// Calculate acceleration based on distance - closer objects move faster
-		var distanceFactor = Math.max(0.1, 1 - self.z / 1000); // 0.1 to 1.0
-		var currentSpeed = self.speed * (0.3 + distanceFactor * 2); // Speed ranges from 0.9 to 6.9
-		self.z -= currentSpeed;
-		// Calculate perspective scaling and position (exactly like tori)
-		var scale = Math.max(0.1, 1 - self.z / 1000);
-		var horizonY = 1503; // Horizon line position moved 10% lower
-		var groundY = 2532; // Ground position
-		var perspectiveY = horizonY + (groundY - horizonY) * scale;
+		var p = computePerspective(self.z, self.speed);
+		self.z = p.newZ;
+		var scale = p.scale;
+		var perspectiveY = p.perspectiveY;
 		self.y = perspectiveY;
-		// Casa ninja stays in center like tori
-		self.x = self.baseX; // Keep in center, no spreading
-		// Scale casa ninja exactly like tori
-		var casaScale = scale * 2.0; // Same scaling as tori
+		self.x = self.baseX;
+		var casaScale = scale * 2.0;
 		self.scaleX = casaScale;
 		self.scaleY = casaScale;
-		// Remove if too close or below screen (same as tori)
 		if (self.z <= -500 || self.y > 3000) {
 			self.active = false;
 		}
 	};
-	// Method to change house state (open/closed)
 	self.changeState = function (isOpen) {
 		self.isOpen = isOpen;
 		if (isOpen) {
@@ -400,12 +363,11 @@ var Cloud = Container.expand(function () {
 		scaleX: 1.5,
 		scaleY: 1.5
 	});
-	self.speed = 2; // Fixed speed for all clouds
+	self.speed = 2;
 	self.active = true;
-	// Start with much smaller scale and transparency
 	self.scaleX = 0.05;
 	self.scaleY = 0.05;
-	cloudGraphics.alpha = 0.1; // Start very transparent
+	cloudGraphics.alpha = 0.1;
 	tween(self, {
 		scaleX: 0.3,
 		scaleY: 0.3
@@ -417,52 +379,36 @@ var Cloud = Container.expand(function () {
 		if (!self.active || game.paused) {
 			return;
 		}
-		// Simulate running toward horizon - clouds approach from distance
-		self.z = self.z || 2000; // Start very far away
+		self.z = self.z || 2000;
 		self.z -= self.speed;
-		// Racing game perspective: tiny at horizon, grow gradually
-		var distanceProgress = (2000 - self.z) / 2000; // 0 at start, 1 when very close
-		var scale = 0.02 + distanceProgress * 1.8; // Grow from 0.02 to 1.82 (bigger clouds)
-		// Transparency: faint at distance, solid when close
+		var distanceProgress = (2000 - self.z) / 2000;
+		var scale = 0.02 + distanceProgress * 1.8;
 		var alpha = Math.min(1.0, 0.3 + distanceProgress * 0.7);
 		cloudGraphics.alpha = alpha;
-		// Y movement: start near horizon, escape dramatically upward when close
 		self.baseY = self.baseY || self.y;
-		var horizonCloudY = self.baseY; // Original Y position (near horizon)
-		// Gradual upward movement - clouds rise slowly and smoothly
-		var escapeFactor = distanceProgress * distanceProgress; // Quadratic progression for gradual effect
-		var maxEscapeHeight = 950; // Extremely high upward movement - clouds escape far above screen
+		var horizonCloudY = self.baseY;
+		var escapeFactor = distanceProgress * distanceProgress;
+		var maxEscapeHeight = 950;
 		self.y = horizonCloudY - escapeFactor * maxEscapeHeight;
-		// Scale dramatically as clouds approach
 		self.scaleX = scale;
 		self.scaleY = scale;
-		// Horizon perspective: clouds spread to sides as you approach them
-		var screenCenter = 1024;
-		self.baseX = self.baseX || self.x; // Store original X position
+		var screenCenter = SCREEN_CENTER_X;
+		self.baseX = self.baseX || self.x;
 		var distanceFromCenter = self.baseX - screenCenter;
-		// Exponential spreading - closer clouds spread much more to sides
-		var spreadFactor = distanceProgress * distanceProgress * 2; // Quadratic spreading
+		var spreadFactor = distanceProgress * distanceProgress * 2;
 		var horizontalOffset = distanceFromCenter * spreadFactor;
 		self.x = self.baseX + horizontalOffset;
-		// Remove when cloud is completely off screen
-		// Check multiple conditions for cloud destruction
 		var shouldDestroy = false;
-		// Condition 1: Cloud has moved too far back (Z position)
 		if (self.z <= -100) {
 			shouldDestroy = true;
 		}
-		// Condition 2: Cloud has moved too high up (Y position)
-		// Clouds should disappear when they go above the top of the screen (Y=0)
-		if (self.y < -100) {
+		if (self.y < WORLD_MIN_Y) {
 			shouldDestroy = true;
 		}
-		// Condition 3: Cloud has moved too far to the sides (X position)
-		if (self.x < -500 || self.x > 2548) {
+		if (self.x < WORLD_MIN_X || self.x > WORLD_MAX_X) {
 			shouldDestroy = true;
 		}
 		if (shouldDestroy) {
-			// Debug: Log cloud position when destroying
-			console.log('Destroying cloud at Y=' + self.y + ', Z=' + self.z + ', X=' + self.x);
 			self.active = false;
 		}
 	};
@@ -476,12 +422,11 @@ var CloudType3 = Container.expand(function () {
 		scaleX: 1.5,
 		scaleY: 1.5
 	});
-	self.speed = 2; // Fixed speed for all clouds
+	self.speed = 2;
 	self.active = true;
-	// Start with much smaller scale and transparency
 	self.scaleX = 0.05;
 	self.scaleY = 0.05;
-	cloudGraphics.alpha = 0.1; // Start very transparent
+	cloudGraphics.alpha = 0.1;
 	tween(self, {
 		scaleX: 0.3,
 		scaleY: 0.3
@@ -493,259 +438,36 @@ var CloudType3 = Container.expand(function () {
 		if (!self.active || game.paused) {
 			return;
 		}
-		// Simulate running toward horizon - clouds approach from distance
 		self.z = self.z || 2000;
 		self.z -= self.speed;
-		// Racing game perspective: tiny at horizon, grow gradually
-		var distanceProgress = (2000 - self.z) / 2000; // 0 at start, 1 when very close
-		var scale = 0.02 + distanceProgress * 2.1; // CloudType3 grows biggest of all clouds
-		// Transparency: faint at distance, solid when close
+		var distanceProgress = (2000 - self.z) / 2000;
+		var scale = 0.02 + distanceProgress * 2.1;
 		var alpha = Math.min(1.0, 0.3 + distanceProgress * 0.7);
 		cloudGraphics.alpha = alpha;
-		// Y movement: start near horizon, escape dramatically upward when close
 		self.baseY = self.baseY || self.y;
-		var horizonCloudY = self.baseY; // Original Y position (near horizon)
-		// Gradual upward movement - clouds rise slowly and smoothly
-		var escapeFactor = distanceProgress * distanceProgress; // Quadratic progression for gradual effect
-		var maxEscapeHeight = 1100; // CloudType3 escapes extremely high - reaches furthest up
+		var horizonCloudY = self.baseY;
+		var escapeFactor = distanceProgress * distanceProgress;
+		var maxEscapeHeight = 1100;
 		self.y = horizonCloudY - escapeFactor * maxEscapeHeight;
-		// Scale dramatically as clouds approach
 		self.scaleX = scale;
 		self.scaleY = scale;
-		// Horizon perspective: clouds spread to sides as you approach them
-		var screenCenter = 1024;
-		self.baseX = self.baseX || self.x; // Store original X position
+		var screenCenter = SCREEN_CENTER_X;
+		self.baseX = self.baseX || self.x;
 		var distanceFromCenter = self.baseX - screenCenter;
-		// Exponential spreading - closer clouds spread much more to sides
-		var spreadFactor = distanceProgress * distanceProgress * 2.2; // Slightly more spreading for CloudType3
+		var spreadFactor = distanceProgress * distanceProgress * 2.2;
 		var horizontalOffset = distanceFromCenter * spreadFactor;
 		self.x = self.baseX + horizontalOffset;
-		// Remove when cloud is completely off screen
-		// Check multiple conditions for cloud destruction
 		var shouldDestroy = false;
-		// Condition 1: Cloud has moved too far back (Z position)
 		if (self.z <= -100) {
 			shouldDestroy = true;
 		}
-		// Condition 2: Cloud has moved too high up (Y position)
-		// Clouds should disappear when they go above the top of the screen (Y=0)
 		if (self.y < -100) {
 			shouldDestroy = true;
 		}
-		// Condition 3: Cloud has moved too far to the sides (X position)
 		if (self.x < -500 || self.x > 2548) {
 			shouldDestroy = true;
 		}
 		if (shouldDestroy) {
-			self.active = false;
-		}
-	};
-	return self;
-});
-var Enemy = Container.expand(function () {
-	var self = Container.call(this);
-	var enemyGraphics = self.attachAsset('enemy', {
-		anchorX: 0.5,
-		anchorY: 0.5
-	});
-	self.active = true;
-	self.velocityX = 0;
-	self.velocityY = 0;
-	self.gravity = 0.15; // Much much slower gravity for very slow falling
-	self.isJumping = true; // Start in jumping state
-	self.groundY = 2532; // Ground level
-	self.frozen = false; // Track if enemy is frozen
-	// Initialize scale for distance-based scaling
-	self.scaleX = 1; // Start larger when spawned far away
-	self.scaleY = 1;
-	self.update = function () {
-		if (!self.active || game.paused) {
-			return;
-		}
-		// Check if enemy is falling (hit state) - apply stronger gravity for falling
-		if (self.falling) {
-			self.velocityY += 0.8; // Stronger gravity for falling enemies
-		} else {
-			// Apply normal gravity and movement
-			self.velocityY += self.gravity;
-		}
-		self.x += self.velocityX;
-		self.y += self.velocityY;
-		// Scale enemy based on distance to ninja
-		if (ninja) {
-			var dx = ninja.x - self.x;
-			var dy = ninja.y - self.y;
-			var distance = Math.sqrt(dx * dx + dy * dy);
-			// Calculate scale based on distance - closer enemies are larger
-			var maxDistance = 1500; // Maximum expected distance
-			var minScale = 1.5; // Minimum scale when far away
-			var maxScale = 2; // Maximum scale when very close
-			var normalizedDistance = Math.min(distance / maxDistance, 1);
-			var targetScale = maxScale - normalizedDistance * (maxScale - minScale);
-			// Smooth scaling transition using tween
-			if (Math.abs(self.scaleX - targetScale) > 0.05) {
-				tween(self, {
-					scaleX: targetScale,
-					scaleY: targetScale
-				}, {
-					duration: 100,
-					easing: tween.easeOut
-				});
-			}
-		}
-		// Check if enemy hits ground (only if not frozen and not falling)
-		if (!self.frozen && !self.falling && self.y >= self.groundY) {
-			self.y = self.groundY;
-			self.velocityY = 0;
-			self.isJumping = false;
-		}
-		// Remove if off screen or fallen enemies that have fallen off screen bottom
-		if (self.x < -200 || self.x > 2248 || self.falling && self.y > 2800 || !self.falling && self.y > 4000) {
-			// Play break ice sound if enemy was frozen when leaving screen
-			if (self.frozen) {
-				LK.getSound('breakIce').play();
-			}
-			LK.getSound('bodyFall').play();
-			self.active = false;
-		}
-	};
-	return self;
-});
-var Enemy2 = Container.expand(function () {
-	var self = Container.call(this);
-	var enemyGraphics = self.attachAsset('Enemy2', {
-		anchorX: 0.5,
-		anchorY: 0.5
-	});
-	self.active = true;
-	self.velocityX = 0;
-	self.velocityY = 0;
-	self.gravity = 0.15; // Same gravity as Enemy
-	self.isJumping = true; // Start in jumping state
-	self.groundY = 2532; // Ground level
-	self.frozen = false; // Track if enemy is frozen
-	// Initialize scale for distance-based scaling
-	self.scaleX = 1.0; // Start larger when spawned far away - doubled from 0.5
-	self.scaleY = 1.0;
-	self.update = function () {
-		if (!self.active || game.paused) {
-			return;
-		}
-		// Check if enemy is falling (hit state) - apply stronger gravity for falling
-		if (self.falling) {
-			self.velocityY += 0.8; // Stronger gravity for falling enemies
-		} else {
-			// Apply normal gravity and movement
-			self.velocityY += self.gravity;
-		}
-		self.x += self.velocityX;
-		self.y += self.velocityY;
-		// Scale enemy based on distance to ninja
-		if (ninja) {
-			var dx = ninja.x - self.x;
-			var dy = ninja.y - self.y;
-			var distance = Math.sqrt(dx * dx + dy * dy);
-			// Calculate scale based on distance - closer enemies are larger
-			var maxDistance = 1500; // Maximum expected distance
-			var minScale = 1.0; // Minimum scale when far away - doubled from 0.5
-			var maxScale = 4.0; // Maximum scale when very close - doubled from 2.0
-			var normalizedDistance = Math.min(distance / maxDistance, 1);
-			var targetScale = maxScale - normalizedDistance * (maxScale - minScale);
-			// Smooth scaling transition using tween
-			if (Math.abs(self.scaleX - targetScale) > 0.05) {
-				tween(self, {
-					scaleX: targetScale,
-					scaleY: targetScale
-				}, {
-					duration: 100,
-					easing: tween.easeOut
-				});
-			}
-		}
-		// Check if enemy hits ground (only if not frozen and not falling)
-		if (!self.frozen && !self.falling && self.y >= self.groundY) {
-			self.y = self.groundY;
-			self.velocityY = 0;
-			self.isJumping = false;
-		}
-		// Remove if off screen or fallen enemies that have fallen off screen bottom
-		if (self.x < -200 || self.x > 2248 || self.falling && self.y > 2800 || !self.falling && self.y > 4000) {
-			// Play break ice sound if enemy was frozen when leaving screen
-			if (self.frozen) {
-				LK.getSound('breakIce').play();
-			} else {
-				LK.getSound('bodyFall').play();
-			}
-			self.active = false;
-		}
-	};
-	return self;
-});
-var Enemy3 = Container.expand(function () {
-	var self = Container.call(this);
-	var enemyGraphics = self.attachAsset('Enemy3', {
-		anchorX: 0.5,
-		anchorY: 0.5
-	});
-	self.active = true;
-	self.velocityX = 0;
-	self.velocityY = 0;
-	self.gravity = 0.15; // Same gravity as other enemies
-	self.isJumping = true; // Start in jumping state
-	self.groundY = 2532; // Ground level
-	self.frozen = false; // Track if enemy is frozen
-	// Initialize scale for distance-based scaling
-	self.scaleX = 1.0; // Start larger when spawned far away
-	self.scaleY = 1.0;
-	self.update = function () {
-		if (!self.active || game.paused) {
-			return;
-		}
-		// Check if enemy is falling (hit state) - apply stronger gravity for falling
-		if (self.falling) {
-			self.velocityY += 0.8; // Stronger gravity for falling enemies
-		} else {
-			// Apply normal gravity and movement
-			self.velocityY += self.gravity;
-		}
-		self.x += self.velocityX;
-		self.y += self.velocityY;
-		// Scale enemy based on distance to ninja
-		if (ninja) {
-			var dx = ninja.x - self.x;
-			var dy = ninja.y - self.y;
-			var distance = Math.sqrt(dx * dx + dy * dy);
-			// Calculate scale based on distance - closer enemies are larger
-			var maxDistance = 1500; // Maximum expected distance
-			var minScale = 1.0; // Minimum scale when far away
-			var maxScale = 4.0; // Maximum scale when very close
-			var normalizedDistance = Math.min(distance / maxDistance, 1);
-			var targetScale = maxScale - normalizedDistance * (maxScale - minScale);
-			// Smooth scaling transition using tween
-			if (Math.abs(self.scaleX - targetScale) > 0.05) {
-				tween(self, {
-					scaleX: targetScale,
-					scaleY: targetScale
-				}, {
-					duration: 100,
-					easing: tween.easeOut
-				});
-			}
-		}
-		// Check if enemy hits ground (only if not frozen and not falling)
-		if (!self.frozen && !self.falling && self.y >= self.groundY) {
-			self.y = self.groundY;
-			self.velocityY = 0;
-			self.isJumping = false;
-		}
-		// Remove if off screen or fallen enemies that have fallen off screen bottom
-		if (self.x < -200 || self.x > 2248 || self.falling && self.y > 2800 || !self.falling && self.y > 4000) {
-			// Play break ice sound if enemy was frozen when leaving screen
-			if (self.frozen) {
-				LK.getSound('breakIce').play();
-			} else {
-				LK.getSound('bodyFall').play();
-			}
 			self.active = false;
 		}
 	};
@@ -758,109 +480,86 @@ var EnemyArcher = Container.expand(function () {
 		anchorY: 1.0
 	});
 	self.active = true;
-	self.tree = null; // Reference to the tree this archer is on
+	self.tree = null;
 	self.shootTimer = 0;
-	self.detectionRange = 20000; // Even larger range to detect ninja from very far away
-	self.lastDistance = null; // Track distance to ninja for approach detection
-	self.frozen = false; // Track if archer is frozen
+	self.detectionRange = 20000;
+	self.lastDistance = null;
+	self.frozen = false;
 	self.update = function () {
 		if (!self.active || game.paused) {
 			return;
 		}
-		// Check if archer is falling (hit state)
 		if (self.falling) {
-			// Change to full body asset if not already changed
 			if (self.children[0] && self.children[0].texture && self.children[0].texture.name !== 'archer-ninja-full-body') {
-				// Preserve current scale and position
 				var currentScaleX = self.children[0].scaleX;
 				var currentScaleY = self.children[0].scaleY;
 				var currentTint = self.children[0].tint;
 				var currentRotation = self.children[0].rotation;
-				// Destroy current graphics
 				self.children[0].destroy();
-				// Add full body archer graphics
 				var fullBodyGraphics = self.attachAsset('archer-ninja-full-body', {
 					anchorX: 0.5,
 					anchorY: 1.0
 				});
-				// Restore visual properties
 				fullBodyGraphics.scaleX = currentScaleX;
 				fullBodyGraphics.scaleY = currentScaleY;
 				fullBodyGraphics.tint = currentTint;
 				fullBodyGraphics.rotation = currentRotation;
 			}
-			// Apply gravity for falling
-			self.velocityY += 0.8; // Stronger gravity for falling enemies
+			self.velocityY += 0.8;
 			self.x += self.velocityX;
 			self.y += self.velocityY;
-			// Remove archer when it falls off screen - use lower threshold for fallen archers
 			if (self.falling && self.y > 2800 || !self.falling && self.y > 4000) {
-				// Play breakIce sound if archer was frozen when leaving screen
 				if (self.frozen) {
 					LK.getSound('breakIce').play();
 				}
 				self.active = false;
 			}
-			return; // Skip normal tree positioning when falling
+			return;
 		}
-		// Stay positioned on tree crown
 		if (self.tree && self.tree.active) {
 			self.x = self.tree.x;
-			self.y = self.tree.y - self.tree.scaleY * 300; // Position at tree crown
-			// Match tree scaling for perspective
-			self.scaleX = self.tree.scaleX * 0.4; // Smaller than tree
+			self.y = self.tree.y - self.tree.scaleY * 300;
+			self.scaleX = self.tree.scaleX * 0.4;
 			self.scaleY = self.tree.scaleY * 0.4;
-			// Check if ninja is within range and at ground level for shooting
 			if (ninja) {
 				var dx = ninja.x - self.x;
 				var dy = ninja.y - self.y;
 				var distance = Math.sqrt(dx * dx + dy * dy);
-				// Check if ninja is at ground level (not jumping) and at similar height
 				var heightDifference = Math.abs(dy);
-				var isNinjaAtGroundLevel = !ninja.isJumping && ninja.y >= ninja.groundY - 50; // Allow small tolerance for ground detection
+				var isNinjaAtGroundLevel = !ninja.isJumping && ninja.y >= ninja.groundY - 50;
 				var isSameHeight = heightDifference < 500;
-				// Check if ninja is within horizontal shooting range - increased range
 				var horizontalDistance = Math.abs(dx);
 				var isInRange = horizontalDistance < 2000 && distance < self.detectionRange;
-				// Only shoot if ninja is at ground level, at same height, and in range
 				if (isNinjaAtGroundLevel && isSameHeight && isInRange) {
 					self.shootArrow();
 				}
 			}
 		} else {
-			// Tree is gone - remove archer
 			self.active = false;
 		}
 	};
 	self.shootArrow = function () {
 		if (!ninja) {
 			return;
-		} // Safety check
-		// Check if archer is on cooldown
+		}
 		if (self.lastShotTime && LK.ticks - self.lastShotTime < 180) {
-			return; // Still on cooldown (3 seconds)
+			return;
 		}
 		var arrow = new Arrow();
 		arrow.x = self.x;
 		arrow.y = self.y;
-		// Calculate direction toward ninja
 		var dx = ninja.x - arrow.x;
 		var dy = ninja.y - arrow.y;
 		var distance = Math.sqrt(dx * dx + dy * dy);
-		// Set arrow velocity toward ninja
 		arrow.velocityX = dx / distance * arrow.speed;
 		arrow.velocityY = dy / distance * arrow.speed;
-		// Ensure arrows array exists before pushing
 		if (typeof arrows === 'undefined') {
 			arrows = [];
 		}
 		arrows.push(arrow);
 		game.addChild(arrow);
-		// Set cooldown timer
 		self.lastShotTime = LK.ticks;
-		// Play archer shooting sound when arrow appears
 		LK.getSound('archer-shoot').play();
-		// Change archer state after shooting - tween to show shooting pose
 		var archerGraphics = self.children[0];
 		tween(archerGraphics, {
 			scaleX: archerGraphics.scaleX * 1.2,
@@ -881,7 +580,48 @@ var EnemyArcher = Container.expand(function () {
 	};
 	return self;
 });
-// Fog class removed - no fog elements needed for clearer gameplay
+// Segmentos de carril verde a los lados del camino central
+var GreenLaneSegment = Container.expand(function () {
+	var self = Container.call(this);
+	var gfx = self.attachAsset('greenBackground', {
+		anchorX: 0.5,
+		anchorY: 0.5
+	});
+	self.speed = 3;
+	self.active = true;
+	self.baseX = 1024;
+	self.side = 1; // 1 derecha, -1 izquierda
+	self.colIndex = 0; // columna desde el borde del camino
+	self.laneInsetBase = 220; // separación base respecto al borde del camino (alejado del centro)
+	self.laneScaleX = 3.0; // estirado horizontal para cubrir más ancho
+	self.laneScaleY = 2.2; // estirado vertical para mayor presencia
+	self.z = 1000;
+	self.update = function () {
+		if (!self.active || game.paused) {
+			return;
+		}
+		var p = computePerspective(self.z, self.speed);
+		self.z = p.newZ;
+		var scale = p.scale;
+		var perspectiveY = p.perspectiveY;
+		self.y = perspectiveY - 20;
+		// Usar el ancho lógico de las tablas para alinear carril y cubrir toda la pantalla con columnas
+		var plankWidth = 400 * scale * 2;
+		var plankBoundary = plankWidth / 2;
+		var laneInset = self.laneInsetBase * scale; // separación adicional respecto al borde del camino
+		// Ancho del tile verde en mundo (aprox usando tileWidth global y escala X aplicada)
+		var tileWorldWidth = (typeof tileWidth === 'number' ? tileWidth : 137) * scale * self.laneScaleX;
+		var colStep = tileWorldWidth * 0.85; // solape mayor para evitar huecos
+		var offsetFromRoadEdge = plankBoundary + laneInset + self.colIndex * colStep;
+		self.x = self.baseX + offsetFromRoadEdge * self.side;
+		self.scaleX = scale * self.laneScaleX;
+		self.scaleY = scale * self.laneScaleY;
+		if (self.y > SCREEN_HEIGHT + 400) {
+			self.active = false;
+		}
+	};
+	return self;
+});
 var IceStar = Container.expand(function () {
 	var self = Container.call(this);
 	var starGraphics = self.attachAsset('Ice-horiuken', {
@@ -900,13 +640,11 @@ var IceStar = Container.expand(function () {
 		}
 		self.x += self.velocityX;
 		self.y += self.velocityY;
-		// Calculate distance from ninja and shrink as it travels away
 		if (ninja) {
 			var dx = ninja.x - self.x;
 			var dy = ninja.y - self.y;
 			var distance = Math.sqrt(dx * dx + dy * dy);
-			// Scale from 1.0 to 0.1 based on distance (farther = smaller)
-			var maxDistance = 1500; // Maximum expected distance before removal
+			var maxDistance = 1500;
 			var minScale = 0.1;
 			var maxScale = 1.0;
 			var normalizedDistance = Math.min(distance / maxDistance, 1);
@@ -914,9 +652,7 @@ var IceStar = Container.expand(function () {
 			self.scaleX = scale;
 			self.scaleY = scale;
 		}
-		// Ice stars don't rotate - they maintain their orientation
-		// Remove if off screen
-		if (self.x < -100 || self.x > 2148 || self.y < -100 || self.y > 3332) {
+		if (self.x < -100 || self.x > 2148 || self.y < WORLD_MIN_Y || self.y > SCREEN_HEIGHT + 600) {
 			self.active = false;
 		}
 	};
@@ -929,18 +665,17 @@ var Lightning = Container.expand(function () {
 		anchorY: 0
 	});
 	self.active = true;
-	self.lifeTimer = 0; // Temporizador de vida del rayo
-	self.maxLifetime = 120; // 2 segundos (120 frames)
-	self.flickerTimer = 0; // Temporizador para el parpadeo
-	self.visible = true; // Visibilidad para el parpadeo
-	lightningGraphics.alpha = 0; // Comienza invisible
+	self.lifeTimer = 0;
+	self.maxLifetime = 120;
+	self.flickerTimer = 0;
+	self.visible = true;
+	lightningGraphics.alpha = 0;
 	self.update = function () {
 		if (!self.active || game.paused) {
 			return;
 		}
 		self.lifeTimer++;
 		self.flickerTimer++;
-		// Efecto de parpadeo
 		if (self.flickerTimer <= 30) {
 			if (self.flickerTimer % 3 === 0) {
 				self.visible = !self.visible;
@@ -960,33 +695,26 @@ var Lightning = Container.expand(function () {
 			var fadeProgress = (self.flickerTimer - 90) / 30;
 			lightningGraphics.alpha = Math.max(0, 0.3 * (1 - fadeProgress));
 		}
-		// Actualiza el rayo para que vaya del centro inferior de la nube al centro del ninja
 		self.stretchTo();
 		if (self.lifeTimer >= self.maxLifetime) {
 			self.active = false;
 		}
 	};
-	// Simple: top center del rayo en bottom center de nube, bottom center del rayo en top center de ninja
 	self.stretchTo = function () {
 		if (!ninja || !self.sourceCloud) {
 			return;
 		}
 		var cloud = self.sourceCloud;
-		// Bottom center de cloudType2 (height=197.66, anchored at center)
 		var cloudBottomX = cloud.x;
-		var cloudBottomY = cloud.y + 98.83; // 197.66/2
-		// Top center del ninja (height=538.95, anchored at bottom)
+		var cloudBottomY = cloud.y + 98.83;
 		var ninjaTopX = ninja.x;
 		var ninjaTopY = ninja.y - 538.95;
-		// Distancia y ángulo
 		var dx = ninjaTopX - cloudBottomX;
 		var dy = ninjaTopY - cloudBottomY;
 		var distance = Math.sqrt(dx * dx + dy * dy);
 		var angle = Math.atan2(dy, dx) - Math.PI / 2;
-		// Posicionar container en bottom center de nube
 		self.x = cloudBottomX;
 		self.y = cloudBottomY;
-		// Lightning asset (height=50, anchorY=0 significa top del asset está en el container)
 		lightningGraphics.scaleY = distance / 50;
 		lightningGraphics.rotation = angle;
 		lightningGraphics.scaleX = 2;
@@ -1000,20 +728,15 @@ var Meteorite = Container.expand(function () {
 		anchorY: 0.5
 	});
 	self.active = true;
-	self.speed = 3; // Slow movement toward ninja
+	self.speed = 3;
 	self.velocityX = 0;
 	self.velocityY = 0;
-	self.hitCount = 0; // Track how many times it's been hit
-	// Start with zero scale and grow as it approaches
+	self.hitCount = 0;
 	self.scaleX = 0.05;
 	self.scaleY = 0.05;
-	// Method to change face based on hit count
 	self.changeFace = function () {
-		// Play meterito-voltea sound when meteorite flips
 		LK.getSound('meterito-voltea').play();
-		// Remove current graphics
 		meteoriteGraphics.destroy();
-		// Add new graphics based on hit count
 		if (self.hitCount === 1) {
 			meteoriteGraphics = self.attachAsset('meteorHit1', {
 				anchorX: 0.5,
@@ -1032,10 +755,8 @@ var Meteorite = Container.expand(function () {
 		}
 		self.x += self.velocityX;
 		self.y += self.velocityY;
-		// Grow linearly over time instead of based on distance
 		self.lifeTime = self.lifeTime || 0;
 		self.lifeTime++;
-		// Linear growth from 0.05 to 2.5 over 200 frames (about 3.3 seconds)
 		var maxLifeTime = 200;
 		var minScale = 0.05;
 		var maxScale = 2.5;
@@ -1043,8 +764,7 @@ var Meteorite = Container.expand(function () {
 		var scale = minScale + progress * (maxScale - minScale);
 		self.scaleX = scale;
 		self.scaleY = scale;
-		// Remove if off screen
-		if (self.x < -100 || self.x > 2148 || self.y < -100 || self.y > 3332) {
+		if (self.x < -100 || self.x > 2148 || self.y < WORLD_MIN_Y || self.y > SCREEN_HEIGHT + 600) {
 			self.active = false;
 		}
 	};
@@ -1056,48 +776,42 @@ var Ninja = Container.expand(function () {
 		anchorX: 0.5,
 		anchorY: 1.0
 	});
-	self.groundY = 2673; // Ground at 98% of screen height (2732 * 0.98 = 2677, rounded to 2673)
+	self.groundY = 2673;
 	self.isJumping = false;
 	self.jumpVelocity = 0;
-	self.jumpSpeed = -45; // Much higher initial jump velocity
-	self.gravity = 0.8; // Reduced gravity for longer hang time
-	self.maxJumpHeight = 1800; // Much higher maximum jump height
+	self.jumpSpeed = -45;
+	self.gravity = 0.8;
+	self.maxJumpHeight = 1800;
 	self.runningTimer = 0;
 	self.flipDirection = 1;
-	self.jumpCount = 0; // Track number of jumps (0 = on ground, 1 = first jump, 2 = double jump)
-	self.maxJumps = 2; // Allow double jump
+	self.jumpCount = 0;
+	self.maxJumps = 2;
 	self.jump = function () {
 		if (self.jumpCount < self.maxJumps && !ninjaParalyzed) {
 			self.jumpCount++;
 			self.isJumping = true;
 			LK.getSound('jump').play();
-			// Check if ninja is jumping over an obstacle to give points
 			self.checkObstacleJump();
-			// For double jump, ensure we use ninja-jump asset and keep spinning
 			if (self.jumpCount === 2) {
-				// Stop any existing tweens and always recreate ninja-jump asset for consistency
 				if (self.children[0]) {
-					tween.stop(self.children[0]); // Stop any existing rotation
-					// Always destroy and recreate ninja-jump asset to ensure consistency
+					tween.stop(self.children[0]);
 					self.children[0].destroy();
 					var jumpGraphics = self.attachAsset('ninja-jump', {
 						anchorX: 0.5,
 						anchorY: 0.5
 					});
 				}
-				var jumpHeight = self.y - 500; // Jump 500px higher from current position
-				var totalJumpDuration = 800; // Total time for complete jump cycle
-				// Continue or start rotation for double jump
+				var jumpHeight = self.y - 500;
+				var totalJumpDuration = 800;
 				if (self.children[0]) {
 					tween(self.children[0], {
-						rotation: self.children[0].rotation + Math.PI * 6 // Add 3 more rotations
+						rotation: self.children[0].rotation + Math.PI * 6
 					}, {
 						duration: totalJumpDuration,
 						easing: tween.linear
 					});
 				}
 			} else {
-				// First jump - change sprite to ninja-jump
 				if (self.children[0]) {
 					self.children[0].destroy();
 				}
@@ -1106,8 +820,7 @@ var Ninja = Container.expand(function () {
 					anchorY: 0.5
 				});
 				var jumpHeight = self.maxJumpHeight;
-				var totalJumpDuration = 800; // Total time for complete jump cycle
-				// Add 3 rotations during jump - duration matches total jump time
+				var totalJumpDuration = 800;
 				if (self.children[0]) {
 					tween(self.children[0], {
 						rotation: Math.PI * 6
@@ -1117,36 +830,29 @@ var Ninja = Container.expand(function () {
 					});
 				}
 			}
-			// Use tween for smooth, high, faster jump
 			tween(self, {
 				y: jumpHeight
 			}, {
 				duration: 400,
-				// 400ms to reach peak (much faster)
 				easing: tween.easeOut,
 				onFinish: function onFinish() {
-					// Tween back down to ground
 					tween(self, {
 						y: self.groundY
 					}, {
 						duration: 400,
-						// 400ms to fall back down
 						easing: tween.easeIn,
 						onFinish: function onFinish() {
 							self.isJumping = false;
 							self.jumpVelocity = 0;
-							self.jumpCount = 0; // Reset jump count when landing
-							// Stop rotation immediately when landing
+							self.jumpCount = 0;
 							if (self.children[0]) {
 								tween.stop(self.children[0]);
-								// Change back to normal ninja sprite
 								self.children[0].destroy();
 							}
 							var normalGraphics = self.attachAsset('ninja', {
 								anchorX: 0.5,
 								anchorY: 1.0
 							});
-							// Reset rotation
 							normalGraphics.rotation = 0;
 						}
 					});
@@ -1158,35 +864,26 @@ var Ninja = Container.expand(function () {
 		if (game.paused) {
 			return;
 		}
-		// Running animation - flip sprite every 10 ticks for natural running motion
 		self.runningTimer++;
 		if (self.runningTimer >= 30) {
 			self.flipDirection = -self.flipDirection;
-			// Use self.children[0] instead of ninjaGraphics to handle sprite changes correctly
 			if (self.children[0]) {
 				self.children[0].scaleX = self.flipDirection;
 			}
 			self.runningTimer = 0;
 		}
 	};
-	// Function to check if ninja is jumping over an obstacle and give points
 	self.checkObstacleJump = function () {
-		// Check if there are any obstacles nearby that the ninja could be jumping over
 		for (var i = 0; i < obstacles.length; i++) {
 			var obstacle = obstacles[i];
 			if (obstacle.active) {
-				// Check if obstacle is in the right position (near ninja's feet level)
 				if (obstacle.y > 2500 && obstacle.y < 2700) {
-					// Check if obstacle is horizontally close to ninja (within jumping range)
 					var distanceX = Math.abs(obstacle.x - self.x);
 					if (distanceX < 200) {
-						// Within 200px horizontally
-						// Ninja is jumping over an obstacle - give points!
 						LK.setScore(LK.getScore() + 50);
 						updateScore();
-						// Play a sound to indicate successful jump over obstacle
 						LK.getSound('jump').play();
-						return; // Only give points once per jump
+						return;
 					}
 				}
 			}
@@ -1210,13 +907,11 @@ var NinjaStar = Container.expand(function () {
 		}
 		self.x += self.velocityX;
 		self.y += self.velocityY;
-		// Calculate distance from ninja and shrink as it travels away
 		if (ninja) {
 			var dx = ninja.x - self.x;
 			var dy = ninja.y - self.y;
 			var distance = Math.sqrt(dx * dx + dy * dy);
-			// Scale from 1.0 to 0.1 based on distance (farther = smaller)
-			var maxDistance = 1500; // Maximum expected distance before removal
+			var maxDistance = 1500;
 			var minScale = 0.2;
 			var maxScale = 1.5;
 			var normalizedDistance = Math.min(distance / maxDistance, 1);
@@ -1224,57 +919,8 @@ var NinjaStar = Container.expand(function () {
 			self.scaleX = scale;
 			self.scaleY = scale;
 		}
-		// Rotate ninja star - one full rotation per second (60 FPS = 60 ticks per second)
-		starGraphics.rotation += Math.PI * 2 / 45; // 2π radians per 60 ticks = 1 rotation per second
-		// Remove if off screen
+		starGraphics.rotation += Math.PI * 2 / 45;
 		if (self.x < -100 || self.x > 2148 || self.y < -100 || self.y > 3332) {
-			self.active = false;
-		}
-	};
-	return self;
-});
-var Obstacle = Container.expand(function () {
-	var self = Container.call(this);
-	var obstacleGraphics = self.attachAsset('obstacle', {
-		anchorX: 0.5,
-		anchorY: 1.0
-	});
-	self.speed = 3;
-	self.active = true;
-	self.baseX = 1024; // Start from center of horizon
-	self.side = 0; // Keep in center for jumping
-	// Start with zero scale and tween to grow
-	self.scaleX = 0.1;
-	self.scaleY = 0.1;
-	tween(self, {
-		scaleX: 1,
-		scaleY: 1
-	}, {
-		duration: 600,
-		easing: tween.easeOut
-	});
-	self.update = function () {
-		if (!self.active || game.paused) {
-			return;
-		}
-		// Move toward player from horizon with acceleration
-		self.z = self.z || 1000; // Start far away
-		// Calculate acceleration based on distance - closer objects move faster
-		var distanceFactor = Math.max(0.1, 1 - self.z / 1000); // 0.1 to 1.0
-		var currentSpeed = self.speed * (0.3 + distanceFactor * 2); // Speed ranges from 0.9 to 6.9
-		self.z -= currentSpeed;
-		// Calculate perspective scaling and position
-		var scale = Math.max(0.1, 1 - self.z / 1000);
-		var horizonY = 1503; // Horizon line position moved 10% lower
-		var groundY = 2532; // Ground position
-		var perspectiveY = horizonY + (groundY - horizonY) * scale; // From horizon to ground
-		self.y = perspectiveY - 35;
-		// Keep obstacles in center for ninja to jump over them
-		self.x = self.baseX; // Stay in center for jumping
-		self.scaleX = scale * 1.33; // 33% larger trunks
-		self.scaleY = scale * 1.33; // 33% larger trunks
-		// Remove if too close or below screen
-		if (self.z <= -500 || self.y > 3000) {
 			self.active = false;
 		}
 	};
@@ -1286,7 +932,6 @@ var PowerUp = Container.expand(function () {
 		anchorX: 0.5,
 		anchorY: 0.5,
 		y: 100,
-		// Position below parachute
 		scaleX: 2.5,
 		scaleY: 2.5
 	});
@@ -1301,28 +946,21 @@ var PowerUp = Container.expand(function () {
 	self.fallSpeed = 2;
 	self.swayAmount = 1;
 	self.swayTimer = 0;
-	self.powerupType = 1; // Will be set when created
-	// Gentle swaying motion
+	self.powerupType = 1;
 	self.update = function () {
 		if (!self.active || game.paused) {
 			return;
 		}
-		// Fall down with parachute effect
 		self.y += self.fallSpeed;
-		// Sway left and right gently
 		self.swayTimer += 0.1;
 		var targetX = ninja.x + Math.sin(self.swayTimer) * self.swayAmount * 20;
-		// Move toward ninja horizontally with gentle drift
 		var dx = targetX - self.x;
-		self.x += dx * 0.02; // Gentle drift toward ninja
-		// Rotate parachute slightly for realism
+		self.x += dx * 0.02;
 		parachuteGraphics.rotation = Math.sin(self.swayTimer) * 0.2;
-		// Remove if hits ground or goes off screen
 		if (self.y > 3232 || self.x < -100 || self.x > 2148) {
 			self.active = false;
 		}
 	};
-	// Method to set power-up type
 	self.setPowerUpType = function (type) {
 		self.powerupType = type;
 		powerupGraphics.destroy();
@@ -1343,54 +981,9 @@ var PowerUp = Container.expand(function () {
 				scaleY: 2.5
 			});
 		}
-		// Ensure parachute stays in front by re-adding it
 		var tempParachute = parachuteGraphics;
 		self.removeChild(parachuteGraphics);
 		self.addChild(tempParachute);
-	};
-	return self;
-});
-var RockObstacle = Container.expand(function () {
-	var self = Container.call(this);
-	var obstacleGraphics = self.attachAsset('rockObstacle', {
-		anchorX: 0.5,
-		anchorY: 1.0
-	});
-	self.speed = 3;
-	self.active = true;
-	self.baseX = 1024;
-	self.side = 0; // Keep in center for jumping
-	// Start with zero scale and tween to grow
-	self.scaleX = 0.1;
-	self.scaleY = 0.1;
-	tween(self, {
-		scaleX: 1,
-		scaleY: 1
-	}, {
-		duration: 600,
-		easing: tween.easeOut
-	});
-	self.update = function () {
-		if (!self.active || game.paused) {
-			return;
-		}
-		self.z = self.z || 1000;
-		// Calculate acceleration based on distance - closer objects move faster
-		var distanceFactor = Math.max(0.1, 1 - self.z / 1000); // 0.1 to 1.0
-		var currentSpeed = self.speed * (0.3 + distanceFactor * 2); // Speed ranges from 0.9 to 6.9
-		self.z -= currentSpeed;
-		var scale = Math.max(0.1, 1 - self.z / 1000);
-		var horizonY = 1503;
-		var groundY = 2532;
-		var perspectiveY = horizonY + (groundY - horizonY) * scale;
-		self.y = perspectiveY - 35;
-		// Keep obstacles in center for ninja to jump over them
-		self.x = self.baseX; // Stay in center for jumping
-		self.scaleX = scale * 1.33; // 33% larger rocks
-		self.scaleY = scale * 1.33; // 33% larger rocks
-		if (self.z <= -500 || self.y > 3000) {
-			self.active = false;
-		}
 	};
 	return self;
 });
@@ -1403,7 +996,6 @@ var Tori = Container.expand(function () {
 	self.speed = 3;
 	self.active = true;
 	self.baseX = 1024;
-	// Start with zero scale and tween to grow
 	self.scaleX = 0.1;
 	self.scaleY = 0.1;
 	tween(self, {
@@ -1417,195 +1009,16 @@ var Tori = Container.expand(function () {
 		if (!self.active || game.paused) {
 			return;
 		}
-		// Move toward player from horizon with acceleration
-		self.z = self.z || 1000; // Start far away
-		// Calculate acceleration based on distance - closer objects move faster
-		var distanceFactor = Math.max(0.1, 1 - self.z / 1000); // 0.1 to 1.0
-		var currentSpeed = self.speed * (0.3 + distanceFactor * 2); // Speed ranges from 0.9 to 6.9
-		self.z -= currentSpeed;
-		// Calculate perspective scaling and position
-		var scale = Math.max(0.1, 1 - self.z / 1000);
-		var horizonY = 1503; // Horizon line position moved 10% lower
-		var groundY = 2532; // Ground position
-		var perspectiveY = horizonY + (groundY - horizonY) * scale;
+		var p = computePerspective(self.z, self.speed);
+		self.z = p.newZ;
+		var scale = p.scale;
+		var perspectiveY = p.perspectiveY;
 		self.y = perspectiveY;
-		// Tori stays in center for ninja to pass underneath
-		self.x = self.baseX; // Keep in center, no spreading
-		// Make tori much larger to create proper archway
-		var toriScale = scale * 2.0; // Reduced scaling to make it smaller
+		self.x = self.baseX;
+		var toriScale = scale * 2.0;
 		self.scaleX = toriScale;
 		self.scaleY = toriScale;
-		// Remove if too close or below screen
 		if (self.z <= -500 || self.y > 3000) {
-			self.active = false;
-		}
-	};
-	return self;
-});
-var Tree = Container.expand(function () {
-	var self = Container.call(this);
-	var treeGraphics = self.attachAsset('tree', {
-		anchorX: 0.5,
-		anchorY: 1.0
-	});
-	self.speed = 3;
-	self.active = true;
-	self.baseX = 1024; // Trees start from center of horizon
-	self.side = 1; // 1 for right, -1 for left
-	// Start with zero scale and transparency
-	self.scaleX = 0;
-	self.scaleY = 0;
-	treeGraphics.alpha = 0; // Start completely transparent
-	tween(self, {
-		scaleX: 1,
-		scaleY: 1
-	}, {
-		duration: 800,
-		easing: tween.easeOut
-	});
-	tween(treeGraphics, {
-		alpha: 1
-	}, {
-		duration: 800,
-		easing: tween.easeOut
-	});
-	self.update = function () {
-		if (!self.active || game.paused || isInCasaNinja) {
-			return;
-		}
-		// Move toward player from horizon with acceleration
-		self.z = self.z || 1000; // Start far away
-		// Calculate acceleration based on distance - closer objects move faster
-		var distanceFactor = Math.max(0.1, 1 - self.z / 1000); // 0.1 to 1.0
-		var currentSpeed = self.speed * (0.3 + distanceFactor * 2); // Speed ranges from 0.9 to 6.9
-		self.z -= currentSpeed;
-		// Calculate perspective scaling and position
-		var scale = Math.max(0.1, 1 - self.z / 1000);
-		var horizonY = 1503; // Horizon line position moved 10% lower
-		var groundY = 2532; // Ground position
-		var perspectiveY = horizonY + (groundY - horizonY) * scale;
-		self.y = perspectiveY;
-		// Align trees with wooden plank boundaries but much further away
-		var plankWidth = 400 * scale * 2; // Wooden plank scaled width (400 base width * scale * 2 plank scale)
-		var plankBoundary = plankWidth / 2; // Half width from center to edge
-		var extraSeparation = 300 * scale; // Additional separation from planks
-		self.x = self.baseX + (plankBoundary + extraSeparation) * self.side; // Position much further from plank edges
-		// Much smaller scaling for smaller trees
-		var treeScale = scale * 1.73; // 33% larger trees (1.3 * 1.33 = 1.73)
-		self.scaleX = treeScale;
-		self.scaleY = treeScale;
-		// Remove trees when they get too close or go off screen - extend removal to below screen
-		if (self.z <= -500 || self.x < -300 || self.x > 2348 || self.y > 3400) {
-			self.active = false;
-		}
-	};
-	return self;
-});
-var TreeType2 = Container.expand(function () {
-	var self = Container.call(this);
-	var treeGraphics = self.attachAsset('treeType2', {
-		anchorX: 0.5,
-		anchorY: 1.0
-	});
-	self.speed = 3;
-	self.active = true;
-	self.baseX = 1024;
-	self.side = 1;
-	// Start with zero scale and transparency
-	self.scaleX = 0;
-	self.scaleY = 0;
-	treeGraphics.alpha = 0; // Start completely transparent
-	tween(self, {
-		scaleX: 1,
-		scaleY: 1
-	}, {
-		duration: 800,
-		easing: tween.easeOut
-	});
-	tween(treeGraphics, {
-		alpha: 1
-	}, {
-		duration: 800,
-		easing: tween.easeOut
-	});
-	self.update = function () {
-		if (!self.active || game.paused || isInCasaNinja) {
-			return;
-		}
-		self.z = self.z || 1000;
-		// Calculate acceleration based on distance - closer objects move faster
-		var distanceFactor = Math.max(0.1, 1 - self.z / 1000); // 0.1 to 1.0
-		var currentSpeed = self.speed * (0.3 + distanceFactor * 2); // Speed ranges from 0.9 to 6.9
-		self.z -= currentSpeed;
-		var scale = Math.max(0.1, 1 - self.z / 1000);
-		var horizonY = 1503;
-		var groundY = 2532;
-		var perspectiveY = horizonY + (groundY - horizonY) * scale;
-		self.y = perspectiveY;
-		// Align trees with wooden plank boundaries but much further away
-		var plankWidth = 400 * scale * 2; // Wooden plank scaled width
-		var plankBoundary = plankWidth / 2; // Half width from center to edge
-		var extraSeparation = 300 * scale; // Additional separation from planks
-		self.x = self.baseX + (plankBoundary + extraSeparation) * self.side; // Position much further from plank edges
-		var treeScale = scale * 1.73; // 33% larger scaling (1.3 * 1.33 = 1.73)
-		self.scaleX = treeScale;
-		self.scaleY = treeScale;
-		if (self.z <= -500 || self.x < -300 || self.x > 2348 || self.y > 3400) {
-			self.active = false;
-		}
-	};
-	return self;
-});
-var TreeType3 = Container.expand(function () {
-	var self = Container.call(this);
-	var treeGraphics = self.attachAsset('treeType3', {
-		anchorX: 0.5,
-		anchorY: 1.0
-	});
-	self.speed = 3;
-	self.active = true;
-	self.baseX = 1024;
-	self.side = 1;
-	// Start with zero scale and transparency
-	self.scaleX = 0;
-	self.scaleY = 0;
-	treeGraphics.alpha = 0; // Start completely transparent
-	tween(self, {
-		scaleX: 1,
-		scaleY: 1
-	}, {
-		duration: 800,
-		easing: tween.easeOut
-	});
-	tween(treeGraphics, {
-		alpha: 1
-	}, {
-		duration: 800,
-		easing: tween.easeOut
-	});
-	self.update = function () {
-		if (!self.active || game.paused || isInCasaNinja) {
-			return;
-		}
-		self.z = self.z || 1000;
-		// Calculate acceleration based on distance - closer objects move faster
-		var distanceFactor = Math.max(0.1, 1 - self.z / 1000); // 0.1 to 1.0
-		var currentSpeed = self.speed * (0.3 + distanceFactor * 2); // Speed ranges from 0.9 to 6.9
-		self.z -= currentSpeed;
-		var scale = Math.max(0.1, 1 - self.z / 1000);
-		var horizonY = 1503;
-		var groundY = 2532;
-		var perspectiveY = horizonY + (groundY - horizonY) * scale;
-		self.y = perspectiveY;
-		// Align trees with wooden plank boundaries but much further away
-		var plankWidth = 400 * scale * 2; // Wooden plank scaled width
-		var plankBoundary = plankWidth / 2; // Half width from center to edge
-		var extraSeparation = 300 * scale; // Additional separation from planks
-		self.x = self.baseX + (plankBoundary + extraSeparation) * self.side; // Position much further from plank edges
-		var treeScale = scale * 1.73; // 33% larger scaling (1.3 * 1.33 = 1.73)
-		self.scaleX = treeScale;
-		self.scaleY = treeScale;
-		if (self.z <= -500 || self.x < -300 || self.x > 2348 || self.y > 3400) {
 			self.active = false;
 		}
 	};
@@ -1619,47 +1032,25 @@ var WoodenPlank = Container.expand(function () {
 	});
 	self.speed = 3;
 	self.active = true;
-	self.baseX = 1024; // Start from center of horizon
-	self.side = 0; // Center position
-	// Start with zero scale and tween to grow
-	self.scaleX = 0.1;
-	self.scaleY = 0.1;
-	tween(self, {
-		scaleX: 1,
-		scaleY: 1
-	}, {
-		duration: 600,
-		easing: tween.easeOut
-	});
+	self.baseX = 1024;
+	self.side = 0;
+	// Inicial sin tween de aparición para mantener regularidad
+	self.scaleX = 1;
+	self.scaleY = 1;
 	self.update = function () {
-		if (!self.active || game.paused || isInCasaNinja) {
+		if (!self.active || game.paused) {
 			return;
 		}
-		// Move toward player from horizon with acceleration
-		self.z = self.z || 1000; // Start far away
-		// Calculate acceleration based on distance - closer objects move faster
-		var distanceFactor = Math.max(0.1, 1 - self.z / 1000); // 0.1 to 1.0
-		var currentSpeed = self.speed * (0.3 + distanceFactor * 2); // Speed ranges from 0.9 to 6.9
-		self.z -= currentSpeed;
-		// Calculate perspective scaling and position
-		var scale = Math.max(0.1, 1 - self.z / 1000);
-		var horizonY = 1503; // Horizon line position moved 10% lower
-		var groundY = 2532; // Ground position
-		var perspectiveY = horizonY + (groundY - horizonY) * scale;
-		self.y = perspectiveY - 20; // Slightly above ground for walkway effect
-		// Keep wooden planks centered - no horizontal spreading
-		self.x = self.baseX; // Keep planks aligned in center
-		// Scale plank appropriately with perspective - narrower and extend below screen
-		var plankScale = scale * 2; // Further reduced from 3 to make even narrower
-		self.scaleX = plankScale;
-		// Make planks much taller to extend from horizon to below screen
-		var verticalScale = scale * 1.665; // Reduced height to half of current size (3.33 / 2)
-		self.scaleY = verticalScale;
-		// Remove planks only when their top edge goes below screen bottom (y > 2732)
-		// Calculate the top edge of the plank based on its position and scale
-		var plankTopY = self.y - self.scaleY * 20; // Half height of scaled plank (original height 40, so half is 20)
+		var p = computePerspective(self.z, self.speed);
+		self.z = p.newZ;
+		var scale = p.scale;
+		var perspectiveY = p.perspectiveY;
+		self.y = perspectiveY - 20;
+		self.x = self.baseX;
+		self.scaleX = scale * 2;
+		self.scaleY = scale * 1.665;
+		var plankTopY = self.y - self.scaleY * 20;
 		if (plankTopY > 2732) {
-			// Plank's top edge is below screen bottom - now safe to remove
 			self.active = false;
 		}
 	};
@@ -1681,13 +1072,11 @@ var WoodenStar = Container.expand(function () {
 		}
 		self.x += self.velocityX;
 		self.y += self.velocityY;
-		// Calculate distance from ninja and shrink as it travels away
 		if (ninja) {
 			var dx = ninja.x - self.x;
 			var dy = ninja.y - self.y;
 			var distance = Math.sqrt(dx * dx + dy * dy);
-			// Scale from 1.0 to 0.1 based on distance (farther = smaller)
-			var maxDistance = 1500; // Maximum expected distance before removal
+			var maxDistance = 1500;
 			var minScale = 0.1;
 			var maxScale = 1.0;
 			var normalizedDistance = Math.min(distance / maxDistance, 1);
@@ -1695,9 +1084,7 @@ var WoodenStar = Container.expand(function () {
 			self.scaleX = scale;
 			self.scaleY = scale;
 		}
-		// Wooden stars don't rotate - they maintain their orientation
-		// Remove if off screen or above 50% of screen height (limited range)
-		var screenMiddle = 1366; // 50% of 2732px screen height
+		var screenMiddle = SCREEN_HALFY;
 		if (self.x < -100 || self.x > 2148 || self.y < screenMiddle || self.y > 3332) {
 			self.active = false;
 		}
@@ -1711,25 +1098,24 @@ var electroCloud = Container.expand(function () {
 		anchorY: 0.5,
 		scaleX: 0.75,
 		scaleY: 0.75,
-		alpha: 0 // Start invisible
+		alpha: 0
 	});
 	var inactiveCloudGraphics = self.attachAsset('cloudInactive', {
 		anchorX: 0.5,
 		anchorY: 0.5,
 		scaleX: 1,
 		scaleY: 1,
-		alpha: 1 // Start visible (inactive cloud)
+		alpha: 1
 	});
-	self.speed = 2; // Fixed speed for all clouds
+	self.speed = 2;
 	self.active = true;
-	self.isCharged = false; // Track if cloud is charged and ready for interaction
-	self.chargeTimer = 0; // Timer for charging sequence
-	self.interactionRange = 150; // Defined interaction area radius
-	// Start with much smaller scale and transparency
+	self.isCharged = false;
+	self.chargeTimer = 0;
+	self.interactionRange = 150;
 	self.scaleX = 0.05;
 	self.scaleY = 0.05;
-	cloudGraphics.alpha = 0; // Start with active cloud hidden
-	inactiveCloudGraphics.alpha = 1; // Start with inactive cloud fully visible
+	cloudGraphics.alpha = 0;
+	inactiveCloudGraphics.alpha = 1;
 	tween(self, {
 		scaleX: 0.3,
 		scaleY: 0.3
@@ -1741,32 +1127,21 @@ var electroCloud = Container.expand(function () {
 		if (!self.active || game.paused) {
 			return;
 		}
-		// Simulate running toward horizon - clouds approach from distance  
 		self.z = self.z || 2000;
 		self.z -= self.speed;
-		// Racing game perspective: calculate distance progress
-		var distanceProgress = (2000 - self.z) / 2000; // 0 at start, 1 when very close
-		// Determine if cloud is in interaction range (when it's close enough to be affected)
-		var isInInteractionRange = distanceProgress > 0.3 && distanceProgress < 0.7; // Between 30% and 70% of approach
-		// Update charging state based on interaction range
+		var distanceProgress = (2000 - self.z) / 2000;
+		var isInInteractionRange = distanceProgress > 0.3 && distanceProgress < 0.7;
 		if (isInInteractionRange && !self.isCharged) {
-			// Start charging when entering interaction range
 			self.isCharged = true;
 			self.chargeTimer = 0;
-			// Switch to active cloud graphics (cloudType2 when charged) - only when ready to collide
 			cloudGraphics.alpha = 1;
 			inactiveCloudGraphics.alpha = 0;
-			// Play electric cloud hit sound when cloud becomes active
 			LK.getSound('electric-cloud-hit').play();
 		}
-		// Once charged, clouds never deactivate - they stay as cloudType2 until destroyed
-		// Update charge timer and visual effects
 		if (self.isCharged) {
 			self.chargeTimer++;
-			// Intense lightning flickering when charged and ready for interaction
 			if (self.chargeTimer % 15 === 0) {
-				// Faster flicker when charged
-				var lightningTint = 0x00FFFF; // Bright cyan for charged state
+				var lightningTint = 0x00FFFF;
 				tween(cloudGraphics, {
 					tint: lightningTint
 				}, {
@@ -1782,14 +1157,11 @@ var electroCloud = Container.expand(function () {
 					}
 				});
 			}
-			// Play lightning sound periodically while charged (every 60 frames = 1 second)
 		} else if (!self.isCharged) {
-			// Subtle flickering only when not charged (inactive state)
 			self.flickerTimer = self.flickerTimer || 0;
 			self.flickerTimer++;
 			if (self.flickerTimer % 45 === 0) {
-				// Slower, more subtle flicker for inactive cloud
-				var distantTint = 0xCCCCCC; // Gray tint for distant clouds
+				var distantTint = 0xCCCCCC;
 				tween(inactiveCloudGraphics, {
 					tint: distantTint
 				}, {
@@ -1806,10 +1178,8 @@ var electroCloud = Container.expand(function () {
 				});
 			}
 		}
-		// Transparency: faint at distance, solid when close, but dimmed when not in interaction range
 		var baseAlpha = Math.min(1.0, 0.3 + distanceProgress * 0.7);
-		var finalAlpha = self.isCharged ? baseAlpha : baseAlpha * 0.6; // Dimmed when not charged
-		// Apply transparency based on charging state (but don't override the asset changes)
+		var finalAlpha = self.isCharged ? baseAlpha : baseAlpha * 0.6;
 		if (self.isCharged) {
 			cloudGraphics.alpha = finalAlpha;
 			inactiveCloudGraphics.alpha = 0;
@@ -1817,101 +1187,43 @@ var electroCloud = Container.expand(function () {
 			cloudGraphics.alpha = 0;
 			inactiveCloudGraphics.alpha = finalAlpha;
 		}
-		// Y movement: start near horizon, escape dramatically upward when close
 		self.baseY = self.baseY || self.y;
-		var horizonCloudY = self.baseY; // Original Y position (near horizon)
-		// Gradual upward movement - clouds rise slowly and smoothly
-		var escapeFactor = distanceProgress * distanceProgress; // Quadratic progression for gradual effect
-		var maxEscapeHeight = 1000; // ElectroCloud escapes extremely high - nearly as high as CloudType3
+		var horizonCloudY = self.baseY;
+		var escapeFactor = distanceProgress * distanceProgress;
+		var maxEscapeHeight = 1000;
 		self.y = horizonCloudY - escapeFactor * maxEscapeHeight;
-		// Racing game perspective: tiny at horizon, grow gradually
-		var scale = 0.02 + distanceProgress * 1.9; // ElectroCloud grows bigger and more dramatically
+		var scale = 0.02 + distanceProgress * 1.9;
 		self.scaleX = scale;
 		self.scaleY = scale;
-		// Horizon perspective: clouds spread to sides as you approach them
 		var screenCenter = 1024;
-		self.baseX = self.baseX || self.x; // Store original X position
+		self.baseX = self.baseX || self.x;
 		var distanceFromCenter = self.baseX - screenCenter;
-		// Exponential spreading - closer clouds spread much more to sides
-		var spreadFactor = distanceProgress * distanceProgress * 1.8; // Moderate spreading for electroCloud
+		var spreadFactor = distanceProgress * distanceProgress * 1.8;
 		var horizontalOffset = distanceFromCenter * spreadFactor;
 		self.x = self.baseX + horizontalOffset;
-		// Remove when cloud is completely off screen
-		// Check multiple conditions for cloud destruction
 		var shouldDestroy = false;
-		// Condition 1: Cloud has moved too far back (Z position)
 		if (self.z <= -100) {
 			shouldDestroy = true;
 		}
-		// Condition 2: Cloud has moved too high up (Y position)
-		// Clouds should disappear when they go above the top of the screen (Y=0)
-		if (self.y < -100) {
+		if (self.y < WORLD_MIN_Y) {
 			shouldDestroy = true;
 		}
-		// Condition 3: Cloud has moved too far to the sides (X position)
-		if (self.x < -500 || self.x > 2548) {
+		if (self.x < WORLD_MIN_X || self.x > WORLD_MAX_X) {
 			shouldDestroy = true;
 		}
 		if (shouldDestroy) {
 			self.active = false;
 		}
 	};
-	// Custom intersection method for electroCloud with defined interaction area
 	self.intersects = function (target) {
 		if (!self.isCharged) {
-			return false; // Only interact when charged
+			return false;
 		}
-		// Calculate distance between centers
 		var dx = target.x - self.x;
 		var dy = target.y - self.y;
 		var distance = Math.sqrt(dx * dx + dy * dy);
-		// Use defined interaction range instead of default collision detection
-		var interactionDistance = self.interactionRange * self.scaleX; // Scale with cloud size
+		var interactionDistance = self.interactionRange * self.scaleX;
 		return distance <= interactionDistance;
-	};
-	return self;
-});
-var mushroomObstacle = Container.expand(function () {
-	var self = Container.call(this);
-	var obstacleGraphics = self.attachAsset('spikeObstacle', {
-		anchorX: 0.5,
-		anchorY: 1.0
-	});
-	self.speed = 3;
-	self.active = true;
-	self.baseX = 1024;
-	self.side = 0; // Keep in center for jumping
-	// Start with zero scale and tween to grow
-	self.scaleX = 0.1;
-	self.scaleY = 0.1;
-	tween(self, {
-		scaleX: 1,
-		scaleY: 1
-	}, {
-		duration: 600,
-		easing: tween.easeOut
-	});
-	self.update = function () {
-		if (!self.active || game.paused) {
-			return;
-		}
-		self.z = self.z || 1000;
-		// Calculate acceleration based on distance - closer objects move faster
-		var distanceFactor = Math.max(0.1, 1 - self.z / 1000); // 0.1 to 1.0
-		var currentSpeed = self.speed * (0.3 + distanceFactor * 2); // Speed ranges from 0.9 to 6.9
-		self.z -= currentSpeed;
-		var scale = Math.max(0.1, 1 - self.z / 1000);
-		var horizonY = 1503;
-		var groundY = 2532;
-		var perspectiveY = horizonY + (groundY - horizonY) * scale;
-		self.y = perspectiveY - 35;
-		// Keep obstacles in center for ninja to jump over them
-		self.x = self.baseX; // Stay in center for jumping
-		self.scaleX = scale;
-		self.scaleY = scale;
-		if (self.z <= -500 || self.y > 3000) {
-			self.active = false;
-		}
 	};
 	return self;
 });
@@ -1926,8 +1238,166 @@ var game = new LK.Game({
 /**** 
 * Game Code
 ****/
-// Game variables
-// Fog assets removed - no fog elements in game
+function createEnemyClass(assetId, minScale, maxScale, alwaysBodyFallOnExit) {
+	return Container.expand(function () {
+		var self = Container.call(this);
+		var enemyGraphics = self.attachAsset(assetId, {
+			anchorX: 0.5,
+			anchorY: 0.5
+		});
+		self.active = true;
+		self.velocityX = 0;
+		self.velocityY = 0;
+		self.gravity = 0.15;
+		self.isJumping = true;
+		self.groundY = 2532;
+		self.frozen = false;
+		self.scaleX = 1.0;
+		self.scaleY = 1.0;
+		self.update = function () {
+			if (!self.active || game.paused) {
+				return;
+			}
+			if (self.falling) {
+				self.velocityY += 0.8;
+			} else {
+				self.velocityY += self.gravity;
+			}
+			self.x += self.velocityX;
+			self.y += self.velocityY;
+			if (ninja) {
+				var dx = ninja.x - self.x;
+				var dy = ninja.y - self.y;
+				var distance = Math.sqrt(dx * dx + dy * dy);
+				var maxDistance = 1500;
+				var normalizedDistance = Math.min(distance / maxDistance, 1);
+				var targetScale = maxScale - normalizedDistance * (maxScale - minScale);
+				if (Math.abs(self.scaleX - targetScale) > 0.05) {
+					tween(self, {
+						scaleX: targetScale,
+						scaleY: targetScale
+					}, {
+						duration: 100,
+						easing: tween.easeOut
+					});
+				}
+			}
+			if (!self.frozen && !self.falling && self.y >= self.groundY) {
+				self.y = self.groundY;
+				self.velocityY = 0;
+				self.isJumping = false;
+			}
+			if (self.x < -200 || self.x > 2248 || self.falling && self.y > 2800 || !self.falling && self.y > 4000) {
+				if (self.frozen) {
+					LK.getSound('breakIce').play();
+				}
+				if (alwaysBodyFallOnExit || !self.frozen) {
+					LK.getSound('bodyFall').play();
+				}
+				self.active = false;
+			}
+		};
+		return self;
+	});
+}
+var Enemy = createEnemyClass('enemy', 1.5, 2.0, true);
+var Enemy2 = createEnemyClass('Enemy2', 1.0, 4.0, false);
+var Enemy3 = createEnemyClass('Enemy3', 1.0, 4.0, false);
+function createObstacleClass(assetId, scaleMultiplier) {
+	return Container.expand(function () {
+		var self = Container.call(this);
+		var obstacleGraphics = self.attachAsset(assetId, {
+			anchorX: 0.5,
+			anchorY: 1.0
+		});
+		self.speed = 3;
+		self.active = true;
+		self.baseX = 1024;
+		self.side = 0;
+		self.scaleX = 0.1;
+		self.scaleY = 0.1;
+		tween(self, {
+			scaleX: 1,
+			scaleY: 1
+		}, {
+			duration: 600,
+			easing: tween.easeOut
+		});
+		self.update = function () {
+			if (!self.active || game.paused) {
+				return;
+			}
+			var p = computePerspective(self.z, self.speed);
+			self.z = p.newZ;
+			var scale = p.scale;
+			var perspectiveY = p.perspectiveY;
+			self.y = perspectiveY - 35;
+			self.x = self.baseX;
+			self.scaleX = scale * scaleMultiplier;
+			self.scaleY = scale * scaleMultiplier;
+			if (self.z <= -500 || self.y > 3000) {
+				self.active = false;
+			}
+		};
+		return self;
+	});
+}
+var Obstacle = createObstacleClass('obstacle', 1.33);
+var RockObstacle = createObstacleClass('rockObstacle', 1.33);
+function createTreeClass(assetId) {
+	return Container.expand(function () {
+		var self = Container.call(this);
+		var treeGraphics = self.attachAsset(assetId, {
+			anchorX: 0.5,
+			anchorY: 1.0
+		});
+		self.speed = 3;
+		self.active = true;
+		self.baseX = 1024;
+		self.side = 1;
+		self.scaleX = 0;
+		self.scaleY = 0;
+		treeGraphics.alpha = 0;
+		tween(self, {
+			scaleX: 1,
+			scaleY: 1
+		}, {
+			duration: 800,
+			easing: tween.easeOut
+		});
+		tween(treeGraphics, {
+			alpha: 1
+		}, {
+			duration: 800,
+			easing: tween.easeOut
+		});
+		self.update = function () {
+			if (!self.active || game.paused || isInCasaNinja) {
+				return;
+			}
+			var p = computePerspective(self.z, self.speed);
+			self.z = p.newZ;
+			var scale = p.scale;
+			var perspectiveY = p.perspectiveY;
+			self.y = perspectiveY;
+			var plankWidth = 400 * scale * 2;
+			var plankBoundary = plankWidth / 2;
+			var extraSeparation = 300 * scale;
+			self.x = self.baseX + (plankBoundary + extraSeparation) * self.side;
+			var treeScale = scale * 1.73;
+			self.scaleX = treeScale;
+			self.scaleY = treeScale;
+			if (self.z <= -500 || self.x < -300 || self.x > 2348 || self.y > 3400) {
+				self.active = false;
+			}
+		};
+		return self;
+	});
+}
+var Tree = createTreeClass('tree');
+var TreeType2 = createTreeClass('treeType2');
+var TreeType3 = createTreeClass('treeType3');
+var mushroomObstacle = createObstacleClass('spikeObstacle', 1.0);
 var ninja;
 var ninjaStars = [];
 var enemies = [];
@@ -1938,9 +1408,9 @@ var electricalNinjas = [];
 var enemySpawnTimer = 0;
 var enemy2SpawnTimer = 0;
 var enemy3SpawnTimer = 0;
-var lastEnemySpawnSide = 0; // Track last side that spawned an enemy (-1 left, 1 right, 0 none)
-var lastEnemySpawnTime = 0; // Track when last enemy was spawned
-var minSpawnDelay = 240; // Minimum delay between enemy spawns (4 seconds at 60fps) - increased for better separation
+var lastEnemySpawnSide = 0;
+var lastEnemySpawnTime = 0;
+var minSpawnDelay = 240;
 var obstacleSpawnTimer = 0;
 var swipeStartX = 0;
 var swipeStartY = 0;
@@ -1952,121 +1422,253 @@ var treeSpawnTimer = 0;
 var ninjaSpawnTimer = 0;
 var meteorites = [];
 var lightnings = [];
-var sunFaceTimer = 0; // Timer for sun face change duration
-var sunIsHit = false; // Track if sun is currently in hit state
+var sunFaceTimer = 0;
+var sunIsHit = false;
 var ninjaParalyzed = false;
 var ninjaParalyzeTimer = 0;
 var toris = [];
 var toriSpawnTimer = 0;
 var woodenPlanks = [];
-var lastPlankSpawnY = 0; // Track Y position of last spawned plank
-var plankRegularDistance = 50; // Regular distance between planks - reduced to 50px spacing
+var lastPlankSpawnY = 0;
+var plankRegularDistance = 50;
+var greenLanesLeft = [];
+var greenLanesRight = [];
 var airplanes = [];
 var airplaneSpawnTimer = 0;
 var powerUps = [];
 var woodenStars = [];
 var hasWoodenStarPower = false;
 var woodenStarPowerTimer = 0;
-var woodenStarDuration = 1800; // 30 seconds at 60fps
+var woodenStarDuration = 1800;
 var hasIcePower = false;
 var icePowerTimer = 0;
-var icePowerDuration = 1800; // 30 seconds at 60fps
+var icePowerDuration = 1800;
 var iceStars = [];
 var alerts = [];
 var sunFrozen = false;
 var sunFrozenTimer = 0;
-var sunFrozenDuration = 600; // 10 seconds at 60fps
-// Progressive difficulty system
+var sunFrozenDuration = 600;
 var difficultyLevel = 1;
 var gameStartTime = 0;
 var enemyArchers = [];
 var arrows = [];
-// Main screen popup variables
 var mainScreenActive = true;
 var mainScreenTimer = 0;
-var mainScreenMinTime = 180; // 3 seconds at 60fps
+var mainScreenMinTime = 180;
 var mainScreenPopup;
 var mainScreenMask;
 var swipeStartXPopup = 0;
 var swipeStartYPopup = 0;
 var isSwipingPopup = false;
-// Function to check current difficulty level based on time survived
+// --- Utilidades de colisiones y efectos (DRY) ---
+// Utilidades de perspectiva/escala repetidas en varios objetos
+function computePerspective(z, speed) {
+	z = z || 1000;
+	var distanceFactor = Math.max(0.1, 1 - (z || 1000) / 1000);
+	var currentSpeed = (speed || 0) * (0.3 + distanceFactor * 2);
+	var newZ = z - currentSpeed;
+	var scale = Math.max(0.1, 1 - newZ / 1000);
+	var perspectiveY = 1503 + (2532 - 1503) * scale;
+	return {
+		newZ: newZ,
+		scale: scale,
+		perspectiveY: perspectiveY
+	};
+}
+function destroyProjectile(projectileArray, index, projectile) {
+	projectile.active = false;
+	projectile.destroy();
+	projectileArray.splice(index, 1);
+}
+function awardPoints(points) {
+	LK.setScore(LK.getScore() + points);
+	if (typeof updateScore === 'function') {
+		updateScore();
+	}
+}
+function causeEnemyFall(enemy, points, soundId, isArcher) {
+	enemiesKilled++;
+	if (points) {
+		awardPoints(points);
+	}
+	if (soundId) {
+		LK.getSound(soundId).play();
+	}
+	enemy.falling = true;
+	var graphics = enemy.children && enemy.children[0];
+	if (graphics) {
+		tween(graphics, {
+			rotation: Math.PI
+		}, {
+			duration: 300,
+			easing: tween.easeOut
+		});
+	}
+	enemy.velocityY = -2;
+	enemy.velocityX = isArcher ? 0 : enemy.velocityX * 0.3;
+}
+function freezeEnemyAndFall(enemy, freezeAssetId, points, options) {
+	// options: { anchorY, scaleMultiplier, isArcher }
+	enemiesKilled++;
+	if (points) {
+		awardPoints(points);
+	}
+	LK.getSound('Congelado').play();
+	enemy.falling = true;
+	enemy.frozen = true;
+	var graphics = enemy.children && enemy.children[0];
+	var scaleX = 1,
+		scaleY = 1;
+	if (graphics) {
+		scaleX = graphics.scaleX;
+		scaleY = graphics.scaleY;
+		graphics.destroy();
+	}
+	var frozenGraphics = enemy.attachAsset(freezeAssetId, {
+		anchorX: 0.5,
+		anchorY: options && options.anchorY != null ? options.anchorY : 0.5
+	});
+	var mult = options && options.scaleMultiplier != null ? options.scaleMultiplier : 1.0;
+	var finalScaleMultiplier = mult * 0.75; // Enemigos congelados al 75% del tamaño actual
+	frozenGraphics.scaleX = scaleX * finalScaleMultiplier;
+	frozenGraphics.scaleY = scaleY * finalScaleMultiplier;
+	tween(frozenGraphics, {
+		rotation: Math.PI,
+		tint: 0x87CEEB
+	}, {
+		duration: 300,
+		easing: tween.easeOut
+	});
+	enemy.velocityY = -2;
+	enemy.velocityX = options && options.isArcher ? 0 : enemy.velocityX * 0.3;
+}
+function tryHitEnemiesWithFall(projectile, projectileArray, i, targets, points, soundId, isArcher) {
+	for (var j = targets.length - 1; j >= 0; j--) {
+		var target = targets[j];
+		if (target.active && !target.falling && projectile.intersects(target)) {
+			causeEnemyFall(target, points, soundId, isArcher);
+			destroyProjectile(projectileArray, i, projectile);
+			return true;
+		}
+	}
+	return false;
+}
+function tryFreezeEnemiesWithFall(projectile, projectileArray, i, targets, points, freezeAssetId, options) {
+	for (var j = targets.length - 1; j >= 0; j--) {
+		var target = targets[j];
+		if (target.active && !target.falling && projectile.intersects(target)) {
+			freezeEnemyAndFall(target, freezeAssetId, points, options || {});
+			destroyProjectile(projectileArray, i, projectile);
+			return true;
+		}
+	}
+	return false;
+}
+function handleMeteoriteHitCommon(projectile, projectileArray, i, meteorite, destroyThreshold) {
+	meteorite.hitCount++;
+	LK.getSound('meteoro-golpe').play();
+	if (meteorite.hitCount < destroyThreshold && typeof meteorite.changeFace === 'function') {
+		meteorite.changeFace();
+	}
+	destroyProjectile(projectileArray, i, projectile);
+	if (meteorite.hitCount >= destroyThreshold) {
+		meteorite.active = false;
+		meteorite.destroy();
+		var idx = meteorites.indexOf(meteorite);
+		if (idx >= 0) {
+			meteorites.splice(idx, 1);
+		}
+		LK.getSound('meteoro-grito').play();
+		awardPoints(50);
+	}
+}
+function tryHitArrows(projectile, projectileArray, i, arrowsArray) {
+	for (var a = arrowsArray.length - 1; a >= 0; a--) {
+		var arrow = arrowsArray[a];
+		if (arrow.active && !arrow.falling && projectile.intersects(arrow)) {
+			arrow.startFalling();
+			destroyProjectile(projectileArray, i, projectile);
+			return true;
+		}
+	}
+	return false;
+}
+function handleAirplaneHit(projectile, projectileArray, i, airplane, opts) {
+	// opts: { score, soundId, dropPowerUp }
+	if (opts && opts.score) {
+		awardPoints(opts.score);
+	}
+	if (opts && opts.dropPowerUp && typeof dropPowerUp === 'function') {
+		dropPowerUp(airplane);
+	}
+	if (opts && opts.soundId) {
+		LK.getSound(opts.soundId).play();
+	}
+	if (typeof airplane.startFalling === 'function') {
+		airplane.startFalling();
+	} else {
+		airplane.falling = true;
+	}
+	destroyProjectile(projectileArray, i, projectile);
+}
 function getCurrentDifficultyLevel() {
-	var timeSurvived = Math.floor((LK.ticks - gameStartTime) / 60); // seconds
+	var timeSurvived = Math.floor((LK.ticks - gameStartTime) / 60);
 	if (timeSurvived < 30) {
 		return 1;
-	} // Level 1: 0-30 seconds - basic game
-	else if (timeSurvived < 60) {
+	} else if (timeSurvived < 60) {
 		return 2;
-	} // Level 2: 30-60 seconds - add lightning clouds
-	else if (timeSurvived < 120) {
+	} else if (timeSurvived < 120) {
 		return 3;
-	} // Level 3: 1-2 minutes - add more objects
-	else if (timeSurvived < 180) {
+	} else if (timeSurvived < 180) {
 		return 4;
-	} // Level 4: 2-3 minutes - increase spawn rates
-	else {
+	} else {
 		return 5;
-	} // Level 5: 3+ minutes - electrical ninjas
+	}
 }
-// Function to check if feature is unlocked at current difficulty
 function isFeatureUnlocked(feature) {
-	// Phase system based on casa ninja visits
-	var currentPhase = Math.min(casaNinjaVisitCount + 1, 4); // Phase 1-4
+	var currentPhase = Math.min(casaNinjaVisitCount + 1, 4);
 	switch (feature) {
 		case 'obstacles':
 			return currentPhase >= 2;
-		// Available from phase 2
 		case 'enemies':
 			return currentPhase >= 1;
-		// Available from phase 1
 		case 'toris':
 			return currentPhase >= 2;
-		// Available from phase 2
 		case 'lightningClouds':
 			return currentPhase >= 3;
-		// Available from phase 3
 		case 'airplanes':
 			return currentPhase >= 3;
-		// Available from phase 3
 		case 'archers':
 			return currentPhase >= 4;
-		// Available from phase 4
 		case 'sun':
 			return currentPhase >= 2;
-		// Available from phase 2
 		default:
 			return true;
 	}
 }
-// Function to show current phase above score
 function showCurrentPhase() {
 	var currentPhase = Math.min(casaNinjaVisitCount + 1, 4);
 	var phaseText = 'FASE ' + currentPhase;
-	// Create or update phase display with same style as score
-	if (!window.phaseDisplay) {
-		window.phaseDisplay = new Text2(phaseText, {
-			size: 76,
-			fill: 0xFFD700,
+	if (!game.phaseDisplay) {
+		game.phaseDisplay = new Text2(phaseText, {
+			size: 82,
+			fill: 0x222222,
 			font: "'Arial Black', 'Impact', 'Helvetica Bold', sans-serif"
 		});
-		window.phaseDisplay.anchor.set(0.5, 0.5);
-		window.phaseDisplay.x = 1024; // Center of screen horizontally
-		window.phaseDisplay.y = 1366; // Center of screen vertically (2732/2)
-		// Initialize style object if it doesn't exist
-		if (!window.phaseDisplay.style) {
-			window.phaseDisplay.style = {};
+		game.phaseDisplay.anchor.set(0.5, 0.5);
+		game.phaseDisplay.x = 1024;
+		game.phaseDisplay.y = 110;
+		if (!game.phaseDisplay.style) {
+			game.phaseDisplay.style = {};
 		}
-		// Add 3D bold effects with enhanced drop shadow (same as score)
-		window.phaseDisplay.style.dropShadow = true;
-		window.phaseDisplay.style.dropShadowColor = "#000000";
-		window.phaseDisplay.style.dropShadowDistance = 4;
-		window.phaseDisplay.style.dropShadowAngle = Math.PI / 4;
-		game.addChild(window.phaseDisplay);
+		game.phaseDisplay.style.dropShadow = true;
+		game.phaseDisplay.style.dropShadowColor = "#000000";
+		game.phaseDisplay.style.dropShadowDistance = 4;
+		game.phaseDisplay.style.dropShadowAngle = Math.PI / 4;
+		game.addChild(game.phaseDisplay);
 	}
-	window.phaseDisplay.setText(phaseText);
+	game.phaseDisplay.setText(phaseText);
 }
-// Function to show phase information in casa ninja
 function showPhaseInfo() {
 	if (!isInCasaNinja || !casaNinja) {
 		return;
@@ -2075,148 +1677,175 @@ function showPhaseInfo() {
 	var message = '';
 	switch (currentPhase) {
 		case 1:
-			message = 'FASE 1: Enemigos básicos y obstáculos';
+			message = 'PHASE 1: Basic enemies and obstacles\nJump to avoid enemies and obstacles\nUse ninja stars to defeat enemies\nCollect power-ups for special abilities';
 			break;
 		case 2:
-			message = 'FASE 2: Aparecerán TORIS\n¡No saltes para pasar sin daño!';
+			message = 'PHASE 2: TORIS will appear\nDon\'t jump to pass through without damage\nJump over enemies and obstacles\nUse ninja stars strategically';
 			break;
 		case 3:
-			message = 'FASE 3: Nubes eléctricas y aviones\n¡Cuidado con los rayos!';
+			message = 'PHASE 3: Electric clouds and airplanes\nBeware of lightning strikes from clouds\nAirplanes will drop power-ups\nJump to avoid obstacles and enemies';
 			break;
 		case 4:
-			message = 'FASE 4: Arqueros ninja\n¡Mátalos antes que tiren o salta la flecha!';
+			message = 'PHASE 4: Ninja archers\nKill them before they shoot arrows\nOr jump to avoid their arrows\nUse all your ninja skills to survive';
 			break;
 	}
-	// Create phase info text with same style as score
+	var backgroundWidth = 2048 * 0.75;
+	var backgroundHeight = 2732 * 0.75;
+	var backgroundX = 1024;
+	var backgroundY = 1366 + 200;
+	var backgroundImage = LK.getAsset('indicaciones', {
+		anchorX: 0.5,
+		anchorY: 0.5,
+		x: backgroundX,
+		y: backgroundY,
+		scaleX: backgroundWidth / 100,
+		scaleY: backgroundHeight / 100
+	});
+	var textAreaWidth = backgroundWidth * 0.9;
+	var textAreaHeight = backgroundHeight * 0.9;
+	var textSize = 76;
 	var phaseInfo = new Text2(message, {
-		size: 76,
-		fill: 0xFFD700,
+		size: textSize,
+		fill: 0x1a1a1a,
 		font: "'Arial Black', 'Impact', 'Helvetica Bold', sans-serif"
 	});
 	phaseInfo.anchor.set(0.5, 0.5);
-	phaseInfo.x = casaNinja.x;
-	phaseInfo.y = casaNinja.y - 2000;
-	// Initialize style object if it doesn't exist
+	phaseInfo.x = backgroundX;
+	phaseInfo.y = backgroundY;
 	if (!phaseInfo.style) {
 		phaseInfo.style = {};
 	}
-	// Add 3D bold effects with enhanced drop shadow (same as score)
 	phaseInfo.style.dropShadow = true;
 	phaseInfo.style.dropShadowColor = "#000000";
 	phaseInfo.style.dropShadowDistance = 4;
 	phaseInfo.style.dropShadowAngle = Math.PI / 4;
+	phaseInfo.style.width = textAreaWidth;
+	game.addChild(backgroundImage);
 	game.addChild(phaseInfo);
-	// Remove after 3 seconds
 	LK.setTimeout(function () {
 		if (phaseInfo && phaseInfo.parent) {
 			phaseInfo.destroy();
 		}
-	}, 3000);
+		if (backgroundImage && backgroundImage.parent) {
+			backgroundImage.destroy();
+		}
+	}, 10000);
 }
-// Function to show alert above ninja head when objects spawn
 function showAlert() {
 	if (!ninja) {
 		return;
 	}
 	var alert = new Alert();
 	alert.x = ninja.x;
-	alert.y = ninja.y - 900; // Position above ninja head
+	alert.y = ninja.y - 900;
 	alerts.push(alert);
 	game.addChild(alert);
-	// Play alert sound
 	try {
 		LK.getSound('alert-sound').play();
 	} catch (e) {
-		// Fallback sound if alert-sound doesn't work
 		LK.getSound('jump').play();
 	}
 }
-// Create tiled green background pattern starting at wooden plank height with perspective
 var greenBackgrounds = [];
 var backgroundAsset = LK.getAsset('greenBackground', {});
 var tileWidth = backgroundAsset.width;
 var tileHeight = backgroundAsset.height;
 var fieldWidth = 2048;
-var horizonY = 1583; // Horizon moved much lower - increased from 1543 to 1583 (40px lower)
-var woodenPlankStartY = horizonY; // Start grass at same height as wooden planks
-var fieldHeight = 2732 - woodenPlankStartY; // From wooden plank level to bottom of screen
-// Calculate perspective tiles with varying scale based on distance from wooden plank level
-var perspectiveRows = 15; // Number of perspective rows from wooden plank level to bottom
-var tilesX = 20; // Fixed number of horizontal tiles
+var horizonY = 1583;
+var woodenPlankStartY = horizonY;
+var fieldHeight = 2732 - woodenPlankStartY;
+var perspectiveRows = 10; // menos filas por rendimiento
+var tilesX = 12; // menos columnas por rendimiento
 for (var row = 0; row < perspectiveRows; row++) {
-	// Calculate perspective scale - smaller at wooden plank level (distance), larger at bottom (close)
-	var rowProgress = row / (perspectiveRows - 1); // 0 at wooden plank level to 1 at bottom
-	var perspectiveScale = 2 + rowProgress * 6; // Scale from 2 (small/far) to 8 (big/close)
-	// Calculate Y position with perspective spacing - start from wooden plank level
+	var rowProgress = row / (perspectiveRows - 1);
+	var perspectiveScale = 2 + rowProgress * 6;
 	var rowY = woodenPlankStartY + fieldHeight * rowProgress;
-	var _loop = function _loop() {
-			greenTile = game.addChild(LK.getAsset('greenBackground', {
-				anchorX: 0,
-				anchorY: 0,
-				x: col * tileWidth * perspectiveScale - tilesX * tileWidth * perspectiveScale / 2 + fieldWidth / 2,
-				y: rowY,
-				scaleX: perspectiveScale,
-				scaleY: perspectiveScale
-			})); // Store original properties for enhanced forward motion animation
-			greenTile.originalY = rowY;
-			greenTile.perspectiveScale = perspectiveScale;
-			greenTile.rowIndex = row;
-			greenTile.originalX = greenTile.x; // Store original X position for forward motion
-			greenBackgrounds.push(greenTile);
-			// Store tile reference for background animation with forward motion effects
-			// Individual tiles will have coordinated movement for ninja advancement illusion
-		},
+    var _loop = function _loop() {
+            var tileX = col * tileWidth * perspectiveScale - tilesX * tileWidth * perspectiveScale / 2 + fieldWidth / 2;
+            var tileScaleX = perspectiveScale * 2.2; // compensar reducción de columnas
+            var tileScaleY = perspectiveScale;
+            // culling horizontal: no crear tiles totalmente fuera de pantalla
+            if (tileX + tileWidth * tileScaleX < WORLD_MIN_X - 100 || tileX > WORLD_MAX_X + 100) {
+                return;
+            }
+            greenTile = game.addChild(LK.getAsset('greenBackground', {
+                anchorX: 0,
+                anchorY: 0,
+                x: tileX,
+                y: rowY,
+                scaleX: tileScaleX,
+                scaleY: tileScaleY
+            }));
+            greenTile.originalY = rowY;
+            greenTile.perspectiveScale = perspectiveScale;
+            greenTile.rowIndex = row;
+            greenTile.originalX = greenTile.x;
+            greenTile.colIndex = col;
+            greenTile.z = 1000 * (1 - rowProgress);
+            greenTile.speed = 3;
+            greenBackgrounds.push(greenTile);
+        },
 		greenTile;
 	for (var col = 0; col < tilesX; col++) {
 		_loop();
 	}
 }
-// Create solid green background layer beneath grass tiles - covers lower half of screen
 var greenLayer = game.addChildAt(LK.getAsset('grassMask', {
 	anchorX: 0,
 	anchorY: 0,
 	x: 0,
 	y: 1600,
-	// Position higher up (moved from 1366 to 1200)
 	scaleX: 1,
 	scaleY: 0.61,
-	// Increase scale to cover more area (from 0.5 to 0.6)
 	tint: 0x90EE90,
-	// Light green color
-	alpha: 1 // Fully opaque
+	alpha: 1
 }), 0);
-// Create sun in background (behind everything else but above mask) - only visible in phase 2+
+// Monte Fuji: detrás del césped (y delante del cielo)
+var monteFuji = game.addChildAt(LK.getAsset('montefuji', {
+	anchorX: 0.5,
+	anchorY: 1.0,
+	x: 1024,
+	y: 1700,
+	scaleX: 2.1,
+	scaleY: 2.1,
+	alpha: 1
+}), 0);
 var sun = game.addChild(LK.getAsset('sun', {
 	anchorX: 0.5,
 	anchorY: 0.5,
 	x: 2500,
-	// Start off-screen to the right
 	y: 300,
 	scaleX: 1.5,
 	scaleY: 1.5,
-	alpha: 0 // Start invisible
+	alpha: 0
 }));
-// Pre-populate with wooden planks to create running walkway
+// Constantes globales de geometría/escena
+var SCREEN_CENTER_X = 1024;
+var WORLD_MIN_X = -500;
+var WORLD_MAX_X = 2548;
+var WORLD_MIN_Y = -100;
+var WORLD_MAX_Y = 4000;
+var HORIZON_Y = 1503;
+var GROUND_Y = 2532;
+var SCREEN_HEIGHT = 2732;
+var SCREEN_HALFY = SCREEN_HEIGHT / 2; // 1366
 for (var prePlankIndex = 0; prePlankIndex < 8; prePlankIndex++) {
 	var plank = new WoodenPlank();
 	plank.x = 1024;
 	plank.y = horizonY;
-	plank.z = 50 + prePlankIndex * 50; // Start closer and use 50px spacing
+	plank.z = 50 + prePlankIndex * 50;
 	plank.baseX = 1024;
 	plank.speed = 3;
 	woodenPlanks.push(plank);
-	// Insert planks on the ground level, above green background but below other objects
 	var plankInsertIndex = greenBackgrounds.length + 1;
 	if (plankInsertIndex > game.children.length) {
 		plankInsertIndex = game.children.length;
 	}
 	game.addChildAt(plank, plankInsertIndex);
 }
-// Initialize last plank spawn Y position after pre-population
-lastPlankSpawnY = 50 + 7 * 50; // Last pre-populated plank position with 50px spacing
-// Pre-populate with trees at various distances to simulate game already started
+showCurrentPhase();
+lastPlankSpawnY = 50 + 7 * 50;
 for (var preTreeIndex = 0; preTreeIndex < 5; preTreeIndex++) {
-	// Create trees at different z distances to fill the field
 	var leftTreeType = Math.random();
 	var leftTree;
 	if (leftTreeType < 0.33) {
@@ -2228,16 +1857,14 @@ for (var preTreeIndex = 0; preTreeIndex < 5; preTreeIndex++) {
 	}
 	leftTree.x = 1024;
 	leftTree.y = horizonY;
-	leftTree.z = 200 + preTreeIndex * 80; // Spread trees from near to far
+	leftTree.z = 200 + preTreeIndex * 80;
 	leftTree.side = -1;
 	trees.push(leftTree);
-	// Trees that appear first (smaller z) should have higher z-index (appear behind)
 	var insertIndex = greenBackgrounds.length + 2 + (4 - preTreeIndex);
 	if (insertIndex > game.children.length) {
 		insertIndex = game.children.length;
 	}
 	game.addChildAt(leftTree, insertIndex);
-	// Right side tree
 	var rightTreeType = Math.random();
 	var rightTree;
 	if (rightTreeType < 0.33) {
@@ -2249,7 +1876,7 @@ for (var preTreeIndex = 0; preTreeIndex < 5; preTreeIndex++) {
 	}
 	rightTree.x = 1024;
 	rightTree.y = horizonY;
-	rightTree.z = 250 + preTreeIndex * 80; // Slightly offset from left trees
+	rightTree.z = 250 + preTreeIndex * 80;
 	rightTree.side = 1;
 	trees.push(rightTree);
 	var rightInsertIndex = greenBackgrounds.length + 2 + (4 - preTreeIndex);
@@ -2258,7 +1885,6 @@ for (var preTreeIndex = 0; preTreeIndex < 5; preTreeIndex++) {
 	}
 	game.addChildAt(rightTree, rightInsertIndex);
 }
-// Pre-populate with clouds at various distances
 for (var preCloudIndex = 0; preCloudIndex < 8; preCloudIndex++) {
 	var cloudType = Math.random();
 	var cloud;
@@ -2270,41 +1896,31 @@ for (var preCloudIndex = 0; preCloudIndex < 8; preCloudIndex++) {
 		cloud = new CloudType3();
 	}
 	cloud.x = Math.random() * 1200 + 400;
-	cloud.y = horizonY - 50 + Math.random() * 100 - 50; // Spawn closer to horizon with some variation
+	cloud.y = horizonY - 50 + Math.random() * 100 - 50;
 	cloud.baseY = cloud.y;
-	cloud.z = 500 + preCloudIndex * 200; // Spread clouds at different distances
+	cloud.z = 500 + preCloudIndex * 200;
 	clouds.push(cloud);
-	// Add clouds in front of sun - find sun's position and add cloud after it
 	var sunIndex = game.children.indexOf(sun);
 	var cloudIndex = Math.min(sunIndex + 1, game.children.length);
 	game.addChildAt(cloud, cloudIndex);
 }
-// Fog system removed - no pre-population needed for clearer gameplay
-// Create ninja
 ninja = game.addChild(new Ninja());
 ninja.x = 1024;
-ninja.y = 2673; // Keep ninja at same ground position regardless of horizon change
-// Create ninja house (casa ninja) - initially hidden/inactive
-var casaNinja = null; // Will be created when needed
-// Game state for casa ninja functionality
+ninja.y = 2673;
+var casaNinja = null;
 var isInCasaNinja = false;
 var casaNinjaSequenceTimer = 0;
-var casaNinjaSequenceStage = 0; // 0=entering, 1=door_close, 2=pee, 3=wc, 4=relief, 5=door_open, 6=door_close_final
-var casaNinjaActivated = false; // Track if casa ninja has been activated for this game
-var casaNinjaActivatedPoints = []; // Track which activation points have been used
-var casaNinjaVisitCount = 0; // Track how many times ninja has visited the house
-// Initialize background animation system for grass tiles
+var casaNinjaSequenceStage = 0;
+var casaNinjaActivated = false;
+var casaNinjaActivatedPoints = [];
+var casaNinjaVisitCount = 0;
 var backgroundOffsetY = 0;
-var backgroundAnimationSpeed = 2; // Speed of background scrolling
-var grassAnimationTimer = 0; // Timer for coordinated grass movements
-// Start continuous background animation with enhanced forward motion for ninja advancement illusion
+var backgroundAnimationSpeed = 2;
+var grassAnimationTimer = 0;
 function animateGrassBackground() {
-	// Stop background animation when ninja is in casa ninja
 	if (isInCasaNinja) {
-		// Continue animation loop but don't update positions
 		tween({}, {}, {
 			duration: 16,
-			// ~60fps update rate
 			easing: tween.linear,
 			onFinish: function onFinish() {
 				animateGrassBackground();
@@ -2312,71 +1928,25 @@ function animateGrassBackground() {
 		});
 		return;
 	}
-	// Drive background animation primarily based on ninja's Y position for powerful forward motion effect
 	if (ninja) {
-		// Use ninja's Y position as primary driver - higher Y creates stronger backward flow effect
-		// Combine with ninja's movement state and time for dynamic forward advancement sensation
-		var ninjaYInfluence = (ninja.y - ninja.groundY) * 0.08; // Stronger Y position influence when jumping/moving
-		var ninjaMotionBoost = ninja.isJumping ? 1.5 : 1.0; // Extra boost during jumps
-		backgroundOffsetY = ninjaYInfluence * ninjaMotionBoost + LK.ticks * 0.2; // Ninja Y drives background displacement
+		var ninjaYInfluence = (ninja.y - ninja.groundY) * 0.08;
+		var ninjaMotionBoost = ninja.isJumping ? 1.5 : 1.0;
+		backgroundOffsetY = ninjaYInfluence * ninjaMotionBoost + LK.ticks * 0.2;
 	} else {
-		// Fallback to time-based animation if ninja doesn't exist
-		backgroundOffsetY += backgroundAnimationSpeed * 4; // Higher speed for forward motion
+		backgroundOffsetY += backgroundAnimationSpeed * 4;
 	}
-	// Increment animation timer for coordinated movements with enhanced speed
-	grassAnimationTimer += 0.15; // Increased speed for more dynamic forward movement
-	// Apply enhanced forward motion animation to grass tiles driven by ninja Y position
-	for (var i = 0; i < greenBackgrounds.length; i++) {
-		var tile = greenBackgrounds[i];
-		// Create strong forward movement waves that flow toward the ninja from wooden plank level
-		var distanceFromNinja = ninja ? Math.abs(tile.originalX - ninja.x) : 1000;
-		var forwardMotionIntensity = Math.max(0.4, 1 - distanceFromNinja / 1500); // Higher base intensity, closer tiles move more
-		// Create flowing motion pattern driven by ninja's Y position for advancement through field
-		var ninjaYPhase = ninja ? (ninja.y - ninja.groundY) * 0.003 : 0; // Y position creates phase shift
-		var flowPhase = tile.rowIndex * 0.8 + grassAnimationTimer - backgroundOffsetY * 0.2 + ninjaYPhase;
-		var forwardFlow = Math.sin(flowPhase) * forwardMotionIntensity * 6; // Stronger forward flowing motion
-		// Enhanced horizontal drift based on perspective and ninja Y - creates stronger 3D motion
-		var perspectiveMotion = (tile.originalX - 1024) * 0.003 * forwardMotionIntensity;
-		var ninjaYMotion = ninja ? (ninja.y - ninja.groundY) * 0.001 * forwardMotionIntensity : 0;
-		// Stronger vertical forward motion driven by ninja Y - simulates ground rushing toward ninja
-		var forwardVerticalMotion = Math.sin(flowPhase * 1.1) * forwardMotionIntensity * 5;
-		var ninjaYVerticalBoost = ninja ? (ninja.y - ninja.groundY) * 0.002 : 0;
-		// Enhanced scaling pulsation that reinforces forward advancement based on ninja Y
-		var motionScale = 1 + Math.sin(flowPhase * 0.8) * 0.06 * forwardMotionIntensity;
-		// Create wave-like motion that travels from distant tiles toward ninja, enhanced by Y position
-		var advancementWave = Math.sin(flowPhase - tile.rowIndex * 0.4) * forwardMotionIntensity * 2.5;
-		var ninjaYWave = ninja ? Math.sin(ninjaYPhase + tile.rowIndex * 0.2) * (ninja.y - ninja.groundY) * 0.001 : 0;
-		// Calculate target position with enhanced forward motion effects driven by ninja Y
-		var targetX = tile.originalX + perspectiveMotion + advancementWave + ninjaYMotion;
-		var targetY = tile.originalY + forwardVerticalMotion - forwardFlow + advancementWave * 0.6 + ninjaYVerticalBoost + ninjaYWave;
-		// Animate tile to new position with stronger forward motion
-		tween(tile, {
-			x: targetX,
-			y: targetY,
-			scaleX: tile.perspectiveScale * motionScale,
-			scaleY: tile.perspectiveScale * motionScale
-		}, {
-			duration: 50,
-			// Faster animation for smoother forward advancement sensation
-			easing: tween.easeInOut
-		});
-	}
-	// Background animation creates strong visual perception of ninja advancement driven by Y position
-	// Continue animation loop
+	// Animación anterior del césped eliminada: tiles se quedan fijos
+	// Conservamos el bucle temporal para no romper dependencias de tiempo
 	tween({}, {}, {
 		duration: 16,
-		// ~60fps update rate
 		easing: tween.linear,
 		onFinish: function onFinish() {
 			animateGrassBackground();
 		}
 	});
 }
-// Start the background animation
 animateGrassBackground();
-// Play main theme music
 LK.playMusic('main-theme');
-// Create semi-transparent black mask overlay
 var mainScreenMask = game.addChild(LK.getAsset('grassMask', {
 	anchorX: 0,
 	anchorY: 0,
@@ -2387,14 +1957,12 @@ var mainScreenMask = game.addChild(LK.getAsset('grassMask', {
 	tint: 0x000000,
 	alpha: 0.8
 }));
-// Add blur effect to the mask for visual enhancement
 tween(mainScreenMask, {
 	alpha: 0.8
 }, {
 	duration: 300,
 	easing: tween.easeOut
 });
-// Create main screen popup
 mainScreenPopup = game.addChild(LK.getAsset('Mainscreen', {
 	anchorX: 0.5,
 	anchorY: 0.5,
@@ -2403,10 +1971,8 @@ mainScreenPopup = game.addChild(LK.getAsset('Mainscreen', {
 	scaleX: 3.0,
 	scaleY: 3.0
 }));
-// Add popup to ensure it's on top
 game.removeChild(mainScreenPopup);
 game.addChild(mainScreenPopup);
-// Animate popup entrance
 tween(mainScreenPopup, {
 	scaleX: 2.5,
 	scaleY: 2.5
@@ -2414,19 +1980,15 @@ tween(mainScreenPopup, {
 	duration: 300,
 	easing: tween.easeOut
 });
-// Create center UI background in top center using center-ui-bg asset
 var centerUIBackground = game.addChild(LK.getAsset('center-ui-bg', {
 	anchorX: 0.5,
 	anchorY: 0.5,
 	x: 1024,
-	// Center of screen
 	y: 300,
-	// Same Y position as weapon indicator
 	scaleX: 4.0,
 	scaleY: 4.0,
 	alpha: 1
 }));
-// Create weapon indicator in top-left corner using Arma-ui as background with improved styling
 var weaponIndicator = game.addChild(LK.getAsset('Arma-ui', {
 	anchorX: 0.5,
 	anchorY: 0.5,
@@ -2435,11 +1997,8 @@ var weaponIndicator = game.addChild(LK.getAsset('Arma-ui', {
 	scaleX: 2.8,
 	scaleY: 2.8,
 	tint: 0x4A4A4A,
-	// Dark gray tint for better contrast
-	alpha: 1 // Slight transparency for modern look
+	alpha: 1
 }));
-// Weapon indicator is now static - no pulsing animation
-// Move weapon indicator behind the mask by repositioning it in the children array
 var maskIndex = game.children.indexOf(mainScreenMask);
 var weaponIndex = game.children.indexOf(weaponIndicator);
 var centerUIIndex = game.children.indexOf(centerUIBackground);
@@ -2451,16 +2010,12 @@ if (maskIndex !== -1 && centerUIIndex !== -1 && centerUIIndex > maskIndex) {
 	game.removeChild(centerUIBackground);
 	game.addChildAt(centerUIBackground, maskIndex);
 }
-// Weapon icon will be created separately on top of Arma-ui
 var weaponIcon = null;
-// Function to update weapon indicator
 function updateWeaponIndicator() {
-	// Remove current weapon icon if it exists
 	if (weaponIcon) {
 		weaponIcon.destroy();
 	}
 	if (hasIcePower) {
-		// Show ice weapon icon - positioned in front of Arma-ui background with enhanced styling
 		weaponIcon = game.addChild(LK.getAsset('Ice-horiuken', {
 			anchorX: 0.5,
 			anchorY: 0.5,
@@ -2469,28 +2024,13 @@ function updateWeaponIndicator() {
 			scaleX: 0.8,
 			scaleY: 0.8
 		}));
-		// Enhanced ice blue tint with glow effect
 		weaponIcon.tint = 0x00BFFF;
 	} else if (hasWoodenStarPower) {
-		// Add spinning animation for active power
 		var _startWoodenStarSpinning = function startWoodenStarSpinning() {
 			if (!weaponIcon || weaponIcon.destroyed || !hasWoodenStarPower) {
 				return;
 			}
-			tween(weaponIcon, {
-				rotation: Math.PI * 2
-			}, {
-				duration: 1500,
-				easing: tween.linear,
-				onFinish: function onFinish() {
-					if (weaponIcon && !weaponIcon.destroyed && hasWoodenStarPower) {
-						weaponIcon.rotation = 0;
-						_startWoodenStarSpinning();
-					}
-				}
-			});
 		};
-		// Show wooden star icon - positioned in front of Arma-ui background with enhanced styling
 		weaponIcon = game.addChild(LK.getAsset('shoriuken3', {
 			anchorX: 0.5,
 			anchorY: 0.5,
@@ -2499,11 +2039,9 @@ function updateWeaponIndicator() {
 			scaleX: 1.1,
 			scaleY: 1.1
 		}));
-		// Enhanced brown tint for wooden power
 		weaponIcon.tint = 0xDAA520;
 		_startWoodenStarSpinning();
 	} else {
-		// Show normal ninja star icon - positioned in front of Arma-ui background with enhanced styling
 		weaponIcon = game.addChild(LK.getAsset('ninjastar', {
 			anchorX: 0.5,
 			anchorY: 0.5,
@@ -2512,10 +2050,8 @@ function updateWeaponIndicator() {
 			scaleX: 1.0,
 			scaleY: 1.0
 		}));
-		// Enhanced silver color for regular ninja star
 		weaponIcon.tint = 0xC0C0C0;
 	}
-	// Ensure weapon icon stays behind the mask if it exists
 	if (weaponIcon && mainScreenMask && game.children.indexOf(mainScreenMask) !== -1) {
 		var maskIndex = game.children.indexOf(mainScreenMask);
 		var iconIndex = game.children.indexOf(weaponIcon);
@@ -2523,7 +2059,6 @@ function updateWeaponIndicator() {
 			game.removeChild(weaponIcon);
 			game.addChildAt(weaponIcon, maskIndex);
 		}
-		// Also ensure score and enemies text stay behind mask
 		var scoreIndex = game.children.indexOf(scoreTxt);
 		var enemiesIndex = game.children.indexOf(enemiesTxt);
 		if (scoreIndex > maskIndex) {
@@ -2536,62 +2071,81 @@ function updateWeaponIndicator() {
 		}
 	}
 }
-// Initialize weapon indicator to show default ninja star on game start
 updateWeaponIndicator();
-// Create score text on the left side of center UI background
 var scoreTxt = new Text2('0', {
 	size: 76,
 	fill: 0xFFD700,
 	font: "'Arial Black', 'Impact', 'Helvetica Bold', sans-serif"
 });
 scoreTxt.anchor.set(1.0, 0.5);
-scoreTxt.x = 1024 - 40; // Left side of center UI
-scoreTxt.y = 345; // Same Y as center UI background
-// Initialize style object if it doesn't exist
+scoreTxt.x = 1024 - 40;
+scoreTxt.y = 345;
 if (!scoreTxt.style) {
 	scoreTxt.style = {};
 }
-// Add 3D bold effects with enhanced drop shadow
 scoreTxt.style.dropShadow = true;
 scoreTxt.style.dropShadowColor = "#000000";
 scoreTxt.style.dropShadowDistance = 4;
 scoreTxt.style.dropShadowAngle = Math.PI / 4;
-// Add bold stroke effect - removed for LK compatibility
 game.addChild(scoreTxt);
-// Create enemies text on the right side of center UI background
 var enemiesTxt = new Text2('00000', {
 	size: 76,
 	fill: 0xFFD700,
 	font: "'Arial Black', 'Impact', 'Helvetica Bold', sans-serif"
 });
 enemiesTxt.anchor.set(1.0, 0.5);
-enemiesTxt.x = 1024 + 300; // Right side of center UI
-enemiesTxt.y = 345; // Same Y as center UI background
-// Initialize style object if it doesn't exist
+enemiesTxt.x = 1024 + 300;
+enemiesTxt.y = 345;
 if (!enemiesTxt.style) {
 	enemiesTxt.style = {};
 }
-// Add 3D bold effects with enhanced drop shadow
 enemiesTxt.style.dropShadow = true;
 enemiesTxt.style.dropShadowColor = "#000000";
 enemiesTxt.style.dropShadowDistance = 4;
 enemiesTxt.style.dropShadowAngle = Math.PI / 4;
-// Add bold stroke effect - removed for LK compatibility
 game.addChild(enemiesTxt);
-// Track enemies killed and time survived
 var enemiesKilled = 0;
 var timeStarted = LK.ticks;
-gameStartTime = LK.ticks; // Set game start time for difficulty system
-// Update score display
+gameStartTime = LK.ticks;
 function updateScore() {
 	scoreTxt.setText(LK.getScore().toString());
 	enemiesTxt.setText(enemiesKilled.toString());
 }
-// Depth sorting function - objects closer to player should have higher z-index
+// Índice superior de fondo (tiles de césped + máscara + Fuji)
+function getBackgroundTopIndex() {
+    var topIndex = -1;
+    if (typeof game !== 'undefined' && game && game.children) {
+        if (typeof monteFuji !== 'undefined' && monteFuji && monteFuji.parent) {
+            var idxFuji = game.children.indexOf(monteFuji);
+            if (idxFuji > topIndex) topIndex = idxFuji;
+        }
+        if (typeof greenLayer !== 'undefined' && greenLayer && greenLayer.parent) {
+            var idxMask = game.children.indexOf(greenLayer);
+            if (idxMask > topIndex) topIndex = idxMask;
+        }
+        for (var i = 0; i < greenBackgrounds.length; i++) {
+            var tile = greenBackgrounds[i];
+            if (tile && tile.parent) {
+                var idxTile = game.children.indexOf(tile);
+                if (idxTile > topIndex) topIndex = idxTile;
+            }
+        }
+    }
+    return Math.max(0, topIndex);
+}
 function sortObjectsByDepth() {
-	// Collect all depth-based objects with their z values
 	var depthObjects = [];
-	// Fog system removed - no fog depth sorting needed
+    // Add green lanes first (just above background). Use very high z so they are placed first at baseIndex
+    for (var i = 0; i < greenLanesLeft.length; i++) {
+        if (greenLanesLeft[i].active) {
+            depthObjects.push({ obj: greenLanesLeft[i], z: 1000000, type: 'greenLane' });
+        }
+    }
+    for (var i = 0; i < greenLanesRight.length; i++) {
+        if (greenLanesRight[i].active) {
+            depthObjects.push({ obj: greenLanesRight[i], z: 1000000, type: 'greenLane' });
+        }
+    }
 	// Add clouds next (they should be behind trees but in front of fog)
 	for (var i = 0; i < clouds.length; i++) {
 		if (clouds[i].active && clouds[i].z !== undefined) {
@@ -2647,8 +2201,9 @@ function sortObjectsByDepth() {
 	depthObjects.sort(function (a, b) {
 		return b.z - a.z;
 	});
-	// Reorder objects in game children - farther objects go behind
-	var baseIndex = greenBackgrounds.length + 2; // After background and sun
+    // Reorder objects in game children - farther objects go behind
+    // Base justo por encima de todo el fondo (tiles césped + máscara + Fuji)
+    var baseIndex = getBackgroundTopIndex() + 1;
 	for (var i = 0; i < depthObjects.length; i++) {
 		var obj = depthObjects[i].obj;
 		var currentIndex = game.children.indexOf(obj);
@@ -3145,8 +2700,7 @@ function spawnWoodenPlanks() {
 		plank.x = 1024; // Start from center of horizon
 		plank.y = 1503; // Start at horizon
 		// Maintain regular distance between planks
-		var currentPlankY = lastPlankSpawnY + plankRegularDistance + plankIndex * plankRegularDistance;
-		plank.z = 1000 + plankIndex * plankRegularDistance; // Regular depth spacing instead of random
+		plank.z = 1000 + plankIndex * plankRegularDistance; // Regular depth spacing
 		plank.baseX = 1024;
 		// No horizontal offset needed - planks stay centered
 		plank.speed = 3; // Match speed with other objects
@@ -3158,8 +2712,29 @@ function spawnWoodenPlanks() {
 		}
 		game.addChildAt(plank, plankInsertIndex);
 	}
+	// Además, crear segmentos de carriles verdes a ambos lados cubriendo todo el ancho
+	// Estimación de cuántas columnas necesitamos hacia cada lado
+	var colsPerSide = 14; // más columnas para cubrir con holgura
+	for (var laneIndex = -2; laneIndex <= 2; laneIndex++) {
+		for (var col = 0; col < colsPerSide; col++) {
+            var leftSeg = new GreenLaneSegment();
+			leftSeg.baseX = 1024;
+			leftSeg.z = 1000 + laneIndex * plankRegularDistance;
+			leftSeg.side = -1;
+			leftSeg.colIndex = col;
+			greenLanesLeft.push(leftSeg);
+            game.addChildAt(leftSeg, getBackgroundTopIndex() + 1); // por encima de TODO el fondo
+			var rightSeg = new GreenLaneSegment();
+			rightSeg.baseX = 1024;
+			rightSeg.z = 1000 + laneIndex * plankRegularDistance;
+			rightSeg.side = 1;
+			rightSeg.colIndex = col;
+			greenLanesRight.push(rightSeg);
+            game.addChildAt(rightSeg, getBackgroundTopIndex() + 1); // por encima de TODO el fondo
+		}
+	}
 	// Update last spawn Y position for next batch
-	lastPlankSpawnY = lastPlankSpawnY + 9 * 50; // 9 planks spawned in total (-4 to +4) with 50px spacing
+	lastPlankSpawnY = lastPlankSpawnY + 9 * plankRegularDistance; // mantener regularidad
 }
 // Enemy spawning is now handled by spawnEnemy function directly from tree crowns
 // Throw ninja star
@@ -3197,7 +2772,7 @@ function throwNinjaStar(targetX, targetY) {
 			var dy = targetY - woodenStar.y;
 			var distance = Math.sqrt(dx * dx + dy * dy);
 			// Limit target Y to 50% of screen height (1366px) - wooden stars limited range
-			var screenMiddle = 1366; // 50% of 2732px screen height
+			var screenMiddle = SCREEN_HALFY; // 50% de la altura virtual
 			var limitedTargetY = Math.max(targetY, screenMiddle);
 			var limitedDy = limitedTargetY - woodenStar.y;
 			// Add spread angle: -15, 0, +15 degrees
@@ -3208,7 +2783,7 @@ function throwNinjaStar(targetX, targetY) {
 			var velocityX = Math.cos(finalAngle) * woodenStar.speed;
 			var velocityY = Math.sin(finalAngle) * woodenStar.speed;
 			// If velocity would make star go above 50% of screen, limit it to horizontal only
-			var screenMiddle = 1366; // 50% of 2732px screen height
+			var screenMiddle = SCREEN_HALFY; // 50% de la altura virtual
 			if (velocityY < 0 && woodenStar.y + velocityY * 50 < screenMiddle) {
 				// 50 frames lookahead
 				velocityY = Math.max(velocityY, 0); // Don't allow upward movement that would cross 50% screen
@@ -3485,191 +3060,30 @@ game.update = function () {
 			for (m = meteorites.length - 1; m >= 0; m--) {
 				meteorite = meteorites[m];
 				if (meteorite.active && iceStar.intersects(meteorite)) {
-					meteorite.hitCount++;
-					LK.getSound('meteoro-golpe').play();
-					if (meteorite.hitCount < 3) {
-						meteorite.changeFace();
-					}
-					iceStar.active = false;
-					iceStar.destroy();
-					iceStars.splice(i, 1);
-					if (meteorite.hitCount >= 3) {
-						meteorite.active = false;
-						meteorite.destroy();
-						meteorites.splice(m, 1);
-						LK.getSound('meteoro-grito').play(); // Play cat scream sound when meteorite is destroyed
-						LK.setScore(LK.getScore() + 50);
-						updateScore();
-					}
+					// Ice star destruye meteorito al 2do golpe
+					handleMeteoriteHitCommon(iceStar, iceStars, i, meteorite, 2);
 					break;
 				}
 			}
 			// Check collision with all enemy types
-			for (j = enemies.length - 1; j >= 0; j--) {
-				enemy = enemies[j];
-				if (enemy.active && !enemy.falling && iceStar.intersects(enemy)) {
-					enemiesKilled++;
-					LK.setScore(LK.getScore() + 10);
-					updateScore();
-					LK.getSound('Congelado').play();
-					// Mark enemy as hit and start falling upside down
-					enemy.falling = true;
-					enemy.frozen = true; // Mark enemy as frozen
-					var enemyGraphics = enemy.children[0];
-					// Preserve current scale and position
-					var currentScaleX = enemyGraphics.scaleX;
-					var currentScaleY = enemyGraphics.scaleY;
-					var currentRotation = enemyGraphics.rotation;
-					// Destroy current graphics
-					enemyGraphics.destroy();
-					// Add frozen enemy graphics
-					var frozenGraphics = enemy.attachAsset('freeze-enemy', {
-						anchorX: 0.5,
-						anchorY: 0.5
-					});
-					// Restore visual properties and rotate upside down
-					frozenGraphics.scaleX = currentScaleX;
-					frozenGraphics.scaleY = currentScaleY;
-					// Rotate enemy upside down and make them fall
-					tween(frozenGraphics, {
-						rotation: Math.PI,
-						tint: 0x87CEEB
-					}, {
-						duration: 300,
-						easing: tween.easeOut
-					});
-					// Set falling velocity
-					enemy.velocityY = -2; // Small upward velocity initially
-					enemy.velocityX = enemy.velocityX * 0.3; // Reduce horizontal speed
-					iceStar.active = false;
-					iceStar.destroy();
-					iceStars.splice(i, 1);
-					break;
-				}
+			if (tryFreezeEnemiesWithFall(iceStar, iceStars, i, enemies, 10, 'freeze-enemy')) {
+				return 0;
 			}
-			for (j = enemies2.length - 1; j >= 0; j--) {
-				enemy2 = enemies2[j];
-				if (enemy2.active && !enemy2.falling && iceStar.intersects(enemy2)) {
-					enemiesKilled++;
-					LK.setScore(LK.getScore() + 15);
-					updateScore();
-					LK.getSound('Congelado').play();
-					// Mark enemy2 as hit and start falling upside down
-					enemy2.falling = true;
-					enemy2.frozen = true; // Mark enemy2 as frozen
-					var enemy2Graphics = enemy2.children[0];
-					// Preserve current scale and position
-					var currentScaleX = enemy2Graphics.scaleX;
-					var currentScaleY = enemy2Graphics.scaleY;
-					var currentRotation = enemy2Graphics.rotation;
-					// Destroy current graphics
-					enemy2Graphics.destroy();
-					// Add frozen enemy2 graphics
-					var frozenGraphics = enemy2.attachAsset('freeze-enemy2', {
-						anchorX: 0.5,
-						anchorY: 0.5
-					});
-					// Restore visual properties and rotate upside down
-					frozenGraphics.scaleX = currentScaleX;
-					frozenGraphics.scaleY = currentScaleY;
-					// Rotate enemy upside down and make them fall
-					tween(frozenGraphics, {
-						rotation: Math.PI,
-						tint: 0x87CEEB
-					}, {
-						duration: 300,
-						easing: tween.easeOut
-					});
-					// Set falling velocity
-					enemy2.velocityY = -2; // Small upward velocity initially
-					enemy2.velocityX = enemy2.velocityX * 0.3; // Reduce horizontal speed
-					iceStar.active = false;
-					iceStar.destroy();
-					iceStars.splice(i, 1);
-					break;
-				}
+			if (tryFreezeEnemiesWithFall(iceStar, iceStars, i, enemies2, 15, 'freeze-enemy2')) {
+				return 0;
 			}
-			for (j = enemies3.length - 1; j >= 0; j--) {
-				enemy3 = enemies3[j];
-				if (enemy3.active && !enemy3.falling && iceStar.intersects(enemy3)) {
-					enemiesKilled++;
-					LK.setScore(LK.getScore() + 20);
-					updateScore();
-					LK.getSound('Congelado').play();
-					// Mark enemy3 as hit and start falling upside down
-					enemy3.falling = true;
-					enemy3.frozen = true; // Mark enemy3 as frozen
-					var enemy3Graphics = enemy3.children[0];
-					// Preserve current scale and position
-					var currentScaleX = enemy3Graphics.scaleX;
-					var currentScaleY = enemy3Graphics.scaleY;
-					var currentRotation = enemy3Graphics.rotation;
-					// Destroy current graphics
-					enemy3Graphics.destroy();
-					// Add frozen enemy3 graphics
-					var frozenGraphics = enemy3.attachAsset('freeze-enemy3', {
-						anchorX: 0.5,
-						anchorY: 0.5
-					});
-					// Restore visual properties and rotate upside down
-					frozenGraphics.scaleX = currentScaleX;
-					frozenGraphics.scaleY = currentScaleY;
-					// Rotate enemy upside down and make them fall
-					tween(frozenGraphics, {
-						rotation: Math.PI,
-						tint: 0x87CEEB
-					}, {
-						duration: 300,
-						easing: tween.easeOut
-					});
-					// Set falling velocity
-					enemy3.velocityY = -2; // Small upward velocity initially
-					enemy3.velocityX = enemy3.velocityX * 0.3; // Reduce horizontal speed
-					iceStar.active = false;
-					iceStar.destroy();
-					iceStars.splice(i, 1);
-					break;
-				}
+			if (tryFreezeEnemiesWithFall(iceStar, iceStars, i, enemies3, 20, 'freeze-enemy3')) {
+				return 0;
 			}
 			for (j = enemyArchers.length - 1; j >= 0; j--) {
 				archer = enemyArchers[j];
 				if (archer.active && iceStar.intersects(archer)) {
-					enemiesKilled++;
-					LK.setScore(LK.getScore() + 25);
-					updateScore();
-					LK.getSound('Congelado').play();
-					// Mark archer as hit and start falling upside down
-					archer.falling = true;
-					archer.frozen = true; // Mark archer as frozen
-					var archerGraphics = archer.children[0];
-					// Preserve current scale and position
-					var currentScaleX = archerGraphics.scaleX;
-					var currentScaleY = archerGraphics.scaleY;
-					var currentRotation = archerGraphics.rotation;
-					// Destroy current graphics
-					archerGraphics.destroy();
-					// Add frozen archer graphics
-					var frozenGraphics = archer.attachAsset('freeze-archer-ninja', {
-						anchorX: 0.5,
-						anchorY: 1.0
+					freezeEnemyAndFall(archer, 'freeze-archer-ninja', 25, {
+						anchorY: 1.0,
+						scaleMultiplier: 2,
+						isArcher: true
 					});
-					// Restore visual properties and rotate upside down
-					frozenGraphics.scaleX = currentScaleX;
-					frozenGraphics.scaleY = currentScaleY;
-					// Rotate archer upside down and make them fall
-					tween(frozenGraphics, {
-						rotation: Math.PI,
-						tint: 0x87CEEB
-					}, {
-						duration: 300,
-						easing: tween.easeOut
-					});
-					// Set falling velocity
-					archer.velocityY = -2; // Small upward velocity initially
-					archer.velocityX = 0; // Stop horizontal movement for archers
-					iceStar.active = false;
-					iceStar.destroy();
-					iceStars.splice(i, 1);
+					destroyProjectile(iceStars, i, iceStar);
 					break;
 				}
 			}
@@ -3677,9 +3091,7 @@ game.update = function () {
 				arrow = arrows[a];
 				if (arrow.active && !arrow.falling && iceStar.intersects(arrow)) {
 					arrow.startFalling();
-					iceStar.active = false;
-					iceStar.destroy();
-					iceStars.splice(i, 1);
+					destroyProjectile(iceStars, i, iceStar);
 					break;
 				}
 			}
@@ -3687,13 +3099,11 @@ game.update = function () {
 			for (var ap = airplanes.length - 1; ap >= 0; ap--) {
 				var airplane = airplanes[ap];
 				if (airplane.active && !airplane.falling && iceStar.intersects(airplane)) {
-					LK.setScore(LK.getScore() + 30);
-					updateScore();
-					// Make airplane fall in nosedive and play crash sound
-					airplane.startFalling();
-					iceStar.active = false;
-					iceStar.destroy();
-					iceStars.splice(i, 1);
+					handleAirplaneHit(iceStar, iceStars, i, airplane, {
+						score: 30,
+						soundId: 'aeroplane-fall',
+						dropPowerUp: true
+					});
 					break;
 				}
 			}
@@ -3701,10 +3111,7 @@ game.update = function () {
 			for (var o = obstacles.length - 1; o >= 0; o--) {
 				var obstacle = obstacles[o];
 				if (obstacle.active && iceStar.intersects(obstacle)) {
-					// Remove ice star
-					iceStar.active = false;
-					iceStar.destroy();
-					iceStars.splice(i, 1);
+					destroyProjectile(iceStars, i, iceStar);
 					break;
 				}
 			}
@@ -3895,157 +3302,35 @@ game.update = function () {
 		for (var m = meteorites.length - 1; m >= 0; m--) {
 			var meteorite = meteorites[m];
 			if (meteorite.active && woodenStar.intersects(meteorite)) {
-				meteorite.hitCount++;
-				// Play hit sound when meteorite is hit
-				LK.getSound('meteoro-golpe').play();
-				// Change meteorite face when hit
-				if (meteorite.hitCount < 3) {
-					meteorite.changeFace();
-				}
-				// Remove wooden star
-				woodenStar.active = false;
-				woodenStar.destroy();
-				woodenStars.splice(i, 1);
-				// Destroy meteorite after 3 hits
-				if (meteorite.hitCount >= 3) {
-					meteorite.active = false;
-					meteorite.destroy();
-					meteorites.splice(m, 1);
-					LK.getSound('meteoro-grito').play(); // Play cat scream sound when meteorite is destroyed
-					LK.setScore(LK.getScore() + 50);
-					updateScore();
-				}
+				// Wooden star destruye meteorito al 3er golpe
+				handleMeteoriteHitCommon(woodenStar, woodenStars, i, meteorite, 3);
 				break;
 			}
 		}
 		// Check collision with enemies
-		for (var j = enemies.length - 1; j >= 0; j--) {
-			var enemy = enemies[j];
-			if (enemy.active && !enemy.falling && woodenStar.intersects(enemy)) {
-				// Hit enemy
-				enemiesKilled++;
-				LK.setScore(LK.getScore() + 10);
-				updateScore();
-				LK.getSound('hit').play();
-				// Mark enemy as hit and start falling upside down
-				enemy.falling = true;
-				var enemyGraphics = enemy.children[0];
-				// Rotate enemy upside down and make them fall
-				tween(enemyGraphics, {
-					rotation: Math.PI
-				}, {
-					duration: 300,
-					easing: tween.easeOut
-				});
-				// Set falling velocity
-				enemy.velocityY = -2; // Small upward velocity initially
-				enemy.velocityX = enemy.velocityX * 0.3; // Reduce horizontal speed
-				// Remove wooden star
-				woodenStar.active = false;
-				woodenStar.destroy();
-				woodenStars.splice(i, 1);
-				break;
-			}
+		if (tryHitEnemiesWithFall(woodenStar, woodenStars, i, enemies, 10, 'hit', false)) {
+			continue;
 		}
 		// Check collision with enemies2
-		for (var j = enemies2.length - 1; j >= 0; j--) {
-			var enemy2 = enemies2[j];
-			if (enemy2.active && !enemy2.falling && woodenStar.intersects(enemy2)) {
-				// Hit enemy2
-				enemiesKilled++;
-				LK.setScore(LK.getScore() + 15);
-				updateScore();
-				LK.getSound('Hit2').play();
-				// Mark enemy2 as hit and start falling upside down
-				enemy2.falling = true;
-				var enemy2Graphics = enemy2.children[0];
-				// Rotate enemy upside down and make them fall
-				tween(enemy2Graphics, {
-					rotation: Math.PI
-				}, {
-					duration: 300,
-					easing: tween.easeOut
-				});
-				// Set falling velocity
-				enemy2.velocityY = -2; // Small upward velocity initially
-				enemy2.velocityX = enemy2.velocityX * 0.3; // Reduce horizontal speed
-				// Remove wooden star
-				woodenStar.active = false;
-				woodenStar.destroy();
-				woodenStars.splice(i, 1);
-				break;
-			}
+		if (tryHitEnemiesWithFall(woodenStar, woodenStars, i, enemies2, 15, 'Hit2', false)) {
+			continue;
 		}
 		// Check collision with enemies3
-		for (var j = enemies3.length - 1; j >= 0; j--) {
-			var enemy3 = enemies3[j];
-			if (enemy3.active && !enemy3.falling && woodenStar.intersects(enemy3)) {
-				// Hit enemy3
-				enemiesKilled++;
-				LK.setScore(LK.getScore() + 20);
-				updateScore();
-				LK.getSound('Enemy3').play();
-				// Mark enemy3 as hit and start falling upside down
-				enemy3.falling = true;
-				var enemy3Graphics = enemy3.children[0];
-				// Rotate enemy upside down and make them fall
-				tween(enemy3Graphics, {
-					rotation: Math.PI
-				}, {
-					duration: 300,
-					easing: tween.easeOut
-				});
-				// Set falling velocity
-				enemy3.velocityY = -2; // Small upward velocity initially
-				enemy3.velocityX = enemy3.velocityX * 0.3; // Reduce horizontal speed
-				// Remove wooden star
-				woodenStar.active = false;
-				woodenStar.destroy();
-				woodenStars.splice(i, 1);
-				break;
-			}
+		if (tryHitEnemiesWithFall(woodenStar, woodenStars, i, enemies3, 20, 'Enemy3', false)) {
+			continue;
 		}
 		// Check collision with enemy archers
 		for (var j = enemyArchers.length - 1; j >= 0; j--) {
 			var archer = enemyArchers[j];
 			if (archer.active && woodenStar.intersects(archer)) {
-				// Hit archer
-				enemiesKilled++;
-				LK.setScore(LK.getScore() + 25);
-				updateScore();
-				LK.getSound('Ninjaarrowgrito').play();
-				// Mark archer as hit and start falling upside down
-				archer.falling = true;
-				var archerGraphics = archer.children[0];
-				// Rotate archer upside down and make them fall
-				tween(archerGraphics, {
-					rotation: Math.PI
-				}, {
-					duration: 300,
-					easing: tween.easeOut
-				});
-				// Set falling velocity
-				archer.velocityY = -2; // Small upward velocity initially
-				archer.velocityX = 0; // Stop horizontal movement for archers
-				// Remove wooden star
-				woodenStar.active = false;
-				woodenStar.destroy();
-				woodenStars.splice(i, 1);
+				causeEnemyFall(archer, 25, 'Ninjaarrowgrito', true);
+				destroyProjectile(woodenStars, i, woodenStar);
 				break;
 			}
 		}
 		// Check collision with arrows (make them fall when hit)
-		for (var a = arrows.length - 1; a >= 0; a--) {
-			var arrow = arrows[a];
-			if (arrow.active && !arrow.falling && woodenStar.intersects(arrow)) {
-				// Arrow hit by wooden star - make it fall
-				arrow.startFalling();
-				// Remove wooden star
-				woodenStar.active = false;
-				woodenStar.destroy();
-				woodenStars.splice(i, 1);
-				break;
-			}
+		if (tryHitArrows(woodenStar, woodenStars, i, arrows)) {
+			continue;
 		}
 	}
 	// Update ninja stars
@@ -4077,9 +3362,7 @@ game.update = function () {
 				sunFaceTimer = 120; // 2 seconds at 60fps
 			}
 			// Remove star
-			star.active = false;
-			star.destroy();
-			ninjaStars.splice(i, 1);
+			destroyProjectile(ninjaStars, i, star);
 			continue;
 		}
 		// Check collision with CloudType2 to spawn lightning (only when clouds are near the end of the screen)
@@ -4187,9 +3470,7 @@ game.update = function () {
 						ninjaParalyzed = true;
 						ninjaParalyzeTimer = 120; // 2 seconds at 60fps
 						// Remove star only when the cloud is ready to shoot lightning
-						star.active = false;
-						star.destroy();
-						ninjaStars.splice(i, 1);
+						destroyProjectile(ninjaStars, i, star);
 						return 1; // break
 					}
 					// Cloud is charged and will shoot lightning when hit by star
@@ -4214,26 +3495,7 @@ game.update = function () {
 		for (var m = meteorites.length - 1; m >= 0; m--) {
 			var meteorite = meteorites[m];
 			if (meteorite.active && star.intersects(meteorite)) {
-				meteorite.hitCount++;
-				// Play hit sound when meteorite is hit
-				LK.getSound('meteoro-golpe').play();
-				// Change meteorite face when hit
-				if (meteorite.hitCount < 3) {
-					meteorite.changeFace();
-				}
-				// Remove star
-				star.active = false;
-				star.destroy();
-				ninjaStars.splice(i, 1);
-				// Destroy meteorite after 3 hits
-				if (meteorite.hitCount >= 3) {
-					meteorite.active = false;
-					meteorite.destroy();
-					meteorites.splice(m, 1);
-					LK.getSound('meteoro-grito').play(); // Play cat scream sound when meteorite is destroyed
-					LK.setScore(LK.getScore() + 50);
-					updateScore();
-				}
+				handleMeteoriteHitCommon(star, ninjaStars, i, meteorite, 3);
 				break;
 			}
 		}
@@ -4241,311 +3503,149 @@ game.update = function () {
 		for (var a = airplanes.length - 1; a >= 0; a--) {
 			var airplane = airplanes[a];
 			if (airplane.active && !airplane.falling && star.intersects(airplane)) {
-				// Hit airplane - drop power-up
-				dropPowerUp(airplane);
-				// Play special airplane hit sound
-				LK.getSound('planeHit').play();
-				// Remove star
-				star.active = false;
-				star.destroy();
-				ninjaStars.splice(i, 1);
+				// Golpe con estrella normal: soltar power-up pero NO caer
+				if (typeof dropPowerUp === 'function') {
+					dropPowerUp(airplane);
+				}
+				try {
+					LK.getSound('planeHit').play();
+				} catch (e) {}
+				destroyProjectile(ninjaStars, i, star);
 				break;
 			}
 		}
 		// Check collision with enemies
-		for (var j = enemies.length - 1; j >= 0; j--) {
-			var enemy = enemies[j];
-			if (enemy.active && !enemy.falling && star.intersects(enemy)) {
-				// Hit enemy
-				enemiesKilled++;
-				LK.setScore(LK.getScore() + 10);
-				updateScore();
-				LK.getSound('hit').play();
-				// Mark enemy as hit and start falling upside down
-				enemy.falling = true;
-				var enemyGraphics = enemy.children[0];
-				// Rotate enemy upside down and make them fall
-				tween(enemyGraphics, {
-					rotation: Math.PI
-				}, {
-					duration: 300,
-					easing: tween.easeOut
-				});
-				// Set falling velocity
-				enemy.velocityY = -2; // Small upward velocity initially
-				enemy.velocityX = enemy.velocityX * 0.3; // Reduce horizontal speed
-				// Remove star
-				star.active = false;
-				star.destroy();
-				ninjaStars.splice(i, 1);
-				break;
-			}
+		if (tryHitEnemiesWithFall(star, ninjaStars, i, enemies, 10, 'hit', false)) {
+			continue;
 		}
 		// Check collision with enemies2 (NMI2)
-		for (var j = enemies2.length - 1; j >= 0; j--) {
-			var enemy2 = enemies2[j];
-			if (enemy2.active && !enemy2.falling && star.intersects(enemy2)) {
-				// Hit enemy2
-				enemiesKilled++;
-				LK.setScore(LK.getScore() + 15); // More points for NMI2
-				updateScore();
-				LK.getSound('Hit2').play(); // Different sound for NMI2
-				// Mark enemy2 as hit and start falling upside down
-				enemy2.falling = true;
-				var enemy2Graphics = enemy2.children[0];
-				// Rotate enemy upside down and make them fall
-				tween(enemy2Graphics, {
-					rotation: Math.PI
-				}, {
-					duration: 300,
-					easing: tween.easeOut
-				});
-				// Set falling velocity
-				enemy2.velocityY = -2; // Small upward velocity initially
-				enemy2.velocityX = enemy2.velocityX * 0.3; // Reduce horizontal speed
-				// Remove star
-				star.active = false;
-				star.destroy();
-				ninjaStars.splice(i, 1);
-				break;
-			}
+		if (tryHitEnemiesWithFall(star, ninjaStars, i, enemies2, 15, 'Hit2', false)) {
+			continue;
 		}
 		// Check collision with enemies3 (Enemy3)
-		for (var j = enemies3.length - 1; j >= 0; j--) {
-			var enemy3 = enemies3[j];
-			if (enemy3.active && !enemy3.falling && star.intersects(enemy3)) {
-				// Hit enemy3
-				enemiesKilled++;
-				LK.setScore(LK.getScore() + 20); // More points for Enemy3
-				updateScore();
-				LK.getSound('Enemy3').play(); // Enemy3 sound for hit
-				// Mark enemy3 as hit and start falling upside down
-				enemy3.falling = true;
-				var enemy3Graphics = enemy3.children[0];
-				// Rotate enemy upside down and make them fall
-				tween(enemy3Graphics, {
-					rotation: Math.PI
-				}, {
-					duration: 300,
-					easing: tween.easeOut
-				});
-				// Set falling velocity
-				enemy3.velocityY = -2; // Small upward velocity initially
-				enemy3.velocityX = enemy3.velocityX * 0.3; // Reduce horizontal speed
-				// Remove star
-				star.active = false;
-				star.destroy();
-				ninjaStars.splice(i, 1);
-				break;
-			}
+		if (tryHitEnemiesWithFall(star, ninjaStars, i, enemies3, 20, 'Enemy3', false)) {
+			continue;
 		}
 		// Check collision with enemy archers
 		for (var j = enemyArchers.length - 1; j >= 0; j--) {
 			var archer = enemyArchers[j];
 			if (archer.active && star.intersects(archer)) {
-				// Hit archer
-				enemiesKilled++;
-				LK.setScore(LK.getScore() + 25);
-				updateScore();
-				LK.getSound('Ninjaarrowgrito').play();
-				// Mark archer as hit and start falling upside down
-				archer.falling = true;
-				var archerGraphics = archer.children[0];
-				// Rotate archer upside down and make them fall
-				tween(archerGraphics, {
-					rotation: Math.PI
-				}, {
-					duration: 300,
-					easing: tween.easeOut
-				});
-				// Set falling velocity
-				archer.velocityY = -2; // Small upward velocity initially
-				archer.velocityX = 0; // Stop horizontal movement for archers
-				// Remove star
-				star.active = false;
-				star.destroy();
-				ninjaStars.splice(i, 1);
+				causeEnemyFall(archer, 25, 'Ninjaarrowgrito', true);
+				destroyProjectile(ninjaStars, i, star);
 				break;
 			}
 		}
 		// Check collision with arrows (make them fall when hit)
-		for (var a = arrows.length - 1; a >= 0; a--) {
-			var arrow = arrows[a];
-			if (arrow.active && !arrow.falling && star.intersects(arrow)) {
-				// Arrow hit by ninja star - make it fall
-				arrow.startFalling();
-				// Remove star
-				star.active = false;
-				star.destroy();
-				ninjaStars.splice(i, 1);
-				break;
-			}
+		if (tryHitArrows(star, ninjaStars, i, arrows)) {
+			continue;
 		}
 	}
 	// Update enemies
-	for (var i = enemies.length - 1; i >= 0; i--) {
-		var enemy = enemies[i];
-		enemy.update();
-		if (!enemy.active) {
-			enemy.destroy();
-			enemies.splice(i, 1);
-			continue;
-		}
-		// Check collision with ninja (only in lower part of game when enemy is close, not frozen, not falling, and casa ninja is not active)
-		if (enemy.y > 2200 && !enemy.frozen && !enemy.falling && !(casaNinja && casaNinja.active) && ninja.intersects(enemy)) {
-			LK.getSound('ninja-ouch').play();
-			// Turn screen red and stop ninja walking
-			tween(game, {
-				tint: 0xff0000
-			}, {
-				duration: 100,
-				easing: tween.linear
-			});
-			ninjaParalyzed = true;
-			var impactImage = game.addChild(LK.getAsset('impact', {
-				anchorX: 0.5,
-				anchorY: 0.5,
-				x: ninja.x,
-				y: ninja.y - 250,
-				scaleX: 2.0,
-				scaleY: 2.0
-			}));
-			LK.effects.flashScreen(0xff0000, 1000);
-			game.paused = true;
-			LK.setTimeout(function () {
-				LK.showGameOver();
-			}, 2000);
-			return;
-		}
+	if (updateEnemiesArray(enemies)) {
+		return;
 	}
 	// Update enemies2 (NMI2)
-	for (var i = enemies2.length - 1; i >= 0; i--) {
-		var enemy2 = enemies2[i];
-		enemy2.update();
-		if (!enemy2.active) {
-			enemy2.destroy();
-			enemies2.splice(i, 1);
-			continue;
-		}
-		// Check collision with ninja (only in lower part of game when enemy is close, not frozen, not falling, and casa ninja is not active)
-		if (enemy2.y > 2200 && !enemy2.frozen && !enemy2.falling && !(casaNinja && casaNinja.active) && ninja.intersects(enemy2)) {
-			LK.getSound('ninja-ouch').play();
-			// Turn screen red and stop ninja walking
-			tween(game, {
-				tint: 0xff0000
-			}, {
-				duration: 100,
-				easing: tween.linear
-			});
-			ninjaParalyzed = true;
-			var impactImage = game.addChild(LK.getAsset('impact', {
-				anchorX: 0.5,
-				anchorY: 0.5,
-				x: ninja.x,
-				y: ninja.y - 250,
-				scaleX: 2.0,
-				scaleY: 2.0
-			}));
-			LK.effects.flashScreen(0xff0000, 1000);
-			game.paused = true;
-			LK.setTimeout(function () {
-				LK.showGameOver();
-			}, 2000);
-			return;
-		}
+	if (updateEnemiesArray(enemies2)) {
+		return;
 	}
 	// Update enemies3 (Enemy3)
-	for (var i = enemies3.length - 1; i >= 0; i--) {
-		var enemy3 = enemies3[i];
-		enemy3.update();
-		if (!enemy3.active) {
-			enemy3.destroy();
-			enemies3.splice(i, 1);
-			continue;
-		}
-		// Check collision with ninja (only in lower part of game when enemy is close, not frozen, not falling, and casa ninja is not active)
-		if (enemy3.y > 2200 && !enemy3.frozen && !enemy3.falling && !(casaNinja && casaNinja.active) && ninja.intersects(enemy3)) {
-			LK.getSound('ninja-ouch').play();
-			// Turn screen red and stop ninja walking
-			tween(game, {
-				tint: 0xff0000
-			}, {
-				duration: 100,
-				easing: tween.linear
-			});
-			ninjaParalyzed = true;
-			var impactImage = game.addChild(LK.getAsset('impact', {
-				anchorX: 0.5,
-				anchorY: 0.5,
-				x: ninja.x,
-				y: ninja.y - 250,
-				scaleX: 2.0,
-				scaleY: 2.0
-			}));
-			LK.effects.flashScreen(0xff0000, 1000);
-			game.paused = true;
-			LK.setTimeout(function () {
-				LK.showGameOver();
-			}, 2000);
-			return;
-		}
+	if (updateEnemiesArray(enemies3)) {
+		return;
 	}
 	// Update enemy archers
-	for (var i = enemyArchers.length - 1; i >= 0; i--) {
-		var archer = enemyArchers[i];
-		archer.update();
-		if (!archer.active) {
-			archer.destroy();
-			enemyArchers.splice(i, 1);
-		}
-	}
+	updateAndCull(enemyArchers);
 	// Update arrows
-	for (var i = arrows.length - 1; i >= 0; i--) {
-		var arrow = arrows[i];
-		arrow.update();
-		if (!arrow.active) {
-			arrow.destroy();
-			arrows.splice(i, 1);
-			continue;
-		}
-		// Check collision with ninja
-		if (ninja.intersects(arrow)) {
-			LK.getSound('ninja-ouch').play();
-			// Turn screen red and stop ninja walking
-			tween(game, {
-				tint: 0xff0000
-			}, {
-				duration: 100,
-				easing: tween.linear
-			});
-			ninjaParalyzed = true;
-			var impactImage = game.addChild(LK.getAsset('impact', {
-				anchorX: 0.5,
-				anchorY: 0.5,
-				x: ninja.x,
-				y: ninja.y - 250,
-				scaleX: 2.0,
-				scaleY: 2.0
-			}));
-			LK.effects.flashScreen(0xff0000, 1000);
-			game.paused = true;
-			LK.setTimeout(function () {
-				LK.showGameOver();
-			}, 2000);
+	if (updateArrowsAndCheckNinjaHit()) {
+		return;
+	}
+	// Utilidades locales del loop
+	function processTimer(get, set, threshold, shouldCount, onTrigger, resetValue) {
+		if (!shouldCount) {
 			return;
 		}
-	}
-	// Update lightnings
-	for (var i = lightnings.length - 1; i >= 0; i--) {
-		var lightning = lightnings[i];
-		lightning.update();
-		if (!lightning.active) {
-			lightning.destroy();
-			lightnings.splice(i, 1);
-			continue;
+		var v = get() + 1;
+		set(v);
+		if (v > threshold) {
+			onTrigger();
+			set(resetValue != null ? resetValue : 0);
 		}
 	}
-	// Update meteorites
+	function ninjaHitSequence() {
+		LK.getSound('ninja-ouch').play();
+		tween(game, {
+			tint: 0xff0000
+		}, {
+			duration: 100,
+			easing: tween.linear
+		});
+		ninjaParalyzed = true;
+		var impactImage = game.addChild(LK.getAsset('impact', {
+			anchorX: 0.5,
+			anchorY: 0.5,
+			x: ninja.x,
+			y: ninja.y - 250,
+			scaleX: 2.0,
+			scaleY: 2.0
+		}));
+		LK.effects.flashScreen(0xff0000, 1000);
+		game.paused = true;
+		LK.setTimeout(function () {
+			LK.showGameOver();
+		}, 2000);
+	}
+	// Actualiza y depura colecciones simples
+	function updateAndCull(list) {
+		for (var i = list.length - 1; i >= 0; i--) {
+			var obj = list[i];
+			obj.update();
+			if (!obj.active) {
+				obj.destroy();
+				list.splice(i, 1);
+			}
+		}
+	}
+	function countActive(list) {
+		var count = 0;
+		for (var i = 0; i < list.length; i++) {
+			if (list[i] && list[i].active) {
+				count++;
+			}
+		}
+		return count;
+	}
+	function updateEnemiesArray(list) {
+		for (var i = list.length - 1; i >= 0; i--) {
+			var enemyObj = list[i];
+			enemyObj.update();
+			if (!enemyObj.active) {
+				enemyObj.destroy();
+				list.splice(i, 1);
+				continue;
+			}
+			if (enemyObj.y > 2200 && !enemyObj.frozen && !enemyObj.falling && !(casaNinja && casaNinja.active) && ninja.intersects(enemyObj)) {
+				ninjaHitSequence();
+				return true; // early exit from game.update
+			}
+		}
+		return false;
+	}
+	function updateArrowsAndCheckNinjaHit() {
+		for (var i = arrows.length - 1; i >= 0; i--) {
+			var arrow = arrows[i];
+			arrow.update();
+			if (!arrow.active) {
+				arrow.destroy();
+				arrows.splice(i, 1);
+				continue;
+			}
+			if (ninja.intersects(arrow)) {
+				ninjaHitSequence();
+				return true;
+			}
+		}
+		return false;
+	}
+	updateAndCull(lightnings);
 	for (var i = meteorites.length - 1; i >= 0; i--) {
 		var meteorite = meteorites[i];
 		meteorite.update();
@@ -4554,34 +3654,11 @@ game.update = function () {
 			meteorites.splice(i, 1);
 			continue;
 		}
-		// Check collision with ninja - but not when in casa ninja
 		if (!isInCasaNinja && ninja.intersects(meteorite)) {
-			LK.getSound('ninja-ouch').play();
-			// Turn screen red and stop ninja walking
-			tween(game, {
-				tint: 0xff0000
-			}, {
-				duration: 100,
-				easing: tween.linear
-			});
-			ninjaParalyzed = true;
-			var impactImage = game.addChild(LK.getAsset('impact', {
-				anchorX: 0.5,
-				anchorY: 0.5,
-				x: ninja.x,
-				y: ninja.y - 250,
-				scaleX: 2.0,
-				scaleY: 2.0
-			}));
-			LK.effects.flashScreen(0xff0000, 1000);
-			game.paused = true;
-			LK.setTimeout(function () {
-				LK.showGameOver();
-			}, 2000);
+			ninjaHitSequence();
 			return;
 		}
 	}
-	// Check collision with obstacles
 	for (var i = obstacles.length - 1; i >= 0; i--) {
 		var obstacle = obstacles[i];
 		obstacle.update();
@@ -4590,59 +3667,30 @@ game.update = function () {
 			obstacles.splice(i, 1);
 			continue;
 		}
-		// Check collision with ninja stars hitting obstacles
 		for (var s = ninjaStars.length - 1; s >= 0; s--) {
 			var star = ninjaStars[s];
 			if (star.active && obstacle.active && star.intersects(obstacle)) {
-				// Remove star
-				star.active = false;
-				star.destroy();
-				ninjaStars.splice(s, 1);
+				destroyProjectile(ninjaStars, s, star);
 				break;
 			}
 		}
-		// Check collision with wooden stars hitting obstacles
 		for (var ws = woodenStars.length - 1; ws >= 0; ws--) {
 			var woodenStar = woodenStars[ws];
 			if (woodenStar.active && obstacle.active && woodenStar.intersects(obstacle)) {
-				// Remove wooden star
-				woodenStar.active = false;
-				woodenStar.destroy();
-				woodenStars.splice(ws, 1);
+				destroyProjectile(woodenStars, ws, woodenStar);
 				break;
 			}
 		}
-		// Check collision with ninja (only if not jumping and when obstacle reaches ninja's feet at ground level)
 		if (!ninja.isJumping && obstacle.y > 2600 && !(casaNinja && casaNinja.active) && ninja.intersects(obstacle)) {
-			// Ninja collides with obstacle - play mushroom hit sound
 			LK.getSound('mushroom-hit').play();
 			LK.getSound('pipipipipi').play();
-			LK.getSound('ninja-ouch').play();
-			// Turn screen red and stop ninja walking
-			tween(game, {
-				tint: 0xff0000
-			}, {
-				duration: 100,
-				easing: tween.linear
-			});
-			ninjaParalyzed = true;
-			var impactImage = game.addChild(LK.getAsset('impact', {
-				anchorX: 0.5,
-				anchorY: 0.5,
-				x: ninja.x,
-				y: ninja.y - 250,
-				scaleX: 2.0,
-				scaleY: 2.0
-			}));
-			LK.effects.flashScreen(0xff0000, 1000);
-			game.paused = true;
-			LK.setTimeout(function () {
-				LK.showGameOver();
-			}, 2000);
+			ninjaHitSequence();
 			return;
 		}
 	}
-	// Update toris - but not when in casa ninja
+	// Actualizar carriles verdes
+	updateAndCull(greenLanesLeft);
+	updateAndCull(greenLanesRight);
 	if (!isInCasaNinja) {
 		for (var i = toris.length - 1; i >= 0; i--) {
 			var tori = toris[i];
@@ -4652,88 +3700,61 @@ game.update = function () {
 				toris.splice(i, 1);
 				continue;
 			}
-			// Check if ninja is jumping and near the tori
 			if (ninja.isJumping && tori.y > 2200 && !(casaNinja && casaNinja.active) && ninja.intersects(tori)) {
-				LK.getSound('ninja-ouch').play();
-				// Turn screen red and stop ninja walking
-				tween(game, {
-					tint: 0xff0000
-				}, {
-					duration: 100,
-					easing: tween.linear
-				});
-				ninjaParalyzed = true;
-				var impactImage = game.addChild(LK.getAsset('impact', {
-					anchorX: 0.5,
-					anchorY: 0.5,
-					x: ninja.x,
-					y: ninja.y - 250,
-					scaleX: 2.0,
-					scaleY: 2.0
-				}));
 				LK.getSound('hit').play();
-				LK.effects.flashScreen(0xff0000, 1000);
-				game.paused = true;
-				LK.setTimeout(function () {
-					LK.showGameOver();
-				}, 2000);
+				ninjaHitSequence();
 				return;
 			}
 		}
 	}
-	// Spawn enemies - only after main screen is dismissed and not in casa ninja or when casa ninja is active
 	if (!mainScreenActive && !isInCasaNinja && !(casaNinja && casaNinja.active) && isFeatureUnlocked('enemies')) {
-		enemySpawnTimer++;
-		if (enemySpawnTimer > 600) {
+		var currentPhase = Math.min(casaNinjaVisitCount + 1, 4);
+		var spawnInterval = currentPhase === 1 ? 300 : 600;
+		processTimer(function () {
+			return enemySpawnTimer;
+		}, function (v) {
+			enemySpawnTimer = v;
+		}, spawnInterval, true, function () {
 			spawnEnemy();
-			enemySpawnTimer = 0;
-		}
-		// Spawn enemies2 (NMI2) - only if unlocked
-		enemy2SpawnTimer++;
-		if (enemy2SpawnTimer > 900 && isFeatureUnlocked('enemy2')) {
-			// Spawn less frequently than regular enemies
+		});
+		processTimer(function () {
+			return enemy2SpawnTimer;
+		}, function (v) {
+			enemy2SpawnTimer = v;
+		}, 900, isFeatureUnlocked('enemy2'), function () {
 			spawnEnemy2();
-			enemy2SpawnTimer = 0;
-		}
-		// Spawn enemies3 (Enemy3) - only if unlocked
-		enemy3SpawnTimer++;
-		if (enemy3SpawnTimer > 1200 && isFeatureUnlocked('enemy3')) {
-			// Spawn less frequently than other enemies
+		});
+		processTimer(function () {
+			return enemy3SpawnTimer;
+		}, function (v) {
+			enemy3SpawnTimer = v;
+		}, 1200, isFeatureUnlocked('enemy3'), function () {
 			spawnEnemy3();
-			enemy3SpawnTimer = 0;
-		}
-		// Spawn enemy archers on trees - only in phase 4+ and not when casa ninja is active
+		});
 		if (LK.ticks % 900 === 0 && isFeatureUnlocked('archers') && !(casaNinja && casaNinja.active)) {
-			// Every 15 seconds, only in phase 4+
 			spawnEnemyArcher();
 		}
 	}
-	// Spawn obstacles - much less frequently and with conflict detection, but not in casa ninja or when casa ninja is active
 	if (!isInCasaNinja && !(casaNinja && casaNinja.active) && isFeatureUnlocked('obstacles')) {
 		obstacleSpawnTimer++;
 		if (obstacleSpawnTimer > 1200) {
-			// Doubled from 600 to 1200 for fewer obstacles
-			// Check if there's been a recent enemy spawn to avoid conflicts
 			if (LK.ticks - lastEnemySpawnTime > 180) {
-				// 3 seconds buffer after enemy spawn
 				spawnObstacle();
 				obstacleSpawnTimer = 0;
 			} else {
-				// Reset timer partially to retry sooner
-				obstacleSpawnTimer = 800; // Retry in 400 ticks instead of full 1200
+				obstacleSpawnTimer = 800;
 			}
 		}
 	}
-	// Spawn toris - but not when in casa ninja or when casa ninja is active
 	if (!isInCasaNinja && !(casaNinja && casaNinja.active) && isFeatureUnlocked('toris')) {
-		toriSpawnTimer++;
-		if (toriSpawnTimer > 480) {
-			// Spawn every 8 seconds
+		processTimer(function () {
+			return toriSpawnTimer;
+		}, function (v) {
+			toriSpawnTimer = v;
+		}, 480, true, function () {
 			spawnTori();
-			toriSpawnTimer = 0;
-		}
+		});
 	}
-	// Update clouds - but not when in casa ninja
 	if (!isInCasaNinja) {
 		var activeClouds = 0;
 		for (var i = clouds.length - 1; i >= 0; i--) {
@@ -4746,46 +3767,18 @@ game.update = function () {
 				activeClouds++;
 			}
 		}
-		// Debug: Log cloud count every 5 seconds
 		if (LK.ticks % 300 === 0) {
-			console.log('Active clouds: ' + activeClouds + ', Total clouds array: ' + clouds.length);
+			// log omitido en plataforma de destino
 		}
 	}
-	// Fog system removed - no fog updates needed
-	// Update trees - but not when in casa ninja
 	if (!isInCasaNinja) {
-		for (var i = trees.length - 1; i >= 0; i--) {
-			var tree = trees[i];
-			tree.update();
-			if (!tree.active) {
-				tree.destroy();
-				trees.splice(i, 1);
-			}
-		}
+		updateAndCull(trees);
 	}
-	// Update wooden planks - but not when in casa ninja
+	// Mantener regularidad de tablas incluso al salir de la casa
+	updateAndCull(woodenPlanks);
 	if (!isInCasaNinja) {
-		for (var i = woodenPlanks.length - 1; i >= 0; i--) {
-			var plank = woodenPlanks[i];
-			plank.update();
-			if (!plank.active) {
-				plank.destroy();
-				woodenPlanks.splice(i, 1);
-			}
-		}
+		updateAndCull(airplanes);
 	}
-	// Update airplanes - but not when in casa ninja
-	if (!isInCasaNinja) {
-		for (var i = airplanes.length - 1; i >= 0; i--) {
-			var airplane = airplanes[i];
-			airplane.update();
-			if (!airplane.active) {
-				airplane.destroy();
-				airplanes.splice(i, 1);
-			}
-		}
-	}
-	// Update power-ups
 	for (var i = powerUps.length - 1; i >= 0; i--) {
 		var powerUp = powerUps[i];
 		powerUp.update();
@@ -4794,70 +3787,57 @@ game.update = function () {
 			powerUps.splice(i, 1);
 			continue;
 		}
-		// Check collision with ninja for power-up collection
 		if (ninja.intersects(powerUp)) {
-			// Collect power-up
 			LK.setScore(LK.getScore() + 25);
 			updateScore();
-			LK.getSound('powerUp').play(); // Use jump sound for power-up collection
-			// Check if this is the wooden star power-up (type 1)
+			LK.getSound('powerUp').play();
 			if (powerUp.powerupType === 1) {
 				hasWoodenStarPower = true;
-				woodenStarPowerTimer = woodenStarDuration; // 30 seconds
-				updateWeaponIndicator(); // Update weapon indicator when power is activated
+				woodenStarPowerTimer = woodenStarDuration;
+				updateWeaponIndicator();
 			}
-			// Check if this is the ice power-up (type 2)
 			if (powerUp.powerupType === 2) {
 				hasIcePower = true;
-				icePowerTimer = icePowerDuration; // 30 seconds
-				updateWeaponIndicator(); // Update weapon indicator when power is activated
+				icePowerTimer = icePowerDuration;
+				updateWeaponIndicator();
 			}
 			powerUp.active = false;
 			powerUp.destroy();
 			powerUps.splice(i, 1);
 		}
 	}
-	// Spawn clouds at reduced frequency
-	cloudSpawnTimer++;
-	if (cloudSpawnTimer > 60) {
-		// Spawn clouds every 1 second (60 frames) - but not when in casa ninja or when casa ninja is active
-		if (!isInCasaNinja && !(casaNinja && casaNinja.active)) {
-			spawnCloud();
-			cloudSpawnTimer = 0;
-		}
-	}
-	// Fog spawning removed - no fog elements needed
-	// Spawn trees on both sides - but not when in casa ninja or when casa ninja is active
+	processTimer(function () {
+		return cloudSpawnTimer;
+	}, function (v) {
+		cloudSpawnTimer = v;
+	}, 60, !isInCasaNinja && !(casaNinja && casaNinja.active) && isFeatureUnlocked('lightningClouds'), function () {
+		spawnCloud();
+	});
 	if (!isInCasaNinja && !(casaNinja && casaNinja.active)) {
-		treeSpawnTimer++;
-		if (treeSpawnTimer > 90) {
-			// Spawn trees much more frequently - 1.5 seconds interval for many more trees
+		processTimer(function () {
+			return treeSpawnTimer;
+		}, function (v) {
+			treeSpawnTimer = v;
+		}, 90, true, function () {
 			spawnTrees();
-			treeSpawnTimer = 0;
-		}
+		});
 	}
-	// Spawn wooden planks with more spacing for walkway effect - but not when in casa ninja or when casa ninja is active
-	if (!isInCasaNinja && !(casaNinja && casaNinja.active) && LK.ticks % 25 === 0) {
-		// Spawn wooden planks every 25 frames (0.42 seconds) for spaced walkway effect
+	if (!(casaNinja && casaNinja.active) && LK.ticks % 25 === 0) {
 		spawnWoodenPlanks();
 	}
-	// Spawn airplanes periodically - only if unlocked and not in casa ninja or when casa ninja is active
 	if (!isInCasaNinja && !(casaNinja && casaNinja.active)) {
-		airplaneSpawnTimer++;
-		if (airplaneSpawnTimer > 600 && isFeatureUnlocked('airplanes')) {
-			// Every 10 seconds (600 frames at 60fps)
+		processTimer(function () {
+			return airplaneSpawnTimer;
+		}, function (v) {
+			airplaneSpawnTimer = v;
+		}, 600, isFeatureUnlocked('airplanes'), function () {
 			spawnAirplane();
-			airplaneSpawnTimer = 0;
-		}
+		});
 	}
-	// Enemy spawning handled by spawnEnemy function with tree physics
-	// Handle sun frozen timer
 	if (sunFrozen && sunFrozenTimer > 0) {
 		sunFrozenTimer--;
 		if (sunFrozenTimer <= 0) {
-			// Stop any ongoing trembling tweens before unfreezing
 			tween.stop(sun);
-			// Unfreeze sun - change back to normal
 			sunFrozen = false;
 			var sunIndex = game.children.indexOf(sun);
 			sun.destroy();
@@ -4871,13 +3851,10 @@ game.update = function () {
 			}), Math.max(greenBackgrounds.length + 1, Math.min(sunIndex, game.children.length)));
 		}
 	}
-	// Handle sun face timer (only if not frozen)
 	if (!sunFrozen && sunIsHit && sunFaceTimer > 0) {
 		sunFaceTimer--;
 		if (sunFaceTimer <= 0) {
-			// Only spawn meteorite if sun is not frozen
 			if (!sunFrozen) {
-				// Change sun to laughing/attack face and spawn meteorite
 				sun.destroy();
 				sun = game.addChildAt(LK.getAsset('sunAttack', {
 					anchorX: 0.5,
@@ -4889,28 +3866,22 @@ game.update = function () {
 				}), greenBackgrounds.length + 2);
 				LK.getSound('sol-risa').play();
 				sunIsHit = false;
-				// Spawn meteorite toward ninja
 				var meteorite = new Meteorite();
 				meteorite.x = sun.x;
 				meteorite.y = sun.y;
-				// Calculate direction toward ninja
 				var dx = ninja.x - meteorite.x;
 				var dy = ninja.y - meteorite.y;
 				var distance = Math.sqrt(dx * dx + dy * dy);
-				// Set velocity toward ninja
 				meteorite.velocityX = dx / distance * meteorite.speed;
 				meteorite.velocityY = dy / distance * meteorite.speed;
 				meteorites.push(meteorite);
 				game.addChild(meteorite);
-				// Set timer to change sun back to normal after meteorite is sent
-				sunFaceTimer = 60; // 1 second to show laughing face
+				sunFaceTimer = 60;
 			}
 		}
 	} else if (!sunFrozen && !sunIsHit && sunFaceTimer > 0) {
-		// Handle sun laughing face timer (when not hit but showing attack face and not frozen)
 		sunFaceTimer--;
 		if (sunFaceTimer <= 0) {
-			// Change sun back to normal after laughing
 			sun.destroy();
 			sun = game.addChildAt(LK.getAsset('sun', {
 				anchorX: 0.5,
@@ -4922,55 +3893,41 @@ game.update = function () {
 			}), greenBackgrounds.length + 2);
 		}
 	}
-	// Handle ninja paralysis timer
 	if (ninjaParalyzed && ninjaParalyzeTimer > 0) {
 		ninjaParalyzeTimer--;
 		if (ninjaParalyzeTimer <= 0) {
-			// Recover from paralysis
 			ninjaParalyzed = false;
-			// Stop all ongoing tweens on ninja and ninja graphics to prevent conflicts
 			tween.stop(ninja);
 			if (ninja.children[0]) {
 				tween.stop(ninja.children[0]);
 			}
-			// Completely reset ninja state - force to ground position
 			ninja.y = ninja.groundY;
 			ninja.isJumping = false;
 			ninja.jumpVelocity = 0;
-			ninja.jumpCount = 0; // Reset jump count to allow jumping again
-			// Remove ALL existing graphics completely and safely
+			ninja.jumpCount = 0;
+			// Limpia todos los gráficos actuales del ninja
 			while (ninja.children.length > 0) {
-				var child = ninja.children[0];
-				child.destroy();
+				ninja.children[0].destroy();
 			}
-			// Add fresh normal ninja graphics for ground walking state
 			var normalNinjaGraphics = ninja.attachAsset('ninja', {
 				anchorX: 0.5,
 				anchorY: 1.0
 			});
-			// Properly restore walking animation state from scratch
-			ninja.flipDirection = 1; // Reset to default direction
-			ninja.runningTimer = 29; // Set to 29 so next update triggers flip immediately (30 is the flip threshold)
+			ninja.flipDirection = 1;
+			ninja.runningTimer = 29;
 			normalNinjaGraphics.scaleX = ninja.flipDirection;
-			// Ensure completely clean rotation state
 			normalNinjaGraphics.rotation = 0;
-			// Force the ninja update to run immediately to restart walking animation loop
 			ninja.update();
 		}
 	}
-	// Update casa ninja movement using tori system
 	if (casaNinja && casaNinja.active) {
-		// Only update if ninja is not inside the house
 		if (!isInCasaNinja) {
-			casaNinja.update(); // Use the exact same update logic as tori
+			casaNinja.update();
 		}
-		// If ninja is inside, casa ninja stays in place (no update called)
 	}
-	// Check if ninja should enter casa ninja at specific points: 300, 600, 1200, 2000, then every 1000
 	var currentScore = LK.getScore();
 	var shouldActivateCasaNinja = false;
 	var activationPoint = 0;
-	// Check specific activation points
 	if (currentScore >= 100 && currentScore < 200) {
 		activationPoint = 100;
 	} else if (currentScore >= 300 && currentScore < 400) {
@@ -4980,42 +3937,34 @@ game.update = function () {
 	} else if (currentScore >= 1000 && currentScore < 1100) {
 		activationPoint = 1000;
 	} else if (currentScore >= 2000 && currentScore % 1000 >= 0 && currentScore % 1000 < 100) {
-		// Every 1000 points after 3000
 		activationPoint = Math.floor(currentScore / 1000) * 1000;
 	}
-	// Check if this activation point hasn't been used yet
 	if (activationPoint > 0 && casaNinjaActivatedPoints.indexOf(activationPoint) === -1) {
 		shouldActivateCasaNinja = true;
 	}
 	if (!isInCasaNinja && shouldActivateCasaNinja) {
-		// Create casa ninja using the CasaNinja class (exactly like tori)
 		casaNinjaActivated = true;
-		casaNinjaActivatedPoints.push(activationPoint); // Mark this point as used
+		casaNinjaActivatedPoints.push(activationPoint);
 		casaNinja = new CasaNinja();
-		casaNinja.z = 1000; // Start far away like tori
+		casaNinja.z = 1000;
 		game.addChild(casaNinja);
 	}
-	// Check if ninja should enter the casa ninja when it's close enough (like passing under tori)
 	if (!isInCasaNinja && casaNinja && casaNinja.active && casaNinja.z < 100 && casaNinja.z > -100) {
 		isInCasaNinja = true;
-		casaNinjaVisitCount++; // Increment visit count
+		casaNinjaVisitCount++;
 		casaNinjaSequenceTimer = 0;
 		casaNinjaSequenceStage = 0;
-		// Show phase information
 		LK.setTimeout(function () {
 			showPhaseInfo();
-		}, 1000); // Show after 1 second
-		// Stop ninja running animation and movement
+		}, 1000);
 		ninjaParalyzed = true;
-		// Move ninja towards casa ninja center with smooth animation
 		tween(ninja, {
 			x: casaNinja.x,
-			y: casaNinja.y - 50 // Position ninja slightly above the house entrance
+			y: casaNinja.y - 50
 		}, {
 			duration: 1200,
 			easing: tween.easeInOut,
 			onFinish: function onFinish() {
-				// Make ninja "disappear" into the house
 				tween(ninja, {
 					alpha: 0,
 					scaleX: 0.5,
@@ -5024,7 +3973,6 @@ game.update = function () {
 					duration: 300,
 					easing: tween.easeIn,
 					onFinish: function onFinish() {
-						// Start casa ninja sequence
 						casaNinjaSequenceStage = 1;
 						casaNinjaSequenceTimer = 0;
 					}
@@ -5032,23 +3980,13 @@ game.update = function () {
 			}
 		});
 	}
-	// Handle casa ninja sequence
 	if (isInCasaNinja && casaNinjaSequenceStage > 0) {
 		casaNinjaSequenceTimer++;
 		switch (casaNinjaSequenceStage) {
 			case 1:
-				// Door close with dramatic effect
 				if (casaNinjaSequenceTimer === 1) {
-					// Play door slam sound
 					LK.getSound('portazo').play();
-					// Change to closed casa ninja with shake effect
 					casaNinja.changeState(false);
-					// Show phase text when entering bathroom
-					showCurrentPhase();
-					if (window.phaseDisplay) {
-						window.phaseDisplay.alpha = 1;
-					}
-					// Add shake effect to house
 					tween(casaNinja, {
 						x: casaNinja.x + 10
 					}, {
@@ -5073,16 +4011,13 @@ game.update = function () {
 					});
 				}
 				if (casaNinjaSequenceTimer >= 120) {
-					// 2 seconds
 					casaNinjaSequenceStage = 2;
 					casaNinjaSequenceTimer = 0;
 				}
 				break;
 			case 2:
-				// Different sequence based on visit count (cycles every 3 houses)
-				var cycleNumber = (casaNinjaVisitCount - 1) % 3 + 1; // 1, 2, 3, 1, 2, 3, etc.
+				var cycleNumber = (casaNinjaVisitCount - 1) % 3 + 1;
 				if (cycleNumber === 1) {
-					// First cycle (houses 1, 4, 7, 10...): normal sequence
 					if (casaNinjaSequenceTimer === 1) {
 						LK.getSound('meo').play();
 					}
@@ -5091,7 +4026,6 @@ game.update = function () {
 						casaNinjaSequenceTimer = 0;
 					}
 				} else if (cycleNumber === 2) {
-					// Second cycle (houses 2, 5, 8, 11...): meo + pedos
 					if (casaNinjaSequenceTimer === 1) {
 						LK.getSound('meo').play();
 					}
@@ -5103,7 +4037,6 @@ game.update = function () {
 						casaNinjaSequenceTimer = 0;
 					}
 				} else if (cycleNumber === 3) {
-					// Third cycle (houses 3, 6, 9, 12...): pedoLargo + bloop + alivio
 					if (casaNinjaSequenceTimer === 1) {
 						LK.getSound('pedoLargo').play();
 					}
@@ -5114,73 +4047,57 @@ game.update = function () {
 				}
 				break;
 			case 3:
-				// Different sequence based on visit count (cycles every 3 houses)
-				var cycleNumber = (casaNinjaVisitCount - 1) % 3 + 1; // 1, 2, 3, 1, 2, 3, etc.
+				var cycleNumber = (casaNinjaVisitCount - 1) % 3 + 1;
 				if (cycleNumber <= 2) {
-					// First and second cycle: Relief sound comes BEFORE WC
 					if (casaNinjaSequenceTimer === 1) {
 						LK.getSound('alivio').play();
 					}
 					if (casaNinjaSequenceTimer >= 120) {
-						// 2 seconds
 						casaNinjaSequenceStage = 4;
 						casaNinjaSequenceTimer = 0;
 					}
 				} else {
-					// Third cycle: bloop comes BEFORE alivio
 					if (casaNinjaSequenceTimer === 1) {
 						LK.getSound('bloop').play();
 					}
 					if (casaNinjaSequenceTimer >= 120) {
-						// 2 seconds
 						casaNinjaSequenceStage = 4;
 						casaNinjaSequenceTimer = 0;
 					}
 				}
 				break;
 			case 4:
-				// Different sequence based on visit count (cycles every 3 houses)
-				var cycleNumber = (casaNinjaVisitCount - 1) % 3 + 1; // 1, 2, 3, 1, 2, 3, etc.
+				var cycleNumber = (casaNinjaVisitCount - 1) % 3 + 1;
 				if (cycleNumber <= 2) {
-					// First and second cycle: WC sound after relief
 					if (casaNinjaSequenceTimer === 1) {
 						LK.getSound('wc').play();
 					}
 					if (casaNinjaSequenceTimer >= 120) {
-						// 2 seconds
 						casaNinjaSequenceStage = 5;
 						casaNinjaSequenceTimer = 0;
 					}
 				} else {
-					// Third cycle: alivio comes AFTER bloop
 					if (casaNinjaSequenceTimer === 1) {
 						LK.getSound('alivio').play();
 					}
 					if (casaNinjaSequenceTimer >= 120) {
-						// 2 seconds
 						casaNinjaSequenceStage = 5;
 						casaNinjaSequenceTimer = 0;
 					}
 				}
 				break;
 			case 5:
-				// Back door opens (not visible - ninja exits through back)
 				if (casaNinjaSequenceTimer === 1) {
 					LK.getSound('puerta-abre').play();
-					// House stays closed - ninja exits through back door
 				}
 				if (casaNinjaSequenceTimer >= 120) {
-					// 2 seconds
 					casaNinjaSequenceStage = 6;
 					casaNinjaSequenceTimer = 0;
 				}
 				break;
 			case 6:
-				// Final back door slam with exit animation
 				if (casaNinjaSequenceTimer === 1) {
 					LK.getSound('portazo').play();
-					// House stays closed - back door slams
-					// Add shake effect to house when closing door to leave
 					tween(casaNinja, {
 						x: casaNinja.x + 10
 					}, {
@@ -5203,11 +4120,6 @@ game.update = function () {
 							});
 						}
 					});
-					// Hide phase text when closing door to leave
-					if (window.phaseDisplay) {
-						window.phaseDisplay.alpha = 0;
-					}
-					// Move ninja back to original position and make him reappear
 					tween(ninja, {
 						x: 1024,
 						y: 2673,
@@ -5218,7 +4130,6 @@ game.update = function () {
 						duration: 800,
 						easing: tween.easeInOut,
 						onFinish: function onFinish() {
-							// Add a little "satisfied" bounce
 							tween(ninja, {
 								y: 2673 - 20
 							}, {
@@ -5237,15 +4148,11 @@ game.update = function () {
 					});
 				}
 				if (casaNinjaSequenceTimer >= 60) {
-					// 1 second
-					// Sequence complete - ninja can resume game
 					ninjaParalyzed = false;
 					isInCasaNinja = false;
 					casaNinjaSequenceStage = 0;
 					casaNinjaSequenceTimer = 0;
-					casaNinjaActivated = false; // Reset for next time
-					// Note: casaNinjaActivatedPoints array is NOT reset here - it keeps track of used points
-					// Hide casa ninja
+					casaNinjaActivated = false;
 					if (casaNinja) {
 						casaNinja.active = false;
 						casaNinja.destroy();
@@ -5255,17 +4162,14 @@ game.update = function () {
 				break;
 		}
 	}
-	// Continuous scoring for time survived (1 point per second) and update display
-	// Only if not in casa ninja (stop scoring during house sequence)
 	if (!isInCasaNinja && LK.ticks % 60 === 0) {
 		LK.setScore(LK.getScore() + 1);
 		updateScore();
 	}
-	// Update score display even during casa ninja sequence to show current score
 	if (isInCasaNinja) {
 		updateScore();
 	}
-	// Update alerts
+	showCurrentPhase();
 	for (var i = alerts.length - 1; i >= 0; i--) {
 		var alert = alerts[i];
 		alert.update();
@@ -5274,23 +4178,17 @@ game.update = function () {
 			alerts.splice(i, 1);
 		}
 	}
-	// Sort objects by depth every few frames for proper layering - but not when in casa ninja
 	if (!isInCasaNinja && LK.ticks % 10 === 0) {
 		sortObjectsByDepth();
 	}
-	// Show current phase only when ninja is in casa ninja
-	if (isInCasaNinja && window.phaseDisplay) {
-		window.phaseDisplay.alpha = 1;
-	} else if (window.phaseDisplay) {
-		window.phaseDisplay.alpha = 0;
+	if (game.phaseDisplay) {
+		game.phaseDisplay.alpha = 1;
 	}
-	// Show/hide sun based on phase with slide animation
 	if (isFeatureUnlocked('sun')) {
 		if (sun.alpha < 1) {
-			// Slide sun in from the right
 			sun.alpha = 1;
 			tween(sun, {
-				x: 1700 // Slide to final position
+				x: 1700
 			}, {
 				duration: 1000,
 				easing: tween.easeOut
@@ -5298,9 +4196,8 @@ game.update = function () {
 		}
 	} else {
 		if (sun.alpha > 0) {
-			// Slide sun out to the right
 			tween(sun, {
-				x: 2500 // Slide off-screen
+				x: 2500
 			}, {
 				duration: 500,
 				easing: tween.easeIn,
